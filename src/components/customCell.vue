@@ -11,7 +11,8 @@ export default {
         dataItem: Object,
     },
 
-    data: {
+    data: function() {
+return {
         styleObjectB:{
             
             'width':'100px',
@@ -29,7 +30,8 @@ export default {
             'top':'50%',
             'left':'50%'
         },
-    },
+    };
+},
     methods:{
         changeColor: function(){
             this.$emit('change',this.dataItem);
