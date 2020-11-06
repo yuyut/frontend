@@ -1,25 +1,12 @@
 <template>
-
   <div id="app">
-    <HelloWorld msg="Kendo Grid Example" />
-    <UploadFile />
+    <div id="nav">
+      <router-link to="./Enter.vue">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </div>
+    <router-view/>
   </div>
 </template>
-
-<script>
-import HelloWorld from './components/HelloWorld.vue'
-import UploadFile from './components/uploadFile.vue'
-
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld,
-    UploadFile
-
-  }
-}
-</script>
 
 <style>
 #app {
@@ -28,7 +15,18 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
 
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>

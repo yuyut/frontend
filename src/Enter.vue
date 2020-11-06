@@ -1,0 +1,35 @@
+@@ -0,0 +1,34 @@
+<template>
+
+  <div id="app">
+    <HelloWorld msg="Kendo Grid Example" />
+    <UploadFile />
+  </div>
+</template>
+
+<script>
+import HelloWorld from './components/HelloWorld.vue'
+import UploadFile from './components/uploadFile.vue'
+
+
+export default {
+  name: 'App',
+  components: {
+    HelloWorld,
+    UploadFile
+
+  }
+}
+</script>
+
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+
+}
+</style>
