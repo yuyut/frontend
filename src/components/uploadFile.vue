@@ -36,7 +36,7 @@
 <script>
 
 import axios from 'axios';
-import custome from 'customCell.vue';
+//import custome from './customCell.vue';
 import { Grid } from '@progress/kendo-vue-grid';
 //import { process } from '@progress/kendo-data-query';
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
@@ -50,7 +50,7 @@ export default {
 
   components: { 
                 'grid':Grid,
-                'customeButton':custome
+                //'customeButton':custome
               },
   beforeCreate() {
     console.log('beforeCreate 被執行');
