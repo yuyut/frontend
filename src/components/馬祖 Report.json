@@ -1,0 +1,198 @@
+{
+    "Schemas" : [ 
+        {
+            "FieldId" : 1,
+            "Type" : "Text",
+            "PropertyName" : "ProjectName",
+            "Title" : "專案名稱",
+            "Children" : [],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 2,
+            "Type" : "Text",
+            "PropertyName" : "IssueIndex",
+            "Title" : "編號",
+            "Children" : [],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 3,
+            "Type" : "Text",
+            "PropertyName" : "Area",
+            "Title" : "區域",
+            "Children" : [],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 4,
+            "Type" : "Text",
+            "PropertyName" : "Position",
+            "Title" : "位置",
+            "Children" : [],
+            "Value" : null
+        },
+        {
+            "FieldId" : 5,
+            "Type" : "Date",
+            "PropertyName" : "IssueDate",
+            "CalendarType" : "Number",
+            "Title" : "日期",
+            "Children" : [],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 6,
+            "Type" : "CheckBoxList",
+            "PropertyName" : "IssueType",
+            "Title" : "干涉類型",
+            "Children" : [ 
+                {
+                    "FieldId" : 7,
+                    "Type" : "CheckBox",
+                    "PropertyName" : "建築",
+                    "Title" : "建築",
+                    "Children" : [],
+                    "Value" : {
+                        "True" : "■",
+                        "False" : "□"
+                    }
+                }, 
+                {
+                    "FieldId" : 8,
+                    "Type" : "CheckBox",
+                    "PropertyName" : "結構",
+                    "Title" : "結構",
+                    "Children" : [],
+                    "Value" : {
+                        "True" : "■",
+                        "False" : "□"
+                    }
+                }, 
+                {
+                    "FieldId" : 9,
+                    "Type" : "CheckBox",
+                    "PropertyName" : "機電",
+                    "Title" : "機電",
+                    "Children" : [],
+                    "Value" : {
+                        "True" : "■",
+                        "False" : "□"
+                    }
+                }, 
+                {
+                    "FieldId" : 10,
+                    "Type" : "CheckBox",
+                    "PropertyName" : "系統內部碰撞",
+                    "Title" : "系統內部碰撞",
+                    "Children" : [],
+                    "Value" : {
+                        "True" : "■",
+                        "False" : "□"
+                    }
+                }
+            ],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 11,
+            "Type" : "ParagraphDataGrid",
+            "PropertyName" : "dataGrid3",
+            "Title" : "問題說明",
+            "Children" : [ 
+                {
+                    "FieldId" : 12,
+                    "Type" : "Text",
+                    "PropertyName" : "DescriptionImgText",
+                    "Title" : "問題說明",
+                    "Children" : [],
+                    "Value" : null
+                }, 
+                {
+                    "FieldId" : 13,
+                    "Type" : "FilePhotoArray",
+                    "PropertyName" : "DescriptionImg",
+                    "Title" : "問題說明圖片",
+                    "Children" : [],
+                    "Value" : null
+                }
+            ],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 14,
+            "Type" : "ParagraphDataGrid",
+            "PropertyName" : "dataGrid",
+            "Title" : "碰撞示意圖",
+            "Children" : [ 
+                {
+                    "FieldId" : 15,
+                    "Type" : "Text",
+                    "PropertyName" : "CollisionText",
+                    "Title" : "碰撞說明",
+                    "Children" : [],
+                    "Value" : null
+                }, 
+                {
+                    "FieldId" : 16,
+                    "Type" : "FilePhotoArray",
+                    "PropertyName" : "CollisionImg",
+                    "Title" : "碰撞示意圖",
+                    "Children" : [],
+                    "Value" : null
+                }
+            ],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 17,
+            "Type" : "ParagraphDataGrid",
+            "PropertyName" : "dataGrid1",
+            "Title" : "碰撞示意圖",
+            "Children" : [ 
+                {
+                    "FieldId" : 18,
+                    "Type" : "Text",
+                    "PropertyName" : "ResolveText",
+                    "Title" : "碰撞說明",
+                    "Children" : [],
+                    "Value" : null
+                }, 
+                {
+                    "FieldId" : 19,
+                    "Type" : "FilePhotoArray",
+                    "PropertyName" : "ResolveImg",
+                    "Title" : "碰撞示意圖",
+                    "Children" : [],
+                    "Value" : null
+                }
+            ],
+            "Value" : null
+        }, 
+        {
+            "FieldId" : 20,
+            "Type" : "ParagraphDataGrid",
+            "PropertyName" : "dataGrid2",
+            "Title" : "碰撞示意圖",
+            "Children" : [ 
+                {
+                    "FieldId" : 21,
+                    "Type" : "Text",
+                    "PropertyName" : "TrackingText",
+                    "Title" : "碰撞說明",
+                    "Children" : [],
+                    "Value" : null
+                }, 
+                {
+                    "FieldId" : 22,
+                    "Type" : "FilePhotoArray",
+                    "PropertyName" : "TrackingImg",
+                    "Title" : "碰撞示意圖",
+                    "Children" : [],
+                    "Value" : null
+                }
+            ],
+            "Value" : null
+        } 
+    ]
+}
