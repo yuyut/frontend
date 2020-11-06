@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import App from './App.vue'
-
+import router from './router' 
 Vue.config.productionTip = false
 
 
 // main.js
 import API from 'syncobox-shared-api'
 
-import router from './router'
+
 
 //設定API伺服器網址
 API.config.token = "";
