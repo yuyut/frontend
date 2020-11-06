@@ -1,10 +1,17 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import Enter from '../Enter.vue'
+
 
 Vue.use(VueRouter)
 
 const routes = [
+  {
+    path: '/Enter.vue',
+    name: 'Enter',
+    component: Enter
+  },
   {
     path: '/',
     name: 'Home',
