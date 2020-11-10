@@ -1,8 +1,7 @@
 @@ -0,0 +1,34 @@
 <template>
 
-  <div id="app">
-    <HelloWorld msg="Kendo Grid Example" />
+  <div id="enter">
     <UploadFile />
   </div>
 </template>
@@ -13,9 +12,9 @@ import UploadFile from './components/uploadFile.vue'
 
 
 export default {
-  name: 'App',
+  name: 'Enter',
   components: {
-    HelloWorld,
+
     UploadFile
 
   }

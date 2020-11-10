@@ -1,5 +1,6 @@
 <template>
     <div class="upload">
+        <keep-alive>
          <grid 
             :style="{height: '660px'}"
             :data-items="items2"
@@ -13,11 +14,11 @@
             :sort= "sort"
             :filter="filter"
             @pagechange="pageChangeHandler">   
-            <template v-bind:style="wrapper" v-slot:aa="data">
+            <template v-slot:aa="data" display: flex; align-items: center;>
                 <customeButton  :dataItem="data" :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" >YESSelect </customeButton>
             </template>
         </grid>  
-            
+         </keep-alive>
         <form  v-on:submit.prevent="onSubmit" >
         <div id='post'>
             <label for="files">檔案 </label>
@@ -74,17 +75,12 @@ export default {
   },
   data: function(){
     console.log('DATA　FUNCTION');
+    this.checkParentCurrentId();
     this.postData();
+   
     var status ='';
         return{
-        wrapper: {
-            display: 'flex',
-            'position':'relative',
-            'font-size': '18px',
-            'text-align':'center',
-            color: 'red',
-            fontSize: '13px', 
-        },
+
         skip: 0,
         take: 10,
         columnMenu: true,
@@ -109,6 +105,18 @@ export default {
     }
   },
   methods:{
+    checkParentCurrentId(){
+        let vm=this;
+        this.$API.api.main.formVersion.get(formVersionId)
+        .then(res => {
+            console.log("Check Parent ID");
+            vm.parentCurrentId = res.data.appliedDocumentReportTemplateId;
+            console.log(vm.parentCurrentId)
+        })
+        .catch(function (error) {
+                console.log(error);
+        });
+    },
     changeCurrentId(id){
 
         this.parentCurrentId=id;
@@ -190,7 +198,6 @@ export default {
             console.log('this total:'+ this.total);
             console.log(res);
             console.log(this.items2+'is items2');
-            return this.items2;
         })
         .catch(function (error) {
                 console.log(error);
