@@ -6,19 +6,38 @@ Vue.config.productionTip = false
 
 // main.js
 import API from 'syncobox-shared-api'
-
+//
 import vuetify from './plugins/vuetify';
 
+//shared
+import shared from 'syncobox-shared'
+import "syncobox-shared/dist/syncobox-shared.css"
+
+//i18n
+import i18n from './i18n'
+import store from './store'
+const apiConfig = {
+    identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,
+    redirectBaseUrl: process.env.VUE_APP_REDIRECT_BASE_URL,
+    mainBaseUrl: process.env.VUE_APP_MAIN_BASE_URL,
+    bimBaseUrl: process.env.VUE_APP_BIM_BASE_URL,
+    token: localStorage.getItem('oidc_access_token')
+}
+Vue.use(shared, { store, router, apiConfig });
 
 
-//設定API伺服器網址
-API.config.token = "eyJhbGciOiJSUzI1NiIsImtpZCI6IkFCZXFQVjYwVG1fVnRPc3BraGlRY0EiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE2MDQ5ODI3NjQsImV4cCI6MTYwNDk4NjM2NCwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS1kZXYuc3luY29ib3guY29tIiwiYXVkIjoicGFubzphbGwiLCJjbGllbnRfaWQiOiJzeW5jb2JveC1hcGktc3dhZ2dlciIsInN1YiI6ImI4MDZiMTZmLWEzY2YtNDJkZS1iN2Q4LWFjOGQzZTgyYzk4MSIsImF1dGhfdGltZSI6MTYwNDk4Mjc2NCwiaWRwIjoibG9jYWwiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6IkFZN0dFTlFERkhQQk8zVVZYWUlXMkhZTjdVVVlLM01aIiwiZm9yZ2VfZXhwaXJlc19kYXRlIjoiMDAwMeW5tDHmnIgx5pelIOaYn-acn-S4gCIsInByZWZlcnJlZF91c2VybmFtZSI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwibmFtZSI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwiZW1haWwiOiJxd2Vyb28wNTI4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI4MDZiMTZmLWEzY2YtNDJkZS1iN2Q4LWFjOGQzZTgyYzk4MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJxd2Vyb28wNTI4QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwic2NvcGUiOlsicGFubzphbGwiXSwiYW1yIjpbInB3ZCJdfQ.G2fHGIEW3D2I431aPT7NlPypcNYflYu08zyVlJEW1EjIpWxhyuZHRx9suVNhTizeq7ckqGFK4eTwSdetNSmgFKcvMDcg0tzfAtRM2QBTZk9d_n4HBPjjplGVEg_ezT4ZGENgrBVhbU22GEUgjPZpZOIxxdZnX2rMOcK2yymk1-FxaYsPgX4GOqkiPQbazcY-hZ-CWp0AdwKpFu6DCxX_RwS0Mt1WYQl-uvmShNpLOrF4N1xBxreByule6RVPQW6Tj6nI30fBVyWCqqB4wywrwDUoxYgdP7ztc7iQFbeZdH-kk6igIFIY_SBmH9c3X9IykQmKmVzKEfh5CvsjSYgcYg";
-API.config.mainBaseUrl = process.env.VUE_APP_MAIN_BASE_URL
-API.config.bimBaseUrl = process.env.VUE_APP_BIM_BASE_URL
-Vue.prototype.$API = API
+
+
+// //設定API伺服器網址
+// API.config.token = TOKEN;
+// API.config.mainBaseUrl = process.env.VUE_APP_MAIN_BASE_URL
+// API.config.bimBaseUrl = process.env.VUE_APP_BIM_BASE_URL
+// Vue.prototype.$API = API
 
 
 new Vue({
+  i18n,
+  store,
   router,
   vuetify,
   render: h => h(App)

@@ -1,9 +1,20 @@
+// vue.config.js
+const VuetifyLoaderPlugin = require('vuetify-loader/lib/plugin')
 module.exports = {
-  "runtimeCompiler": true,
-  "devServer": {
-    "proxy": "http://localhost:9002"
-  },
-  "transpileDependencies": [
-    "vuetify"
-  ]
+    "transpileDependencies": [
+        "vuetify"
+    ],
+    configureWebpack: {
+        plugins: [
+            new VuetifyLoaderPlugin()
+        ],
+    },
+     "pluginOptions": {
+        "i18n": {
+            "locale": "zh-Hant",
+            "fallbackLocale": "en",
+            "localeDir": "locales",
+            "enableInSFC": true
+        }
+    }
 }

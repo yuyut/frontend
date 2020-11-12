@@ -1,23 +1,25 @@
 <template>
-    <div>
-        <div v-if='checkStatus()'>
-            <v-btn
+    <td class="cell">
+   
+            <v-btn class="divStyle"     
+            v-if='checkStatus()'
+            elevation="2"
+            small 
+            disabled
+            @click="postTemplate(id)" >
+                {{msg}}
+            </v-btn>
+
+            <v-btn      
+            v-else
             color="primary"
             elevation="2"
-            x-small 
+            small
             @click="postTemplate(id)" >
                 {{msg}}
             </v-btn>
-        </div>    
-        <div v-else>
-            <v-btn
-            elevation="2"
-            x-small
-            @click="postTemplate(id)" >
-                {{msg}}
-            </v-btn>
-        </div>
-    </div>
+
+    </td >
 </template>
 
 <script>
@@ -34,25 +36,8 @@ export default {
     data: function() {
         return {
             
-            msg:"Select",
-            cellStyle :{
-            'width': '100px',
-            'margin' :' -20px -50px',
-            'position' : 'relative',
-            'top' : '50%',
-            'left' : '50%',
-            'color' : 'white',
-            'background-color': 'coral',
-            },
-            cellStyleSelected :{
-            'width': '100px',
-            'margin' :' -20px -50px',
-            'position' : 'relative',
-            'top' : '50%',
-            'left' : '50%',
-            'color' : 'white',
-            'background-color': 'green',
-            }
+            msg:"應用",
+
         };
     },
     watch:{
@@ -102,12 +87,10 @@ export default {
     
 </script>
 <style>
-button {
-            width: 100px;
-            margin : -20px -50px;
-            position : relative;
-            top : 50%;
-            left : 50%;
-            /* background-color : coral */
+.cell{
+   margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
+
 }
 </style>
