@@ -1,20 +1,20 @@
 
 <template>
 
-  <div id="enter">
-    <UploadFile />
+  <div id="formVersion">
+    <FormResultUpolad />
   </div>
 </template>
 
 <script>
-import UploadFile from './components/uploadFile.vue'
+import FormResultUpolad from './components/FormResultUpolad.vue'
 
 
 export default {
   
-  name: 'Enter',
+  name: 'formVersion',
   components: {
-    UploadFile
+    FormResultUpolad
   }
 }
 </script>

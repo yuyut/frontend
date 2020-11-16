@@ -24,12 +24,11 @@
 
 <script>
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
-const formVersionId='2778a5f3-1024-4c97-9e09-892319689f6a'
+
 
 export default {
     props:{
         currentId:String,
-        dataItem: Object,
         id: String,
     },
 
@@ -80,15 +79,17 @@ export default {
             }    
         }
     },
-    computed:{
-
-    }
+   computed:{
+      formVersionId(){
+          return this.$route.params.formVersionId;
+      },
+  }
 }
     
 </script>
 <style>
 .cell{
-   margin-left: auto;
+  margin-left: auto;
   margin-right: auto;
   padding: 10px;
 

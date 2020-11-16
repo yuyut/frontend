@@ -8,7 +8,7 @@ Vue.config.productionTip = false
 import API from 'syncobox-shared-api'
 //
 import vuetify from './plugins/vuetify';
-
+import moment from 'moment';
 //shared
 import shared from 'syncobox-shared'
 import "syncobox-shared/dist/syncobox-shared.css"
@@ -23,7 +23,7 @@ const apiConfig = {
     bimBaseUrl: process.env.VUE_APP_BIM_BASE_URL,
     token: localStorage.getItem('oidc_access_token')
 }
-Vue.use(shared, { store, router, apiConfig });
+Vue.use(shared, { store, router, apiConfig },{ moment });
 
 
 

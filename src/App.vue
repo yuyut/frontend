@@ -2,15 +2,11 @@
   <v-app>
 
       <div id="nav">
-      <router-link to="/FormVersion/DocumentReportTemplate">Enter</router-link> |
-      <router-link to="/about">About</router-link>
-      |
-      <router-link to="/">Home</router-link>
+      <router-link :to="{name: 'Enter', params: {formVersionId:'2778a5f3-1024-4c97-9e09-892319689f6a'}}"></router-link> 
+      <router-link :to="{name: 'formVersion', params: {formVersionId:'51bb96ec-30e2-4697-869c-94c47b43cc14'}}"></router-link> 
       <router-view/>
        </div>
 
-    <sb-snackbar />
-    <sb-dialog />
 
   
   </v-app>
@@ -18,12 +14,11 @@
 
 <script>
 
-
 export default {
   name: 'App',
-
+  //formVersionId:'2778a5f3-1024-4c97-9e09-892319689f6a',
   data: () => ({
-    //
+     
   }),
 };
 </script>

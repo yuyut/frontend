@@ -125,7 +125,7 @@ import noteBtn from './noteBtn'
 
 export default {
 
-    name: 'UploadFile', 
+    name: 'FormResultUpolad', 
   
     components: { 
                 'grid':Grid,
