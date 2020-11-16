@@ -25,26 +25,7 @@ export default [{
             ...viewPermission["About"]
         }
     },
-    {
-        id: "Enter",
-        name: "Enter",
-        header: "Enter",
-        text: "sidebar.enter",
-        icon: "mdi-view-dashboard",
-        params: { projectId: null },
-        subMenuItems: [],
- 
-    },
-    {
-        id: "FormResultTemplate",
-        name: "FormResultTemplate",
-        header: "FormResultTemplate",
-        text: "FormResultTemplate",
-        icon: "mdi-view-dashboard",
-        params: { projectId: null },
-        subMenuItems: [],
- 
-    },
+    
     // =============================================================================
     // PROJECT
     // =============================================================================

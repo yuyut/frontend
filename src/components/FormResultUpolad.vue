@@ -98,14 +98,6 @@
                         @save="save" 
                         @cancel="cancel"
                         ></noteBtn>
-                       
-    
-                    </template>
-                    <template v-slot:aa="data">
-                        <customeButton  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" >YESSelect </customeButton>
-                    </template>
-                    <template v-slot:day="data">
-                        <td > {{time(data.props.dataItem.createdDate)}} </td>
                     </template>
                 </grid> 
                 </v-card-text>
@@ -115,7 +107,6 @@
 <script>
 import VueI18n from 'vue-i18n'
 import axios from 'axios';
-import custome from './customCell.vue';
 import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
 import moment from 'moment'
@@ -129,13 +120,11 @@ export default {
   
     components: { 
                 'grid':Grid,
-                'customeButton':custome,
                 'noteBtn' : noteBtn,
               },
 
   data: function(){
       
-    this.checkParentCurrentId();
         return{
         //destinationId:this.$route.params.id,
         dialog : false,
@@ -143,12 +132,13 @@ export default {
         file:null,
         jsonfile:null,
         columns: [
-            { title: this.$i18n.t('apply'), cell:"aa", width:'120px',editable:false, columnMenu:false }, 
-            { field: 'createdDate', title:this.$i18n.t('createdTime'),filter: 'numeric',cell:"day",editable:false },
+            { field: 'name', title:this.$i18n.t('name') },
+            { field: 'isEnable', title:this.$i18n.t('isEnable'),editable:false },
             { field: 'createdUserName', title:this.$i18n.t('createdUser'),editable:false},
-            { field: 'fileName', title:this.$i18n.t('fileName'),editable:false},
-            { field: 'note', title:this.$i18n.t('note'), columnMenu:false },
-            { title: "",  cell:"note" , width:'120px',filterable:false, sortable: false, columnMenu:false },
+            { field: 'createdUserId', title:this.$i18n.t('createdUserId'),editable:false},
+            { field: 'content', title:this.$i18n.t('content'), columnMenu:false },
+            { field: 'id', title:this.$i18n.t('id') },
+            { field: 'id', title:this.$i18n.t('id') },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
@@ -221,7 +211,7 @@ export default {
     },
     formData(){
     let vm=this;
-    this.$API.api.main.formVersion.get(this.formVersionId)
+    this.$API.api.main.formVersion.get(vm.formVersionId)
         .then(res => {
             vm.parentCurrentId = res.data.appliedDocumentReportTemplateId;
             vm.versionNumber = res.data.versionNumber;
@@ -258,21 +248,6 @@ export default {
         else 
             return true;
     },
-    checkParentCurrentId(){
-        let vm=this;
-        this.$API.api.main.formVersion.get(this.formVersionId)
-        .then(res => {
-            vm.parentCurrentId = res.data.appliedDocumentReportTemplateId;
-            vm.versionNumber = res.data.versionNumber;
-            vm.formName=res.data.formName;
-        })
-        .catch(function (error) {
-                console.log(error);
-        });
-    },
-    changeCurrentId(id){
-        this.parentCurrentId=id;
-    },
     pageChangeHandler: function(event) {
             this.skip = event.page.skip;
             this.take = event.page.take;
@@ -280,7 +255,11 @@ export default {
             this.postData();
         },
     getData:function(){
-        this.$API.api.main.formVersionDocumentReportTemplate.get(this.formVersionId);
+        let vm = this;
+        this.$API.api.main.formFormResultTemplate.get(this.formVersionId)
+        .then(res => {
+            vm.dataResult = res.data;
+        })
     },
 
     myUpload:function(){
@@ -297,7 +276,7 @@ export default {
         text=reader.result;
         formdata.append('schema',text);
         console.log(vm.formVersionId);
-        vm.$API.api.main.formVersionDocumentReportTemplate.post(vm.formVersionId,formdata)            
+        vm.$API.api.main.formFormResultTemplate.post(vm.formVersionId,formdata)            
         .then(res => {
             vm.postData();      
         })
@@ -314,9 +293,11 @@ export default {
                         filter: this.filter,
                         sort: this.sort
                          };
-        const queryStr = toDataSourceRequestString(state);
+        let name = "nameee";
+        const queryStr = toDataSourceRequestString(name);
         let vm = this;
-        this.$API.api.main.formVersionDocumentReportTemplate.all(this.formVersionId,queryStr)
+        console.log(vm.formVersionId);
+        this.$API.api.main.formFormResultTemplate.post(vm.formVersionId,name)
             .then(res => {
             vm.dataResult = res.data.data;
             vm.total=res.data.total;
@@ -335,17 +316,15 @@ export default {
   },
   created(){
     console.log('created 被執行');
-    this.postData();
-    this.formData();
+    this.getData();
+    //this.postData();
       
   },
   beforeMount(){
         console.log('beforeMount 被執行');
-        //this.formData();
   },
   mounted(){     
     console.log('mounted 被執行');
-    //this.formData();
   },
   computed:{
       formVersionId(){
