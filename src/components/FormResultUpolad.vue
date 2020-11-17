@@ -72,7 +72,6 @@
             </v-card-title>
             <v-card-text>
                 <grid 
-                    
                     :style="{height: '680px'}"
                     :data-items="dataResult"
                     :columns="columns"
@@ -91,13 +90,13 @@
                     @sortchange="sortChangeHandler"
                     @itemchange="itemChange"
                     >
-                    <template v-slot:note="data">
+                    <template v-slot:change="data">
       
-                        <noteBtn :dataItem="data.props.dataItem"
+                        <change :dataItem="data.props.dataItem"
                         @edit="edit"
                         @save="save" 
                         @cancel="cancel"
-                        ></noteBtn>
+                        ></change>
                     </template>
                 </grid> 
                 </v-card-text>
@@ -120,7 +119,7 @@ export default {
   
     components: { 
                 'grid':Grid,
-                'noteBtn' : noteBtn,
+                'change' : noteBtn,
               },
 
   data: function(){
@@ -136,9 +135,9 @@ export default {
             { field: 'isEnable', title:this.$i18n.t('isEnable'),editable:false },
             { field: 'createdUserName', title:this.$i18n.t('createdUser'),editable:false},
             { field: 'createdUserId', title:this.$i18n.t('createdUserId'),editable:false},
-            { field: 'content', title:this.$i18n.t('content'), columnMenu:false },
-            { field: 'id', title:this.$i18n.t('id') },
-            { field: 'id', title:this.$i18n.t('id') },
+            { field: 'content', title:this.$i18n.t('content'), columnMenu:false,editable:false },
+            { field: 'id', title:this.$i18n.t('id'),editable:false },
+            { title: "",  cell:"change" , width:'120px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
@@ -187,22 +186,23 @@ export default {
         let item = this.dataResult[index];
         let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
         this.dataResult.splice(index, 1, updated);
-        let updateDataIndex = this.updatedData.findIndex(p => p.createdUserId === e.dataItem.createdUserId);
+        let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
         this.updatedData.splice(updateDataIndex, 1, updated);
-        
-        
-        let str = this.dataResult[index].note;
-        let id = this.dataResult[index].id;
-        const queryStr = toDataSourceRequestString(str);
-        this.$API.api.main.documentReportTemplate.putNote(id,str)
+        let newname= this.dataResult[index].name;
+        console.log(newname);
+        let str = toDataSourceRequestString(newname);
+        this.$API.api.main.formFormResultTemplate.post(this.formVersionId,str)
         .then(res => {
-            console.log("put successed");
+            console.log("save successed");
+            console.log(res);
         })
         .catch(function (error) {
                 console.log(error);
         });
+        
     }, 
     cancel(e) {
+        console.log(e.dataItem);
         if (e.dataItem.id) {
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
@@ -259,6 +259,7 @@ export default {
         this.$API.api.main.formFormResultTemplate.get(this.formVersionId)
         .then(res => {
             vm.dataResult = res.data;
+            vm.updatedData = JSON.parse(JSON.stringify(res.data));
         })
     },
 
@@ -297,7 +298,7 @@ export default {
         const queryStr = toDataSourceRequestString(name);
         let vm = this;
         console.log(vm.formVersionId);
-        this.$API.api.main.formFormResultTemplate.post(vm.formVersionId,name)
+        this.$API.api.main.formFormResultTemplate.post(vm.formVersionId)
             .then(res => {
             vm.dataResult = res.data.data;
             vm.total=res.data.total;
@@ -316,8 +317,8 @@ export default {
   },
   created(){
     console.log('created 被執行');
-    this.getData();
-    //this.postData();
+    //this.getData();
+    this.postData();
       
   },
   beforeMount(){

@@ -197,7 +197,7 @@ export default {
         let item = this.dataResult[index];
         let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
         this.dataResult.splice(index, 1, updated);
-        let updateDataIndex = this.updatedData.findIndex(p => p.createdUserId === e.dataItem.createdUserId);
+        let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
         this.updatedData.splice(updateDataIndex, 1, updated);
         
         
