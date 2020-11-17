@@ -3,71 +3,22 @@
     <div class="upload">
          <v-card>
              <v-card-title  >
-                <div id="dialog">
+                <div>
                     <v-icon
                     left
                     >
                     mdi-file-document-multiple-outline
                     </v-icon>
                         {{$t('Template Setting')}} : {{formName}} - {{versionNumber}}
-                    <v-dialog
-                        v-model="dialog"
-                        persistent
-                        max-width="600px"
-                    >
                     <v-spacer></v-spacer>
-                        <template v-slot:activator="{ on }">
-                        <v-btn 
-                            color="primary"
-                            dark
-                            v-on="on"
-                            id="uploadBtn"
-                        >
-                            {{$t('uploadFile')}}
-                        </v-btn>
-                        </template>
-                        <v-card>
-                        <v-card-title>
-                            <span class="headline">{{$t('uploadTemplate')}}</span>
-                        </v-card-title>
-                        <v-card-text>
-                            <v-file-input 
-                            v-model="file"
-                            :rules="rules"
-                            id="docfile"
-                            type="file"
-                            accept=".doc,.docx"
-                            label="File input (doc file)"
-                            ></v-file-input>
-                            <v-file-input 
-                            :rules="rules"
-                            v-model="jsonfile"
-                            id="json"
-                            type="file"
-                            accept=".json"
-                            label="File input (Json file)"
-                            ></v-file-input>
-                        </v-card-text>
-                        <v-card-actions>
-                            <v-spacer></v-spacer>
-                            <v-btn
-                            color="blue darken-1"
-                            text
-                            @click="dialog = false;"
-                            >
-                            {{$t('close')}}
-                            </v-btn>
-                            <v-btn
-                            :disabled="buttonDisable()"
-                            color="blue darken-1"
-                            text
-                            @click="dialog = false; myUpload();"
-                            >
-                            {{$t('save')}}
-                            </v-btn>
-                        </v-card-actions>
-                        </v-card>
-                    </v-dialog>    
+                    <v-btn 
+                        color="primary"
+                        dark
+                        id="addnew"
+                        @click='addRecord'
+                    >
+                        {{$t('Add new')}}
+                    </v-btn>
                 </div>
             </v-card-title>
             <v-card-text>
@@ -91,7 +42,6 @@
                     @itemchange="itemChange"
                     >
                     <template v-slot:change="data">
-      
                         <change :dataItem="data.props.dataItem"
                         @edit="edit"
                         @save="save" 
@@ -126,17 +76,11 @@ export default {
       
         return{
         //destinationId:this.$route.params.id,
-        dialog : false,
         columnMenu: true,
-        file:null,
-        jsonfile:null,
         columns: [
             { field: 'name', title:this.$i18n.t('name') },
-            { field: 'isEnable', title:this.$i18n.t('isEnable'),editable:false },
-            { field: 'createdUserName', title:this.$i18n.t('createdUser'),editable:false},
-            { field: 'createdUserId', title:this.$i18n.t('createdUserId'),editable:false},
-            { field: 'content', title:this.$i18n.t('content'), columnMenu:false,editable:false },
-            { field: 'id', title:this.$i18n.t('id'),editable:false },
+            { field: 'isEnable', title:this.$i18n.t('isEnable'), editable:false },
+            { field: 'createdUserName', title:this.$i18n.t('createdUser'), editable:false},
             { title: "",  cell:"change" , width:'120px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
@@ -146,9 +90,6 @@ export default {
         ],
         skip: 0,
         take: 10,
-        sort: [
-                { field: 'createdDate', dir: 'desc' }
-                ],
         filter: null,
         parentCurrentId:null,
         formName:null,
@@ -158,7 +99,12 @@ export default {
     }
   },
   methods:{
+    addRecord() {
+        const dataItem = { inEdit: true };
 
+        this.dataResult.splice(0, 0, dataItem)
+
+    },
     itemChange: function (e) {
         if (e.dataItem.id) {
             console.log(e.field)
@@ -166,7 +112,7 @@ export default {
             let updated = Object.assign({},this.dataResult[index], {[e.field]:e.value});
             this.dataResult.splice(index, 1, updated);
         } else {
-              return;
+              e.dataItem[e.field] = e.value;
         }
     },
     update(data, item) {
@@ -182,32 +128,54 @@ export default {
         this.dataResult.splice(index, 1, updated);
     },
     save: function(e) {
-        let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
-        let item = this.dataResult[index];
-        let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
-        this.dataResult.splice(index, 1, updated);
-        let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
-        this.updatedData.splice(updateDataIndex, 1, updated);
-        let newname= this.dataResult[index].name;
-        console.log(newname);
-        let str = toDataSourceRequestString(newname);
-        this.$API.api.main.formFormResultTemplate.post(this.formVersionId,str)
-        .then(res => {
-            console.log("save successed");
-            console.log(res);
-        })
-        .catch(function (error) {
-                console.log(error);
-        });
+        if (e.dataItem.id!=undefined){ //edit existed item
+            let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
+            let item = this.dataResult[index];
+            let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
+            this.dataResult.splice(index, 1, updated);
+            let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
+            this.updatedData.splice(updateDataIndex, 1, updated);
+            let vm = this;
+            console.log(this.dataResult[index]);
+            this.$API.api.main.formResultTemplate.put(this.dataResult[index].id,this.dataResult[index])
+            .then(res => {
+                console.log("save successed");
+                console.log(res);
+                vm.postData();
+            })
+            .catch(function (error) {
+                    console.log(error);
+            });
+        }
+        else{ //save new item
+            const newRecord = e.dataItem;
+            const data = this.dataResult.slice();
+            console.log(data);
+            this.dataResult = data;
+            let vm = this;
+            this.$API.api.main.formFormResultTemplate.post(this.formVersionId,this.dataResult[0].name)
+            .then(res => {
+                console.log("save successed");
+                console.log(res);
+                vm.postData();
+            })
+            .catch(function (error) {
+                    console.log(error);
+            });
+        }
         
     }, 
     cancel(e) {
         console.log(e.dataItem);
-        if (e.dataItem.id) {
+
+        if (e.dataItem.id!=undefined) {
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
             let updated = Object.assign(this.updatedData[updateDataIndex], {'inEdit': undefined});
             this.dataResult.splice(index, 1, updated);} 
+        else{
+            this.dataResult.splice(0, 1)
+        }
     },
     formData(){
     let vm=this;
@@ -264,43 +232,28 @@ export default {
     },
 
     myUpload:function(){
-        var file = this.file;    //name = file
-        var json = this.jsonfile;    //name = schema
-        var formdata = new FormData();
-        formdata.append('file',file);
-        let abc = this;
-        var text = new String();
-        var reader = new FileReader();
-        reader.readAsText(json);
-        let vm = this;
-        reader.onload=function () { 
-        text=reader.result;
-        formdata.append('schema',text);
-        console.log(vm.formVersionId);
-        vm.$API.api.main.formFormResultTemplate.post(vm.formVersionId,formdata)            
+        vm.$API.api.main.formFormResultTemplate.post(vm.formVersionId,name,data)            
         .then(res => {
             vm.postData();      
         })
         .catch(function (error) {
                 console.log(error);
         });
-        }
-         
-
     },
-    postData:function(){
+    postData:function(){        //fetch kendo grid
         let state = {   take: this.take,
                         skip: this.skip,
                         filter: this.filter,
                         sort: this.sort
                          };
         let name = "nameee";
-        const queryStr = toDataSourceRequestString(name);
+        const queryStr = toDataSourceRequestString(state);
         let vm = this;
-        console.log(vm.formVersionId);
-        this.$API.api.main.formFormResultTemplate.post(vm.formVersionId)
+        console.log(this.formVersionId);
+        this.$API.api.main.formFormResultTemplate.all(this.formVersionId,queryStr)
             .then(res => {
             vm.dataResult = res.data.data;
+            console.log(res);
             vm.total=res.data.total;
             vm.updatedData = JSON.parse(JSON.stringify(res.data.data));
         })
@@ -317,8 +270,7 @@ export default {
   },
   created(){
     console.log('created 被執行');
-    //this.getData();
-    this.postData();
+
       
   },
   beforeMount(){
@@ -326,6 +278,8 @@ export default {
   },
   mounted(){     
     console.log('mounted 被執行');
+    //this.getData();
+    this.postData();
   },
   computed:{
       formVersionId(){
@@ -339,22 +293,17 @@ export default {
 
 #upload{
     text-align: left;
-     padding: 25px 50px 75px 100px;
 }
 .parent p {
   color: #42b883;
 }
-#dialog{
-    padding-right: 50px;
-    /* float: right; */
-}
 #toolbar{
-    padding:16px;
     font-size: 1.25rem
 }
-#uploadBtn{
+#addnew{
     position: absolute;
     right:16px;
+    top:16px;
     margin-right: 0;
 }
 

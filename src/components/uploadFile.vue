@@ -71,8 +71,7 @@
                 </div>
             </v-card-title>
             <v-card-text>
-                <grid 
-                    
+                <grid             
                     :style="{height: '680px'}"
                     :data-items="dataResult"
                     :columns="columns"
@@ -91,15 +90,12 @@
                     @sortchange="sortChangeHandler"
                     @itemchange="itemChange"
                     >
-                    <template v-slot:note="data">
-      
+                    <template v-slot:note="data">    
                         <noteBtn :dataItem="data.props.dataItem"
                         @edit="edit"
                         @save="save" 
                         @cancel="cancel"
                         ></noteBtn>
-                       
-    
                     </template>
                     <template v-slot:aa="data">
                         <customeButton  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" >YESSelect </customeButton>
@@ -153,7 +149,7 @@ export default {
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
-            v => !!v || 'File is required',
+            v => !!v || 'Required Content',
         ],
         skip: 0,
         take: 10,
