@@ -1,25 +1,24 @@
-
 <template>
     <div class="upload">
          <v-card>
-             <v-card-title  >
-                <div>
+             <v-card-title class="v-card__title" >
                     <v-icon
                     left
+                    class:="pr-3"
                     >
                     mdi-file-document-multiple-outline
                     </v-icon>
-                        {{$t('Template Setting')}} : {{formName}} - {{versionNumber}}
+                        {{$t('sidebar.form.companyForms')}} : {{realformName}} 
                     <v-spacer></v-spacer>
                     <v-btn 
                         color="primary"
                         dark
                         id="addnew"
+                        class:="px-3"
                         @click='addRecord'
                     >
-                        {{$t('Add new')}}
+                        {{$t('form.form.add')}}
                     </v-btn>
-                </div>
             </v-card-title>
             <v-card-text>
                 <grid 
@@ -46,11 +45,62 @@
                         @edit="edit"
                         @save="save" 
                         @cancel="cancel"
+                        @checkTemplate="checkTemplate"
+                        :dialog.sync="dialog"
+                        :showRender.sync="showRender"
                         ></change>
+                    </template>
+                    <template v-slot:isEnable="data">
+                        <td >
+                        <v-checkbox :label="$t('project.isEnable')" small v-model="data.props.dataItem.isEnable" :disabled ="(!isAdd &&data.props.dataItem.inEdit )? false : true"></v-checkbox>
+                        </td>
+    
+                    </template>
+                    <template v-slot:name="data">
+                        <td>
+                            <UserMenu :userInfo="{id:data.props.dataItem.createdUserId,name:data.props.dataItem.createdUserName }" />
+                        </td>
                     </template>
                 </grid> 
                 </v-card-text>
-        </v-card>        
+        </v-card> 
+                            
+        <v-dialog
+            v-model="dialog"
+            width='75%'
+            >
+        <v-card>
+            <v-card-title class="headline grey lighten-2">
+            {{$t('flow.formBuilder.preview')}}
+            </v-card-title>
+
+            <sb-formio-render v-if="showRender"
+                ref="formRender"
+                dataType="formComponents"
+                :formComponents="schema"
+                :defaultResult="currentTemplateResult"/>
+
+            <v-divider></v-divider>
+
+            <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+                color="primary"
+                text
+                @click.stop="dialog = false"
+            >
+                {{$t('flow.formflow.btn.cancel')}}
+            </v-btn>
+            <v-btn
+                color="primary"
+                text
+                @click.stop="dialog = false; formSave()"
+            >
+                {{$t('flow.formflow.btn.save')}}
+            </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-dialog>       
     </div>
 </template>
 <script>
@@ -59,7 +109,9 @@ import axios from 'axios';
 import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
 import moment from 'moment'
-import noteBtn from './noteBtn'
+import change from './noteBtnWithPreview'
+import UserMenu from './SystemUserMenu'
+import APICONFIG from '../plugins/ApiConfig'
 //import store from "@/store.js";
 
 
@@ -69,45 +121,108 @@ export default {
   
     components: { 
                 'grid':Grid,
-                'change' : noteBtn,
+                'change' : change,
+                'UserMenu' : UserMenu
               },
 
   data: function(){
-      
-        return{
+        
+    return{
+        showRender : false,
+        dialog: false,
+        templatesResult:[],
+        currentId:null,
+        schema:null,
+        currentTemplateResult:[],
+        realformName:null,
+        isAdd:false,
         //destinationId:this.$route.params.id,
         columnMenu: true,
         columns: [
-            { field: 'name', title:this.$i18n.t('name') },
-            { field: 'isEnable', title:this.$i18n.t('isEnable'), editable:false },
-            { field: 'createdUserName', title:this.$i18n.t('createdUser'), editable:false},
-            { title: "",  cell:"change" , width:'120px',filterable:false, sortable: false, columnMenu:false },
+            { field: 'name', title:this.$i18n.t('panorama.name') },
+            { field: 'isEnable', title:this.$i18n.t('company.is_enable'), editable:false,cell:"isEnable" },
+            { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'), editable:false,cell:"name"},
+            { title: this.$i18n.t('flow.actions.edit'),  cell:"change" , width:'240px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
-            v => !!v || 'File is required',
+            v => !!v || 'Required Content',
         ],
+        sort:null,
+        total:null,
         skip: 0,
         take: 10,
         filter: null,
         parentCurrentId:null,
-        formName:null,
+
         versionNumber:null,
         inEdit:true,
         updatedData: [],
     }
   },
   methods:{
+    getJsonConfig(e) {
+    e.headers['Content-Type'] = "application/json;charset=UTF-8"
+    return e
+  },
+    async formSave(){
+        var result = await this.$refs.formRender.getSubmiton();
+        var resultJson = await JSON.stringify(result);
+        var resultJson2 = JSON.stringify(resultJson);
+        console.log(this.currentId);
+        this.$API.api.main.formResultTemplate.putContent(this.currentId, resultJson2, APICONFIG.getJsonConfig)
+            .then(res => {
+                    console.log("success", res );
+                })
+            .catch(function (error) {
+                console.log(error);
+            });      
+    },
+    checkTemplate(e){
+        let vm = this;
+        this.currentId=e.dataItem.id;
+        this.$API.api.main.formResultTemplate.get(this.currentId)
+            .then(res => {
+                vm.currentTemplateResult=res.data.content;
+                console.log(typeof vm.currentTemplateResult);
+                vm.showRender = true;
+            })
+        .catch(function (error) {
+            console.log(error);
+        });      
+    },
+    
+    getSchema(){
+        let vm = this;
+        this.$API.api.main.form.get(vm.formId,true)
+            .then(res => {
+            vm.schema = res.data.currentAppliedSchema.components;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+        
+    },
+    formName(){
+        let vm = this;
+        this.$API.api.main.form.get(this.formId)
+            .then(res => {
+            vm.realformName = res.data.name;
+        })
+        .catch(function (error) {
+            console.log(error);
+        });
+        
+    },
     addRecord() {
+        this.isAdd=true;
         const dataItem = { inEdit: true };
-
-        this.dataResult.splice(0, 0, dataItem)
+        this.dataResult.splice(0, 0, dataItem);
 
     },
     itemChange: function (e) {
         if (e.dataItem.id) {
-            console.log(e.field)
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let updated = Object.assign({},this.dataResult[index], {[e.field]:e.value});
             this.dataResult.splice(index, 1, updated);
@@ -136,38 +251,31 @@ export default {
             let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
             this.updatedData.splice(updateDataIndex, 1, updated);
             let vm = this;
-            console.log(this.dataResult[index]);
             this.$API.api.main.formResultTemplate.put(this.dataResult[index].id,this.dataResult[index])
             .then(res => {
-                console.log("save successed");
-                console.log(res);
                 vm.postData();
             })
             .catch(function (error) {
-                    console.log(error);
+                console.log(error);
             });
+            
         }
         else{ //save new item
             const newRecord = e.dataItem;
             const data = this.dataResult.slice();
-            console.log(data);
             this.dataResult = data;
             let vm = this;
-            this.$API.api.main.formFormResultTemplate.post(this.formVersionId,this.dataResult[0].name)
+            this.$API.api.main.formFormResultTemplate.post(this.formId,this.dataResult[0].name)
             .then(res => {
-                console.log("save successed");
-                console.log(res);
                 vm.postData();
             })
             .catch(function (error) {
                     console.log(error);
             });
         }
-        
+        this.isAdd=false;
     }, 
     cancel(e) {
-        console.log(e.dataItem);
-
         if (e.dataItem.id!=undefined) {
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
@@ -176,14 +284,14 @@ export default {
         else{
             this.dataResult.splice(0, 1)
         }
+        this.isAdd=false;
     },
     formData(){
     let vm=this;
-    this.$API.api.main.formVersion.get(vm.formVersionId)
+    this.$API.api.main.formVersion.get(vm.formId)
         .then(res => {
             vm.parentCurrentId = res.data.appliedDocumentReportTemplateId;
             vm.versionNumber = res.data.versionNumber;
-            vm.formName=res.data.formName;
         })
         .catch(function (error) {
                 console.log(error);
@@ -222,22 +330,22 @@ export default {
             this.filter = event.page.filter;
             this.postData();
         },
-    getData:function(){
-        let vm = this;
-        this.$API.api.main.formFormResultTemplate.get(this.formVersionId)
-        .then(res => {
-            vm.dataResult = res.data;
-            vm.updatedData = JSON.parse(JSON.stringify(res.data));
-        })
-    },
+    // getData:function(){
+    //     let vm = this;
+    //     this.$API.api.main.formFormResultTemplate.get(this.formId)
+    //     .then(res => {
+    //         vm.dataResult = res.data;
+    //         vm.updatedData = JSON.parse(JSON.stringify(res.data));
+    //     })
+    // },
 
     myUpload:function(){
-        vm.$API.api.main.formFormResultTemplate.post(vm.formVersionId,name,data)            
+        vm.$API.api.main.formFormResultTemplate.post(vm.formId,name,data)            
         .then(res => {
             vm.postData();      
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     },
     postData:function(){        //fetch kendo grid
@@ -249,47 +357,41 @@ export default {
         let name = "nameee";
         const queryStr = toDataSourceRequestString(state);
         let vm = this;
-        console.log(this.formVersionId);
-        this.$API.api.main.formFormResultTemplate.all(this.formVersionId,queryStr)
+        this.$API.api.main.formFormResultTemplate.all(this.formId,queryStr)
             .then(res => {
             vm.dataResult = res.data.data;
-            console.log(res);
             vm.total=res.data.total;
             vm.updatedData = JSON.parse(JSON.stringify(res.data.data));
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     },
 
-    },
+},
     beforeCreate() {
-    console.log('beforeCreate 被執行');
-    
         
-  },
-  created(){
-    console.log('created 被執行');
-
-      
-  },
-  beforeMount(){
-        console.log('beforeMount 被執行');
-  },
-  mounted(){     
-    console.log('mounted 被執行');
-    //this.getData();
-    this.postData();
-  },
-  computed:{
-      formVersionId(){
-          return this.$route.params.formVersionId;
+    },
+    async created(){   
+         this.formName();
+         this.getSchema();
+        
+    },
+    beforeMount(){
+    },
+    mounted(){     
+        this.postData();
+    },
+    computed:{
+    formId(){
+        return this.$route.params.formId;
       },
-
-  }
+    
+    }
  }
 </script>
 <style>
+
 
 #upload{
     text-align: left;

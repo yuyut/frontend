@@ -2,8 +2,8 @@
   <v-app>
 
       <div id="nav">
-      <router-link :to="{name: 'Enter', params: {formVersionId:'51bb96ec-30e2-4697-869c-94c47b43cc14'}}"></router-link> 
-      <router-link :to="{name: 'formVersion', params: {formVersionId:'88787421-5690-451e-a1ed-e41797d0d822'}}"></router-link> 
+      <router-link :to="{name: 'Enter', params: {formVersionId:formVersionId}}"></router-link> 
+      <router-link :to="{name: 'formVersion', params: {formId:formId}}"></router-link> 
       <router-view/>
        </div>
 
@@ -18,7 +18,8 @@ export default {
   name: 'App',
   //formVersionId:'2778a5f3-1024-4c97-9e09-892319689f6a',
   data: () => ({
-     
+     formVersionId:'51bb96ec-30e2-4697-869c-94c47b43cc14',
+     formId:'88787421-5690-451e-a1ed-e41797d0d822'
   }),
 };
 </script>

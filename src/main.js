@@ -16,6 +16,12 @@ import "syncobox-shared/dist/syncobox-shared.css"
 //i18n
 import i18n from './i18n'
 import store from './store'
+
+import syncoboxFormio from "syncobox-formio"
+import "syncobox-formio/dist/syncobox-formio.css"
+
+
+
 const apiConfig = {
     identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,
     redirectBaseUrl: process.env.VUE_APP_REDIRECT_BASE_URL,
@@ -23,7 +29,8 @@ const apiConfig = {
     bimBaseUrl: process.env.VUE_APP_BIM_BASE_URL,
     token: localStorage.getItem('oidc_access_token')
 }
-Vue.use(shared, { store, router, apiConfig },{ moment });
+Vue.use(shared, { store, router, apiConfig });
+Vue.use(syncoboxFormio);
 
 
 

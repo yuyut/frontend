@@ -35,7 +35,7 @@ export default {
     data: function() {
         return {
             
-            msg:"應用",
+            msg:this.$i18n.t('form.actions.apply'),
 
         };
     },
@@ -46,10 +46,6 @@ export default {
         },
     methods:{
         postTemplate:function(id){
-        
-        //postTemplate: (formVersionId, documentReportTemplateId, data, handler)
-        console.log('postTemplate222 started');
-        console.log(id);
         let documentReportTemplateId = id;
         let state = {   filter: 0,
                         group: 0,
@@ -57,19 +53,16 @@ export default {
                         sort: 0,
                         take: 10 };
         const queryStr = toDataSourceRequestString(state);
-        console.log('queryStr is '+queryStr);
         let vmChild = this;
-        this.$API.api.main.formVersionDocumentReportTemplate.postTemplate(formVersionId,documentReportTemplateId,queryStr)
+        this.$API.api.main.formVersionDocumentReportTemplate.postTemplate(this.formVersionId,documentReportTemplateId,queryStr)
             .then(res => {
             vmChild.$emit('change',id);
-            console.log("id: "+documentReportTemplateId+" posted!!!!");
 
             
         })
         .catch(function (error) {
                 console.log(error);
         });
-        console.log('postTemplate222 excuted' ); 
     },
     checkStatus(){
         if(this.id==this.currentId)

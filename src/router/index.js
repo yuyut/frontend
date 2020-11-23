@@ -25,11 +25,11 @@ const routes = [
 
       },
       {
-        path: '/Form/:formVersionId/formVersion',
+        path: '/Form/:formId/FormResultTemplate',
         //path: '/Form/51bb96ec-30e2-4697-869c-94c47b43cc14/formVersion'
         name: 'formVersion',
         component: formVersion,
-        params:{ formVersionId:null}
+        params:{ formId:null}
         //props: true
 
       },
@@ -41,6 +41,12 @@ const routes = [
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+      },
+      {
+        path: '/Project/:projectId/Photo',
+        name: 'projectPhoto',
+        component: () => import(/* webpackChunkName: "about" */ '../components/projectPhoto.vue'),
+        params: {projectId:null}
       }
     ]
   }

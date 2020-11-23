@@ -3,7 +3,7 @@
     <v-icon 
     @click="editHandler"
     color="primary"
-    >  mdi-file-document-edit-outline
+    >  mdi-pencil
     </v-icon> 
 </td>
 <td v-else>
@@ -40,7 +40,6 @@ export default {
     },
     methods: {
         editHandler: function() {
-            console.log(this.dataItem)
             this.$emit('edit', {dataItem:this.dataItem});
         },
         addUpdateHandler: function() {

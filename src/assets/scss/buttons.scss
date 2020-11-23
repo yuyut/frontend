@@ -1,0 +1,56 @@
+.markup-icon {
+    vertical-align: middle;
+    border-style: none;
+    width: 32px;
+    height: 32px;
+    background-repeat: no-repeat;
+    &:active,
+    &:focus {
+        outline: none;
+    }
+    &.markup-icon-cursor {
+        background-image: url("/assets/markup-editor-icons/cursor.svg");
+    }
+    &.markup-icon-arrow {
+        background-image: url("~@/assets/markup-editor-icons/arrow.svg");
+    }
+    &.markup-icon-cloud {
+        background-image: url("~@/assets/markup-editor-icons/cloud.svg");
+    }
+    &.markup-icon-eraser {
+        background-image: url("~@/assets/markup-editor-icons/eraser.svg");
+    }
+    &.markup-icon-fill {
+        background-image: url("~@/assets/markup-editor-icons/fill.svg");
+    }
+    &.markup-icon-freehand {
+        background-image: url("~@/assets/markup-editor-icons/freehand.svg");
+    }
+    &.markup-icon-line {
+        background-image: url("~@/assets/markup-editor-icons/line.svg");
+    }
+    &.markup-icon-oval {
+        background-image: url("~@/assets/markup-editor-icons/oval.svg");
+    }
+    &.markup-icon-polycloud {
+        background-image: url("~@/assets/markup-editor-icons/polycloud.svg");
+    }
+    &.markup-icon-polyline {
+        background-image: url("~@/assets/markup-editor-icons/polyline.svg");
+    }
+    &.markup-icon-rectangle {
+        background-image: url("~@/assets/markup-editor-icons/rectangle.svg");
+    }
+    &.markup-icon-text {
+        background-image: url("~@/assets/markup-editor-icons/text.svg");
+    }
+    &.markup-icon-stroke {
+        background-image: url("~@/assets/markup-editor-icons/stroke.svg");
+    }
+    &.markup-icon-drag {
+        background-image: url("~@/assets/markup-editor-icons/drag.svg");
+    }
+    &.markup-icon-zoomAndPan {
+        background-image: url("~@/assets/markup-editor-icons/zoomAndPan.svg");
+    }
+}

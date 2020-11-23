@@ -2,14 +2,14 @@
 <template>
     <div class="upload">
          <v-card>
-             <v-card-title  >
-                <div id="dialog">
+             <v-card-title class="v-card__title" >
                     <v-icon
                     left
+                    class:="pr-3"
                     >
                     mdi-file-document-multiple-outline
                     </v-icon>
-                        {{$t('Template Setting')}} : {{formName}} - {{versionNumber}}
+                        {{$t('flow.dataGrid.formName')}} : {{formName}} - {{versionNumber}}
                     <v-dialog
                         v-model="dialog"
                         persistent
@@ -22,8 +22,9 @@
                             dark
                             v-on="on"
                             id="uploadBtn"
+                            class:="px-3"
                         >
-                            {{$t('uploadFile')}}
+                            {{$t('flow.form.add')}}
                         </v-btn>
                         </template>
                         <v-card>
@@ -68,7 +69,6 @@
                         </v-card-actions>
                         </v-card>
                     </v-dialog>    
-                </div>
             </v-card-title>
             <v-card-text>
                 <grid             
@@ -98,10 +98,15 @@
                         ></noteBtn>
                     </template>
                     <template v-slot:aa="data">
-                        <customeButton  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" >YESSelect </customeButton>
+                        <customeButton  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" > </customeButton>
                     </template>
                     <template v-slot:day="data">
                         <td > {{time(data.props.dataItem.createdDate)}} </td>
+                    </template>
+                      <template v-slot:name="data">
+                        <td>
+                            <UserMenu :userInfo="{id:data.props.dataItem.createdUserId,name:data.props.dataItem.createdUserName,email:a }" />
+                        </td>
                     </template>
                 </grid> 
                 </v-card-text>
@@ -116,6 +121,7 @@ import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
 import moment from 'moment'
 import noteBtn from './noteBtn'
+import UserMenu from './SystemUserMenu'
 //import store from "@/store.js";
 
 
@@ -127,23 +133,25 @@ export default {
                 'grid':Grid,
                 'customeButton':custome,
                 'noteBtn' : noteBtn,
+                'UserMenu' : UserMenu
               },
 
   data: function(){
       
-    this.checkParentCurrentId();
+    
         return{
+        a:123,
         //destinationId:this.$route.params.id,
         dialog : false,
         columnMenu: true,
         file:null,
         jsonfile:null,
         columns: [
-            { title: this.$i18n.t('apply'), cell:"aa", width:'120px',editable:false, columnMenu:false }, 
-            { field: 'createdDate', title:this.$i18n.t('createdTime'),filter: 'numeric',cell:"day",editable:false },
-            { field: 'createdUserName', title:this.$i18n.t('createdUser'),editable:false},
-            { field: 'fileName', title:this.$i18n.t('fileName'),editable:false},
-            { field: 'note', title:this.$i18n.t('note'), columnMenu:false },
+            { title: this.$i18n.t('form.actions.apply'), cell:"aa", width:'120px',editable:false, columnMenu:false }, 
+            { field: 'createdDate', title:this.$i18n.t('form.dataGrid.createdTime'),filter: 'numeric',cell:"day",editable:false },
+            { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'),editable:false,cell:'name'},
+            { field: 'fileName', title:this.$i18n.t('panorama.file_name'),editable:false},
+            { field: 'note', title:this.$i18n.t('company.note'), columnMenu:false },
             { title: "",  cell:"note" , width:'120px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
@@ -151,6 +159,7 @@ export default {
         rules: [
             v => !!v || 'Required Content',
         ],
+        total:null,
         skip: 0,
         take: 10,
         sort: [
@@ -168,7 +177,6 @@ export default {
 
     itemChange: function (e) {
         if (e.dataItem.id) {
-            console.log(e.field)
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let updated = Object.assign({},this.dataResult[index], {[e.field]:e.value});
             this.dataResult.splice(index, 1, updated);
@@ -202,10 +210,9 @@ export default {
         const queryStr = toDataSourceRequestString(str);
         this.$API.api.main.documentReportTemplate.putNote(id,str)
         .then(res => {
-            console.log("put successed");
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     }, 
     cancel(e) {
@@ -217,14 +224,14 @@ export default {
     },
     formData(){
     let vm=this;
-    this.$API.api.main.formVersion.get(this.formVersionId)
+    this.$API.api.main.formVersion.get(vm.formVersionId)
         .then(res => {
             vm.parentCurrentId = res.data.appliedDocumentReportTemplateId;
             vm.versionNumber = res.data.versionNumber;
             vm.formName=res.data.formName;
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     },
     time(date){
@@ -263,10 +270,11 @@ export default {
             vm.formName=res.data.formName;
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     },
     changeCurrentId(id){
+        console.log(id);
         this.parentCurrentId=id;
     },
     pageChangeHandler: function(event) {
@@ -291,14 +299,13 @@ export default {
         let vm = this;
         reader.onload=function () { 
         text=reader.result;
-        formdata.append('schema',text);
-        console.log(vm.formVersionId);
+        formdata.append('schema',text);;
         vm.$API.api.main.formVersionDocumentReportTemplate.post(vm.formVersionId,formdata)            
         .then(res => {
             vm.postData();      
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
         }
          
@@ -319,28 +326,23 @@ export default {
             vm.updatedData = JSON.parse(JSON.stringify(res.data.data));
         })
         .catch(function (error) {
-                console.log(error);
+            console.log(error);
         });
     },
 
     },
     beforeCreate() {
-    console.log('beforeCreate 被執行');
-    
-        
-  },
+    },
   created(){
-    console.log('created 被執行');
     this.postData();
     this.formData();
+    this.checkParentCurrentId();
       
   },
   beforeMount(){
-        console.log('beforeMount 被執行');
-        //this.formData();
+    //this.formData();
   },
   mounted(){     
-    console.log('mounted 被執行');
     //this.formData();
   },
   computed:{
@@ -360,10 +362,7 @@ export default {
 .parent p {
   color: #42b883;
 }
-#dialog{
-    padding-right: 50px;
-    /* float: right; */
-}
+
 #toolbar{
     padding:16px;
     font-size: 1.25rem
