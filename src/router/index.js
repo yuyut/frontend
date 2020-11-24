@@ -36,7 +36,6 @@ const routes = [
       {
         path: '/about',
         name: 'About',
-        //params: { formVersionId:'2778a5f3-1024-4c97-9e09-892319689f6a' },
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
@@ -45,7 +44,7 @@ const routes = [
       {
         path: '/Project/:projectId/Photo',
         name: 'projectPhoto',
-        component: () => import(/* webpackChunkName: "about" */ '../components/projectPhoto.vue'),
+        component: () => import( '../components/projectPhoto.vue'),
         params: {projectId:null}
       }
     ]

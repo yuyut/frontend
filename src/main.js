@@ -20,6 +20,10 @@ import store from './store'
 import syncoboxFormio from "syncobox-formio"
 import "syncobox-formio/dist/syncobox-formio.css"
 
+//markup
+import SyncoboxMarkup from "syncobox-markup";
+import 'syncobox-markup/dist/syncobox-markup.css'
+Vue.use(SyncoboxMarkup, { store });  //Vuex.Store instance
 
 
 const apiConfig = {
@@ -30,7 +34,7 @@ const apiConfig = {
     token: localStorage.getItem('oidc_access_token')
 }
 Vue.use(shared, { store, router, apiConfig });
-Vue.use(syncoboxFormio);
+Vue.use(syncoboxFormio, {store});
 
 
 

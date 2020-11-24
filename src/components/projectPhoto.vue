@@ -1,183 +1,117 @@
 <template>
-  <v-card
-    class="d-flex black"
-    width="100%"
-    height="100%"
-    :style="{backgroundColor: backgroundColor, borderRadius: 0, overflow:'hidden'}"
-    ref="card"
-  >
-  heyyy
-    <img
-      v-show="false"
-      ref="wb-image"
-      class="wb-image"
-      :src="imgUrl"
-      alt="img"
-      @load="loadCompleted();"
-    />
-    <svg id="svg-webim" ref="svg-webim" class="wb-svg" :width="svgWidth" :height="svgHeight">
-      <image
-        ref="image-svg"
-        class="wb-image-svg"
-        :xlink:href="imgUrl"
-        :x="offsetX"
-        :y="offsetY"
-        :width="imgWidth"
-        :height="imgHeight"
-      />
+<div>
+      <v-container>
+      <v-row
+        
+        :align="center"
+      >
+        <v-col
+          :align-self="center"
+          v-for="n in 4"
+          :key="n"
+        >
+          <v-card
+            outlined
+            tile
+            
+          >
+          <div id="pictures" v-if="is_data_fetched" :style="{ display: flex, 'justify-content': center, 'align-items': center}">
+          <div :style="{width:'300px' ,height:'300px' ,display: flex, 'justify-content': center, 'align-items': center}"
+           v-for="imageURL in imageURLs" :key="imageURL" 
+          >
+          <sb-markup-viewer :style="{display: flex, 'justify-content': center, 'align-items': center}"
+            :image-url='imageURL'
+          ></sb-markup-viewer>
+          </div>
+          </div>
+          <div v-else>
+          nothing
+          </div>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
 
-      <image
-        v-for="markup in annotationData.Markup"
-        :key="markup.id"
-        :xlink:href="markup.url"
-        :x="offsetX"
-        :y="offsetY"
-        :width="imgWidth"
-        :height="imgHeight"
-      />
-    </svg>
-    <v-progress-circular
-      v-show="loading"
-      class="wb-loader"
-      :width="8"
-      :size="60"
-      color="primary"
-      indeterminate
-    ></v-progress-circular>
-    <div class="toolbar-editor" v-if="!loading">
-      <div class="toolbar-body">
-        <zoom-and-pan
-          :imageSvg="$refs['svg-webim']"
-          :imageData="imageData"
-          :containerData="containerData"
-          :markupsLength="annotationData.Markup.length"
-        ></zoom-and-pan>
-      </div>
-    </div>
-  </v-card>
+  </div>
 </template>
 
 <script>
-import { mapState, mapActions, mapMutations } from "vuex";
-import create from "@/mixins/create";
-import ZoomAndPan from "@/components/annotation-tools/ZoomAndPan.vue";
+
 
 export default {
-  name: "Viewer",
-  mixins: [create],
+
   components: {
-    ZoomAndPan,
+
   },
   props: {
-    imageUrl: {
-      type: String,
-    },
-    markups: {
-      type: Array,
-      default: () => [],
-    },
+
   },
   data() {
     return {
-      imgId: null,
-      imgWidth: 0,
-      imgHeight: 0,
-      imageRatio: null,
-      svgWidth: 0,
-      svgHeight: 0,
-      containerData: {
-        width: 0,
-        height: 0,
-        ratio: 0,
-      },
-      offsetX: 0,
-      offsetY: 0,
+      imageURLs:[],
+      photosData:[],
+      is_data_fetched: false,
+
     };
   },
   computed: {
-    ...mapState("SyncoBoxMarkupStoreModule", [
-      "globalUid",
-      "loading",
-      "backgroundColor",
-      "annotationData",
-      "imgUrl",
-    ]),
-    parentRatio() {
-      return window.innerWidth / window.innerHeight;
-    },
-    imageData() {
-      return {
-        width: this.imgWidth,
-        height: this.imgHeight,
-        ratio: this.imageRatio,
-      };
+      projectId(){
+        return this.$route.params.projectId;
     },
   },
   methods: {
-    ...mapActions("SyncoBoxMarkupStoreModule", [
-      "setGlobalUid",
-      "leaveEditMode",
-      "setLoading",
-      "setImgUrl",
-    ]),
-    ...mapMutations("SyncoBoxMarkupStoreModule", ["SET_ANNOTATOR_MARKUP"]),
-    loadCompleted() {
-      this.imgWidth = this.$refs["wb-image"].naturalWidth;
-      this.imgHeight = this.$refs["wb-image"].naturalHeight;
-
-      this.imageRatio =
-        this.$refs["wb-image"].naturalWidth /
-        this.$refs["wb-image"].naturalHeight;
-
-      this.svgWidth = this.$refs["card"].$el.clientWidth; // window.innerWidth;
-      this.svgHeight = this.$refs["card"].$el.clientHeight; // window.innerHeight;
-
-      this.setLoading(false);
-
-      this.containerData.width = this.$refs["card"].$el.clientWidth;
-      this.containerData.height = this.$refs["card"].$el.clientHeight;
-      this.containerData.ratio =
-        this.$refs["card"].$el.clientWidth /
-        this.$refs["card"].$el.clientHeight;
+    Config(e) {
+      e['responseType'] = "blob";
+      return e
     },
-    onWindowResized() {
-      this.svgWidth = window.innerWidth;
-      this.svgHeight = window.innerHeight;
-      this.containerData.width = this.$refs["card"].$el.clientWidth;
-      this.containerData.height = this.$refs["card"].$el.clientHeight;
-      this.containerData.ratio =
-        this.$refs["card"].$el.clientWidth /
-        this.$refs["card"].$el.clientHeight;
+    getPhotos(){
+      let vm = this;
+      for (let i = 0; i < this.photosData.length; i++) {
+        this.$API.api.main.photo.getData(this.photosData[i].id,null,this.Config)            
+        .then(res => {
+          const reader = new FileReader();
+          if (res.data) {
+            vm.imageURLs[i] = reader.readAsDataURL(res.data);
+            reader.onload = function(e) {
+            vm.imageURLs[i]=e.target.result;
+            vm.is_data_fetched = true;
+            };
+          }
+        })
+        .catch(function (error) {
+            console.log(error);
+        }); 
+      }
+      
     },
+
+    getPhotoId() {
+      let vm = this;
+      this.$API.api.main.projectPhoto.get(this.projectId)            
+      .then(res => {
+          if (res.data) {
+            vm.photosData = res.data;
+            vm.getPhotos();
+          }
+      })
+      .catch(function (error) {
+          console.log(error);
+      }); 
+    },
+    
   },
   mounted() {
-    window.addEventListener("resize", this.onWindowResized);
+    this.getPhotoId();
   },
   beforeDestroy() {
-    window.removeEventListener("resize", this.onWindowResized);
+    
   },
   watch: {
-    imageUrl: {
-      handler(imageUrl) {
-        if (imageUrl) {
-          this.setImgUrl(imageUrl);
-          this.SET_ANNOTATOR_MARKUP(this.markups);
-        }
-      },
-      immediate: true,
-    },
-  },
-};
+  }
+
+}
 </script>
 
-<style lang="scss" scoped>
-@import "@/assets/scss/information.scss";
-@import "@/assets/scss/main.scss";
-.v-window__container {
-  height: 100% !important;
-}
+<style >
 
-.button-edit {
-  z-index: 1000;
-}
 </style>
