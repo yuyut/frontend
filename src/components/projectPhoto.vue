@@ -11,17 +11,51 @@
         篩選
         </v-btn>
       </v-card-title>
-      <v-dialog
+      <v-spacer></v-spacer>
+      <div v-if="is_data_fetched"> 
+        <v-row >
+          <v-col
+            cols="12" sm="3" md="4"
+            v-for="imageURL in imageURLs"
+            :key="imageURL"
+            class="d-flex child-flex"
+          >
+            <v-img
+              :src="imageURL"
+              
+              aspect-ratio="1"
+              class="grey lighten-2"
+            >
+              <template v-slot:placeholder>
+                <v-row
+                  class="fill-height ma-0"
+                  align="center"
+                  justify="center"
+                >
+                  <v-progress-circular
+                    indeterminate
+                    color="grey lighten-5"
+                  ></v-progress-circular>
+                </v-row>
+              </template>
+            </v-img>
+          </v-col>
+        </v-row>
+        </div>
+       
+       <!-- <v-dialog 
           v-model="dialog"
           persistent
           max-width="1200px"
+          v-for="imageURL in imageURLs" :key="imageURL"
         >
       <v-spacer></v-spacer>
         <template v-slot:activator="{ on }">
           <v-layout  wrap>
-            <v-flex  xs7 sm7 md3 lg2 
-            v-for="imageURL in imageURLs" :key="imageURL" >
+            <v-flex  xs7 sm7 md3 lg2 v-if="is_data_fetched"
+             >
               <v-card class="justify-center" flat>
+                asdfasdfasdf
                 <v-img
                   v-on="on"
                   @click="checkCurrentImage(e.target.data)"
@@ -89,11 +123,8 @@
               ></sb-markup-viewer>
             </div>
             </v-card-text>
-          <v-card-actions>
-
-          </v-card-actions>
         </v-card>
-      </v-dialog>   
+      </v-dialog>    -->
     </v-card>
   </div>
 </template>
@@ -133,26 +164,19 @@ export default {
       e['responseType'] = "blob";
       return e
     },
-    getPhotos(){
+    async getPhotos(){
       let vm = this;
       for (let i = 0; i < this.photosData.length; i++) {
-        this.$API.api.main.photo.getData(this.photosData[i].id,null,this.Config)            
+        await this.$API.api.main.photo.getData(this.photosData[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
           if (res.data) {
+
             vm.imageURLs[i] = reader.readAsDataURL(res.data);
             reader.onload = function(e) {
             vm.imageURLs[i]=e.target.result;
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-          
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-            vm.imageURLs.push(e.target.result);
-            vm.is_data_fetched = true;
+            
+            
             };
           }
         })
@@ -160,7 +184,8 @@ export default {
             console.log(error);
         }); 
       }
-      
+      vm.is_data_fetched = true;
+      console.log(this.imageURLs);
     },
 
     getPhotoId() {
@@ -169,6 +194,7 @@ export default {
       .then(res => {
           if (res.data) {
             vm.photosData = res.data;
+            debugger
             vm.getPhotos();
           }
       })
@@ -178,8 +204,11 @@ export default {
     },
     
   },
-  mounted() {
+  created() {
     this.getPhotoId();
+  },
+  mounted() {
+    
   },
   beforeDestroy() {
     
