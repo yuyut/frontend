@@ -24,7 +24,7 @@
               <v-card class="justify-center" flat>
                 <v-img
                   v-on="on"
-                  @click="changeCurrentImage(imageURL)"
+                  @click="checkCurrentImage(e.target.data)"
                   lazy-src="https://picsum.photos/id/11/10/6"
                   max-height="500px"
                   max-width="500px"
@@ -34,65 +34,63 @@
             </v-flex>
           </v-layout>
         </template>
-        <v-card>
-              <v-navigation-drawer
-              absolute
-              permanent
-              right
-              width="350px"
+        <v-card >
+           <v-card-title>
+            Preview
+          </v-card-title>
+            <v-navigation-drawer
+            absolute
+            permanent
+            right
+            width="350px"
             >
               <template v-slot:prepend>
                 <v-list-item two-line>
                   <v-list-item-avatar>
                     <img src="https://randomuser.me/api/portraits/women/81.jpg">
                   </v-list-item-avatar>
-
-                  <v-list-item-content>
+                  <v-list-item-content :style="{'justify-content': 'center', 'text-align': 'left'}">
                     <v-list-item-title>System Admin</v-list-item-title>
                     <v-list-item-subtitle>六天前</v-list-item-subtitle>
                   </v-list-item-content>
+                  <v-btn
+                      color="primary"
+                      icon
+                      dark
+                      @click="dialog = false"
+                      :style="{'text-align': 'right'}"
+                    >
+                      <v-icon>mdi-close</v-icon>
+                    </v-btn>
                 </v-list-item>
-              </template>
-               <v-textarea
+                <v-textarea
                 solo
-                label="textarea"           
+                label="textarea"  
+                rows="8"         
               ></v-textarea>
+              </template>
               <v-divider></v-divider>
-
-              <v-list dense>
-                <v-list-item
-                  v-for="item in items"
-                  :key="item.title"
-                >
-                  <v-list-item-icon>
-                    <v-icon>{{ item.icon }}</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.title }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
+               <template v-slot:append>
+                <div class="pa-2" :style="{'text-align': 'right'}">
+                 <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="dialog = false;"
+                  >
+                  {{$t('close')}}
+                  </v-btn>
+                </div>
+              </template>
             </v-navigation-drawer>
-          <v-card-title>
-          <span class="headline">Preview</span>
-          </v-card-title>
-          <v-card-text class=text-center>
-            <div :style="{height:'500px', width:'800px'}" class="justify-center">
+            <v-card-text>
+            <div :style="{height:'500px', width:'800px'}" >
               <sb-markup-viewer
                 :image-url='currentImage'
               ></sb-markup-viewer>
             </div>
-          </v-card-text>
+            </v-card-text>
           <v-card-actions>
-           
-            <v-btn
-            color="blue darken-1"
-            text
-            @click="dialog = false;"
-            >
-            {{$t('close')}}
-            </v-btn>
+
           </v-card-actions>
         </v-card>
       </v-dialog>   
@@ -127,8 +125,9 @@ export default {
     },
   },
   methods: {
-    changeCurrentImage(image){
-      this.currentImage = image;
+    checkCurrentImage(image){
+      console.log(image);
+      //this.currentImage = image;
     },
     Config(e) {
       e['responseType'] = "blob";

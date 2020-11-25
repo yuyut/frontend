@@ -25,6 +25,9 @@ import SyncoboxMarkup from "syncobox-markup";
 import 'syncobox-markup/dist/syncobox-markup.css'
 Vue.use(SyncoboxMarkup, { store });  //Vuex.Store instance
 
+//
+import syncoboxsharedui from "syncobox-shared-ui";
+Vue.use(syncoboxsharedui);
 
 const apiConfig = {
     identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,

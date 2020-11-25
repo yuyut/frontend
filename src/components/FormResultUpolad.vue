@@ -46,8 +46,10 @@
                         @save="save" 
                         @cancel="cancel"
                         @checkTemplate="checkTemplate"
-                        :dialog.sync="dialog"
-                        :showRender.sync="showRender"
+                        :showRender="showRender"
+                        :gotSchema="gotSchema"
+                        :formComponents="schema"
+                        :defaultResult="currentTemplateResult"
                         ></change>
                     </template>
                     <template v-slot:isEnable="data">
@@ -65,42 +67,7 @@
                 </v-card-text>
         </v-card> 
 
-        <v-dialog
-            v-model="dialog"
-            width='75%'
-            >
-        <v-card>
-            <v-card-title class="headline grey lighten-2">
-            {{$t('flow.formBuilder.preview')}}
-            </v-card-title>
-
-            <sb-formio-render v-if="showRender"
-                ref="formRender"
-                dataType="formComponents"
-                :formComponents="schema"
-                :defaultResult="currentTemplateResult"/>
-
-            <v-divider></v-divider>
-
-            <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn
-                color="primary"
-                text
-                @click.stop="dialog = false"
-            >
-                {{$t('flow.formflow.btn.cancel')}}
-            </v-btn>
-            <v-btn
-                color="primary"
-                text
-                @click.stop="dialog = false; formSave()"
-            >
-                {{$t('flow.formflow.btn.save')}}
-            </v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-dialog>       
+     
     </div>
 </template>
 <script>
@@ -128,8 +95,8 @@ export default {
   data: function(){
         
     return{
+        gotSchema : false,
         showRender : false,
-        dialog: false,
         templatesResult:[],
         currentId:null,
         schema:null,
@@ -185,7 +152,6 @@ export default {
         this.$API.api.main.formResultTemplate.get(this.currentId)
             .then(res => {
                 vm.currentTemplateResult=res.data.content;
-                console.log(typeof vm.currentTemplateResult);
                 vm.showRender = true;
             })
         .catch(function (error) {
@@ -198,6 +164,7 @@ export default {
         this.$API.api.main.form.get(vm.formId,true)
             .then(res => {
             vm.schema = res.data.currentAppliedSchema.components;
+            vm.gotSchema = true;
         })
         .catch(function (error) {
             console.log(error);
@@ -372,10 +339,10 @@ export default {
     beforeCreate() {
         
     },
-    async created(){   
+    created(){   
+        this.getSchema();
          this.formName();
-         this.getSchema();
-        
+ 
     },
     beforeMount(){
     },

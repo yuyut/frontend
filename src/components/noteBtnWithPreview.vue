@@ -12,26 +12,28 @@
             </v-icon> 
         </template>
     </v-tooltip>
-    <sb-formio-layout-resultDialog 
-    @click="checkTemplat()"
-    :tooltip="$i18n.t('flow.formBuilder.preview')"
-    color="primary"
-    :buttonSetting="{  icon: true, iconText: 'mdi-eye' }">
-    <template v-slot:buttons>
-        <v-icon
-            class="mx-2" 
-            color="primary">
-                mdi-content-save
-        </v-icon>
-    </template>
-    <template v-slot:content>
-        <sb-formio-render v-if="showRender"
-        ref="formRender"
-        dataType="formComponents"
-        :formComponents="schema"
-        :defaultResult="currentTemplateResult"/>
-    </template>
-    </sb-formio-layout-resultDialog>
+    <sb-layout-dialog-withTitle 
+        :title="$i18n.t('flow.formBuilder.preview')"
+        :tooltip="$i18n.t('flow.formBuilder.preview')"
+        :iconText="'mdi-eye'"
+        :buttonSetting="{  icon: true, color:'primary' }"
+        @click="checkTemplate(); printdefaultResult()"
+        >
+        <template v-slot:buttons>
+            <v-icon
+                @click.stop="formSave()"
+                class="mx-2" 
+                color="primary">
+                    mdi-content-save
+            </v-icon>
+        </template>
+        <template v-slot:content>
+             <sb-formio-render v-if="(showRender && gotSchema)"
+            ref="formRender"
+            dataType="formComponents"
+            :formComponents="formComponents"
+            :defaultResult="defaultResult"/>
+        </template></sb-layout-dialog-withTitle>
 </td>
 <td v-else>
     <v-icon 
@@ -50,26 +52,28 @@
     >
         mdi-cancel
         </v-icon>
-        <sb-formio-layout-resultDialog 
-        @click="checkTemplat()"
+        <sb-layout-dialog-withTitle
+        :title="$i18n.t('flow.formBuilder.preview')"
         :tooltip="$i18n.t('flow.formBuilder.preview')"
-        color="primary"
-        :buttonSetting="{  icon: true, iconText: 'mdi-eye' }">
+        :iconText="'mdi-eye'"
+        :buttonSetting="{  icon: true, color:'primary' }"
+        @click="checkTemplate(); printdefaultResult()"
+        >
         <template v-slot:buttons>
             <v-icon
+                @click.stop=" formSave()"
                 class="mx-2" 
                 color="primary">
                     mdi-content-save
             </v-icon>
         </template>
         <template v-slot:content>
-            <sb-formio-render v-if="showRender"
+            <sb-formio-render  v-if="(showRender && gotSchema)"
             ref="formRender"
             dataType="formComponents"
-            :formComponents="schema"
-            :defaultResult="currentTemplateResult"/>
-        </template>
-        </sb-formio-layout-resultDialog>
+            :formComponents="formComponents"
+            :defaultResult="defaultResult"/>
+        </template></sb-layout-dialog-withTitle>
     <!-- <v-tooltip bottom>
     <span>{{this.$i18n.t('flow.formBuilder.preview')}}</span>
     <template v-slot:activator="{ on }">
@@ -90,8 +94,9 @@
 export default {
     props: {
         defaultResult:Object,
-        formComponents:Object,
+        formComponents:Array,
         showRender:Boolean,
+        gotSchema:Boolean,
         dialog:Boolean,
         field: String,
         dataItem: Object,
@@ -117,6 +122,24 @@ export default {
         checkTemplate: function(){
              this.$emit('checkTemplate', {dataItem:this.dataItem});
         },
+        printdefaultResult(){
+            console.log(this.defaultResult);
+            console.log(this.showRender && this.gotSchema);
+            console.log("formComponents"+this.formComponents);
+        },
+        async formSave(){
+        var result = await this.$refs.formRender.getSubmiton();
+        var resultJson = await JSON.stringify(result);
+        var resultJson2 = JSON.stringify(resultJson);
+        console.log(this.currentId);
+        this.$API.api.main.formResultTemplate.putContent(this.currentId, resultJson2, APICONFIG.getJsonConfig)
+            .then(res => {
+                    console.log("success", res );
+                })
+            .catch(function (error) {
+                console.log(error);
+            });      
+    },
     }
 }
 </script>
