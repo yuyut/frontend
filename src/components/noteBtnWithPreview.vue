@@ -2,9 +2,8 @@
 <td v-if="!dataItem['inEdit']">
     <v-tooltip bottom>
     <span>{{this.$i18n.t('flow.actions.edit')}}</span>
-        <template v-slot:activator="{ on, attrs }">
+        <template v-slot:activator="{ on}">
             <v-icon 
-            v-bind="attrs"
             v-on="on"
             class="mx-2" 
             @click="editHandler"
@@ -13,19 +12,26 @@
             </v-icon> 
         </template>
     </v-tooltip>
-    <v-tooltip bottom>
-    <span>{{this.$i18n.t('flow.formBuilder.preview')}}</span>
-    <template v-slot:activator="{ on, attrs }">
+    <sb-formio-layout-resultDialog 
+    @click="checkTemplat()"
+    :tooltip="$i18n.t('flow.formBuilder.preview')"
+    color="primary"
+    :buttonSetting="{  icon: true, iconText: 'mdi-eye' }">
+    <template v-slot:buttons>
         <v-icon
-            v-model="dialog" @click.stop="$emit('update:dialog', dialog = true); $emit('update:showRender', showRender = false); checkTemplate()"
-            v-bind="attrs"
-            v-on="on"
             class="mx-2" 
             color="primary">
-                mdi-eye
-            </v-icon>
+                mdi-content-save
+        </v-icon>
     </template>
-    </v-tooltip>
+    <template v-slot:content>
+        <sb-formio-render v-if="showRender"
+        ref="formRender"
+        dataType="formComponents"
+        :formComponents="schema"
+        :defaultResult="currentTemplateResult"/>
+    </template>
+    </sb-formio-layout-resultDialog>
 </td>
 <td v-else>
     <v-icon 
@@ -44,25 +50,47 @@
     >
         mdi-cancel
         </v-icon>
-    <v-tooltip bottom>
+        <sb-formio-layout-resultDialog 
+        @click="checkTemplat()"
+        :tooltip="$i18n.t('flow.formBuilder.preview')"
+        color="primary"
+        :buttonSetting="{  icon: true, iconText: 'mdi-eye' }">
+        <template v-slot:buttons>
+            <v-icon
+                class="mx-2" 
+                color="primary">
+                    mdi-content-save
+            </v-icon>
+        </template>
+        <template v-slot:content>
+            <sb-formio-render v-if="showRender"
+            ref="formRender"
+            dataType="formComponents"
+            :formComponents="schema"
+            :defaultResult="currentTemplateResult"/>
+        </template>
+        </sb-formio-layout-resultDialog>
+    <!-- <v-tooltip bottom>
     <span>{{this.$i18n.t('flow.formBuilder.preview')}}</span>
-    <template v-slot:activator="{ on, attrs }">
+    <template v-slot:activator="{ on }">
         <v-icon
-            v-bind="attrs"
             v-on="on"
             class="mx-2" 
-            v-model="dialog" @click.stop="$emit('update:dialog', dialog = true); $emit('update:showRender', showRender = false); checkTemplat()"
+            v-model="dialog" 
+            @click.stop="$emit('update:dialog', dialog = true);  checkTemplat()"
             color="primary">
                 mdi-eye
             </v-icon>
     </template>
-    </v-tooltip>
+    </v-tooltip> -->
     </td>
 </template>
 <script>
 
 export default {
     props: {
+        defaultResult:Object,
+        formComponents:Object,
         showRender:Boolean,
         dialog:Boolean,
         field: String,

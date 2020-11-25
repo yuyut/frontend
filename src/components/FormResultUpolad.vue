@@ -64,7 +64,7 @@
                 </grid> 
                 </v-card-text>
         </v-card> 
-                            
+
         <v-dialog
             v-model="dialog"
             width='75%'
