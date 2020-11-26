@@ -52,9 +52,10 @@
               </v-btn>
           </v-card-actions>
           </v-card>
-      </v-dialog>    
+      </v-dialog> 
       </v-card-title>
       <v-spacer></v-spacer>
+     
       <div v-if="is_data_fetched" > 
         <v-row :align="'end'" >
           <v-col
@@ -68,13 +69,25 @@
           >
           <v-card
           :elevation="hover ? 12 : 2">
+
+             
+          <v-dialog 
+              v-model="dialog2"
+              persistent
+              max-width="1200px"
+              v-for="imageURL in imageURLs" :key="imageURL"
+            >
+          <v-spacer></v-spacer>
+          <template v-slot:activator="{ on }">   
             <v-img
               max-height="350"
               contain
               :src="photo.image"
               aspect-ratio="1.6"
               class="grey lighten-2"
+              v-on="on"
             >
+            
             <div class="bottom-gradient"></div>
               <template v-slot:placeholder>
                 <v-row
@@ -87,40 +100,23 @@
                     color="grey lighten-5"
                   ></v-progress-circular>
                 </v-row>
+
               </template>
             </v-img> 
+          </template>
             <div class="text-bottom"> 
               MONKEY MONKEY MONKEY</div> 
               <div class="text-bottom"> 
                 建立者: {{photo.createdUserName}}    建立時間: {{time(photo.createdDate)}}  
               <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" />
               </div> 
-               <!-- <v-dialog 
-          v-model="dialog"
-          persistent
-          max-width="1200px"
-          v-for="imageURL in imageURLs" :key="imageURL"
-        >
-      <v-spacer></v-spacer>
-        <template v-slot:activator="{ on }">
-          <v-layout  wrap>
-            <v-flex  xs7 sm7 md3 lg2 v-if="is_data_fetched"
-             >
-              <v-card class="justify-center" flat>
-                asdfasdfasdf
-                <v-img
-                  v-on="on"
-                  @click="checkCurrentImage(e.target.data)"
-                  lazy-src="https://picsum.photos/id/11/10/6"
-                  max-height="500px"
-                  max-width="500px"
-                  :src='imageURL'
-                ></v-img>
-              </v-card>
-            </v-flex>
-          </v-layout>
-        </template>
-        <v-card >
+          </v-card>
+          </v-hover>
+          </v-col>
+        </v-row>
+       </div>
+     
+      <v-card >
            <v-card-title>
             Preview
           </v-card-title>
@@ -143,7 +139,7 @@
                       color="primary"
                       icon
                       dark
-                      @click="dialog = false"
+                      @click="dialog2 = false"
                       :style="{'text-align': 'right'}"
                     >
                       <v-icon>mdi-close</v-icon>
@@ -161,7 +157,7 @@
                  <v-btn
                   color="blue darken-1"
                   text
-                  @click="dialog = false;"
+                  @click="dialog2 = false;"
                   >
                   {{$t('close')}}
                   </v-btn>
@@ -176,12 +172,7 @@
             </div>
             </v-card-text>
         </v-card>
-      </v-dialog>    -->
-          </v-card>
-          </v-hover>
-          </v-col>
-        </v-row>
-        </div>
+      </v-dialog> 
     </v-card>
   </div>
 </template>
@@ -192,7 +183,7 @@ import UserMenu from './SystemUserMenu'
 export default {
 
   components: {
-
+    'UserMenu' : UserMenu
   },
   props: {
 
@@ -215,6 +206,7 @@ export default {
       componentKey: 0,
       currentImage:null,
       dialog:false,
+      dialog2:false,
       imageURLs:[],
       photosData:[],
       is_data_fetched: false,
