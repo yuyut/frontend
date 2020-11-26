@@ -90,10 +90,9 @@
     </td>
 </template>
 <script>
-
+import APICONFIG from '../plugins/ApiConfig'
 export default {
     props: {
-        defaultResult:Object,
         formComponents:Array,
         showRender:Boolean,
         gotSchema:Boolean,
@@ -107,7 +106,14 @@ export default {
         rowType: String,
         level: Number,
         expanded: Boolean,
-        editor: String
+        editor: String,
+        currentTemplateResult: Object,
+    },
+    data: function(){   
+        return{
+            defaultResult:{},
+            currentId,
+        }
     },
     methods: {
         editHandler: function() {
@@ -119,8 +125,20 @@ export default {
         cancelDiscardHandler: function() {
             this.$emit('cancel', {dataItem:this.dataItem});
         },
-        checkTemplate: function(){
-             this.$emit('checkTemplate', {dataItem:this.dataItem});
+        // checkTemplate: function(){
+        //      this.$emit('checkTemplate', {dataItem:this.dataItem});
+        // },
+        checkTemplate(){
+        let vm = this;
+        this.currentId=this.dataItem.id;
+        this.$API.api.main.formResultTemplate.get(this.currentId)
+            .then(res => {
+                vm.defaultResult=res.data.content;
+                vm.showRender = true;
+            })
+        .catch(function (error) {
+            console.log(error);
+        });      
         },
         printdefaultResult(){
             console.log(this.defaultResult);

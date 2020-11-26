@@ -78,7 +78,7 @@ import { toDataSourceRequestString  } from '@progress/kendo-data-query';
 import moment from 'moment'
 import change from './noteBtnWithPreview'
 import UserMenu from './SystemUserMenu'
-import APICONFIG from '../plugins/ApiConfig'
+
 //import store from "@/store.js";
 
 

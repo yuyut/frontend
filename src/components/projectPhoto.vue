@@ -52,10 +52,9 @@
               </v-btn>
           </v-card-actions>
           </v-card>
-      </v-dialog> 
+      </v-dialog>    
       </v-card-title>
       <v-spacer></v-spacer>
-     
       <div v-if="is_data_fetched" > 
         <v-row :align="'end'" >
           <v-col
@@ -69,25 +68,13 @@
           >
           <v-card
           :elevation="hover ? 12 : 2">
-
-             
-          <v-dialog 
-              v-model="dialog2"
-              persistent
-              max-width="1200px"
-              v-for="imageURL in imageURLs" :key="imageURL"
-            >
-          <v-spacer></v-spacer>
-          <template v-slot:activator="{ on }">   
             <v-img
               max-height="350"
               contain
               :src="photo.image"
               aspect-ratio="1.6"
               class="grey lighten-2"
-              v-on="on"
             >
-            
             <div class="bottom-gradient"></div>
               <template v-slot:placeholder>
                 <v-row
@@ -97,82 +84,23 @@
                 >
                   <v-progress-circular
                     indeterminate
-                    color="grey lighten-5"
+                    color="primary"
                   ></v-progress-circular>
                 </v-row>
-
               </template>
             </v-img> 
-          </template>
             <div class="text-bottom"> 
               MONKEY MONKEY MONKEY</div> 
               <div class="text-bottom"> 
                 建立者: {{photo.createdUserName}}    建立時間: {{time(photo.createdDate)}}  
               <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" />
               </div> 
+            
           </v-card>
           </v-hover>
           </v-col>
         </v-row>
-       </div>
-     
-      <v-card >
-           <v-card-title>
-            Preview
-          </v-card-title>
-            <v-navigation-drawer
-            absolute
-            permanent
-            right
-            width="350px"
-            >
-              <template v-slot:prepend>
-                <v-list-item two-line>
-                  <v-list-item-avatar>
-                    <img src="https://randomuser.me/api/portraits/women/81.jpg">
-                  </v-list-item-avatar>
-                  <v-list-item-content :style="{'justify-content': 'center', 'text-align': 'left'}">
-                    <v-list-item-title>System Admin</v-list-item-title>
-                    <v-list-item-subtitle>六天前</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-btn
-                      color="primary"
-                      icon
-                      dark
-                      @click="dialog2 = false"
-                      :style="{'text-align': 'right'}"
-                    >
-                      <v-icon>mdi-close</v-icon>
-                    </v-btn>
-                </v-list-item>
-                <v-textarea
-                solo
-                label="textarea"  
-                rows="8"         
-              ></v-textarea>
-              </template>
-              <v-divider></v-divider>
-               <template v-slot:append>
-                <div class="pa-2" :style="{'text-align': 'right'}">
-                 <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="dialog2 = false;"
-                  >
-                  {{$t('close')}}
-                  </v-btn>
-                </div>
-              </template>
-            </v-navigation-drawer>
-            <v-card-text>
-            <div :style="{height:'500px', width:'800px'}" >
-              <sb-markup-viewer
-                :image-url='currentImage'
-              ></sb-markup-viewer>
-            </div>
-            </v-card-text>
-        </v-card>
-      </v-dialog> 
+        </div>
     </v-card>
   </div>
 </template>
@@ -183,22 +111,22 @@ import UserMenu from './SystemUserMenu'
 export default {
 
   components: {
-    'UserMenu' : UserMenu
+
   },
   props: {
 
   },
   watch:{
-    photosData: {
-      deep: true,
+    // photosData: {
+    //   deep: true,
       
-      // We have to move our method to a handler field
-      handler(){
-        console.log('The list of colours has changed!');
-        this.$forceUpdate();
-      }
+    //   // We have to move our method to a handler field
+    //   handler(){
+    //     console.log('The list of colours has changed!');
+    //     this.$forceUpdate();
+    //   }
       
-    }
+    // }
 
   },
   data() {
@@ -206,7 +134,6 @@ export default {
       componentKey: 0,
       currentImage:null,
       dialog:false,
-      dialog2:false,
       imageURLs:[],
       photosData:[],
       is_data_fetched: false,
@@ -223,22 +150,30 @@ export default {
   },
   methods: {
     time(date){
-        let time = moment(date).format('YYYY/MM/DD hh:mm:ss');
+        let time = moment(date).format('YYYY/MM/DD hh:mm');
         return time;
     },
     forceRerender() {
       this.componentKey += 1;
       console.log("forced");
     },
-     myUpload:function(){
+      myUpload:function(){
         var file = this.file;    //name = file
         var formdata = new FormData();
         formdata.append('file',file);
         let vm = this;
         vm.$API.api.main.projectPhoto.post(this.projectId,'GeneralPicture',formdata)            
         .then(res => {
-            console.log("uploaded");
-            vm.getPhotoId();       
+          console.log(this);
+          console.log("uploaded");
+          (async ()=>{
+          console.log("arrow");
+          console.log(this);
+          await this.getProjectPhotosId();
+          await vm.$forceUpdate();     
+          })();
+          console.log("out of");
+            
         })
         .catch(function (error) {
             console.log(error);
@@ -281,7 +216,7 @@ export default {
      
     },
 
-    async getPhotoId() {
+    async getProjectPhotosId() {
       let vm = this;
       await this.$API.api.main.projectPhoto.get(this.projectId)            
       .then(res => {
@@ -289,7 +224,9 @@ export default {
             vm.photosData = res.data;
             vm.getPhotos();
           }
-           
+          return new Promise ((resolve, reject) => {
+            console.log(resolve);
+          })
       })
       .catch(function (error) {
           console.log(error);
@@ -299,7 +236,7 @@ export default {
     
   },
   created() {
-    this.getPhotoId();
+    this.getProjectPhotosId();
   },
   mounted() {
     
