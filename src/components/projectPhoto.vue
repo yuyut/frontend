@@ -68,12 +68,22 @@
           >
           <v-card
           :elevation="hover ? 12 : 2">
-            <v-img
-              max-height="350"
+         
+            <!-- <v-img 
+            max-height="350"
+            contain
+            :src="my"
+            aspect-ratio="1.6"
+            class="123"
+            alt="random image"
+            > -->
+             <img 
+             class="image-card"
+              v-lazyLoad
+              :id="photo.id"
               contain
-              :src="photo.image"
               aspect-ratio="1.6"
-              class="grey lighten-2"
+              alt="random image"
             >
             <div class="bottom-gradient"></div>
               <template v-slot:placeholder>
@@ -88,14 +98,12 @@
                   ></v-progress-circular>
                 </v-row>
               </template>
-            </v-img> 
+            <!-- </v-img>  -->
             <div class="text-bottom"> 
-              MONKEY MONKEY MONKEY</div> 
-              <div class="text-bottom"> 
-                建立者: {{photo.createdUserName}}    建立時間: {{time(photo.createdDate)}}  
-              <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" />
+              <p class="overflow-textbox text-bottom"> MONKEY MONKEY MONKEY <br/>
+               建立者: {{photo.createdUserName}} &nbsp;  建立時間: {{time(photo.createdDate)}}  </p>
+              <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> -->
               </div> 
-            
           </v-card>
           </v-hover>
           </v-col>
@@ -106,9 +114,65 @@
 </template>
 
 <script>
+
 import moment from 'moment'
 import UserMenu from './SystemUserMenu'
+import Vue from 'vue'
 export default {
+  directives:{
+    lazyLoad: {
+      inserted: el => {
+        async function loadImage() {
+         var result;
+         
+          //console.log(result);
+            await Vue.prototype.$API.api.main.photo.getData(el.id,null,Vue.prototype.$Config)            
+            .then(res => {
+              const reader = new FileReader();
+              if (res.data) {
+                console.log(res)
+                result = reader.readAsDataURL(res.data);
+                reader.onloadend = function() { 
+                  result = reader.result; 
+                  el.src=result;
+                  //Vue.prototype.$img[el.id]=result;
+                  //console.log(Vue.prototype.$img[el.id]);
+                  
+                };
+              }
+            })
+            .catch(function (error) {
+                console.log(error);
+            }); 
+            console.log("loadImage DONE");
+        }
+
+        function handleIntersect(entries, observer) {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              loadImage();
+              observer.unobserve(el);
+            }
+          });
+        }
+
+        function createObserver() {
+          const options = {
+            root: null,
+            threshold: "0"
+          };
+          const observer = new IntersectionObserver(handleIntersect, options);
+          observer.observe(el);
+        }
+        if (window["IntersectionObserver"]) {
+          createObserver();
+        } else {
+          loadImage();
+        }
+      }
+    }
+  },
+  
 
   components: {
 
@@ -131,6 +195,7 @@ export default {
   },
   data() {
     return {
+
       componentKey: 0,
       currentImage:null,
       dialog:false,
@@ -149,6 +214,9 @@ export default {
     },
   },
   methods: {
+    say(){
+      console.log("hiiiiii");
+    },
     time(date){
         let time = moment(date).format('YYYY/MM/DD hh:mm');
         return time;
@@ -187,7 +255,7 @@ export default {
     },
     checkCurrentImage(image){
       console.log(image);
-      //this.currentImage = image;
+      this.currentImage = image;
     },
     Config(e) {
       e['responseType'] = "blob";
@@ -196,6 +264,7 @@ export default {
     async getPhotos(){
       let vm = this;
       for (let i = 0; i < this.photosData.length; i++) {
+
         await this.$API.api.main.photo.getData(this.photosData[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
@@ -243,7 +312,8 @@ export default {
   },
   beforeDestroy() {
     
-  }
+  },
+  
 }
 </script>
 
@@ -255,5 +325,21 @@ export default {
   }
   .text-bottom {
     vertical-align: bottom;
+    width: auto;
+    height: 5vh;
+    max-height: 3rem;
+    word-wrap: break-word;
+  }
+  .overflow-textbox{
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    padding-right: 1rem;
+  }
+  .image-card{
+    max-width:100%;
+    max-height:100%;
   }
 </style>

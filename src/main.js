@@ -1,6 +1,9 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+
+
+
 Vue.config.productionTip = false
 
 
@@ -56,3 +59,9 @@ new Vue({
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+Vue.prototype.$Config =function(e) {
+  e["responseType"] = "blob";
+  return e
+}
+Vue.prototype.$img = new Object;
