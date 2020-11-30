@@ -64,4 +64,3 @@ Vue.prototype.$Config =function(e) {
   e["responseType"] = "blob";
   return e
 }
-Vue.prototype.$img = new Object;

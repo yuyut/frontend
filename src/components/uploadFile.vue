@@ -140,7 +140,6 @@ export default {
       
     
         return{
-        a:123,
         //destinationId:this.$route.params.id,
         dialog : false,
         columnMenu: true,

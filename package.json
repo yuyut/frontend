@@ -26,7 +26,7 @@
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "syncobox-markup": "^0.3.0",
-    "syncobox-shared": "^1.1.87",
+    "syncobox-shared": "^1.1.92",
     "syncobox-shared-api": "^1.1.50",
     "syncobox-style": "^0.1.12",
     "vue": "^2.6.12",

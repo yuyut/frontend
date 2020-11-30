@@ -119,7 +119,7 @@ export default {
         sort:null,
         total:null,
         skip: 0,
-        take: 10,
+        take: 5,
         filter: null,
         parentCurrentId:null,
 
