@@ -1,15 +1,42 @@
 <template>
   <div>
-    <v-card class="border-card">
-      <v-card-title  :style="{height:'60px'}">
+    <v-card >
+      <v-card-title >
         Photos
+        <v-menu offset-x open-on-hover>
+              <template v-slot:activator="{ on, attrs }">
+               <v-icon class="edit-icon"
+                v-bind="attrs"
+                v-on="on"
+                @click="editHandler"
+                color="primary"
+                >  mdi-sort-variant
+                </v-icon> 
+              </template>
+              <v-list>
+                <v-list-item  >
+                  <v-checkbox
+                      v-model="checkbox"
+                      label="新增時間"
+                    ></v-checkbox>
+                </v-list-item>
+                <v-list-item link @click="myDelete(photo.id)">
+                   <v-checkbox
+                      v-model="checkbox"
+                      label="修改時間"
+                    ></v-checkbox>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+        <v-spacer/>
         <v-dialog
           v-model="dialog"
           persistent
           max-width="600px"
           >
-        <template v-slot:activator="{ on }">
+        <template v-slot:activator="{ on, attrs }">
             <v-btn 
+                v-bind="attrs"
                 color="primary"
                 dark
                 v-on="on"
@@ -22,7 +49,7 @@
         <v-spacer></v-spacer>  
           <v-card>
             <v-card-title>
-                <span class="headline">{{$t('uploadTemplate')}}</span>
+                <span class="headline">新增圖片</span>
             </v-card-title>
             <v-card-text>
               <v-file-input 
@@ -43,7 +70,7 @@
               {{$t('close')}}
               </v-btn>
               <v-btn
-              :disabled="buttonDisable()"
+              :disabled="buttonDisable(file)"
               color="blue darken-1"
               text
               @click="dialog = false; myUpload();"
@@ -52,11 +79,13 @@
               </v-btn>
           </v-card-actions>
           </v-card>
-      </v-dialog>    
+      </v-dialog>
+
+     
       </v-card-title>
       <v-spacer></v-spacer>
-      <div> 
-        <v-row :align="'end'" >
+      <v-card-text> 
+        <v-row  class="row123" >
           <v-col
             cols="12"  lg="2" sm="3" md="4" xs="6"
             v-for="(photo, index) in photosData"
@@ -69,14 +98,14 @@
           >
           <v-card class="image-grid-card"
           :elevation="hover ? 12 : 2">
-          <div>
-         
+          
+          
             <v-img 
             max-height="350"
             contain
-            :src="photo.image"
-            aspect-ratio="1.6"
-            class="123"
+            :src="(photo.image == undefined) ? 'https://picsum.photos/id/11/10/6': photo.image"
+            aspect-ratio="1.7"
+            class="image-inside-card"
             alt="random image"
             > 
               <template v-slot:placeholder>
@@ -91,27 +120,41 @@
                   ></v-progress-circular>
                 </v-row>
               </template>
-
-              
-              <!-- <img 
-              class="image-card "
-              lazyLoad
-              :id="photo.id"
-              alt="random image"
-              >   -->
             </v-img> 
+              <v-menu offset-y>
+              <template v-slot:activator="{ on, attrs }">
+               <v-icon class="edit-icon"
+                v-bind="attrs"
+                v-on="on"
+                @click="editHandler"
+                color="primary"
+                >  mdi-pencil
+                </v-icon> 
+              </template>
+              <v-list>
+                <v-list-item link>
+                  <v-list-item-title>EDIT</v-list-item-title>
+                </v-list-item>
+                <v-list-item link @click="myDelete(photo.id)">
+                  <v-list-item-title>DELETE</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
             <div class="text-bottom"> 
-              <p class="overflow-textbox text-bottom"> MONKEY MONKEY MONKEY <br/>
-               建立者: {{photo.createdUserName}} &nbsp;  建立時間: {{time(photo.createdDate)}}  </p>
-              <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> -->
-            </div> 
+               ID: {{photo.id}}
+               <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
+              Read more...
+              </a>
+              <p v-if="photo.readMoreActivated" >
+              建立者: {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}  </p>
+            <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> -->
             </div>
           </v-card>
           </v-hover>
           </v-col>
         </v-row>
-        </div>
-        <v-progress-circular v-if="loading"
+        </v-card-text>
+        <v-progress-circular v-if="loading && (!bottom)"
           indeterminate
           color="primary"
         ></v-progress-circular>
@@ -137,7 +180,6 @@ export default {
             .then(res => {
               const reader = new FileReader();
               if (res.data) {
-                console.log(res)
                 result = reader.readAsDataURL(res.data);
                 reader.onloadend = function() { 
                   result = reader.result; 
@@ -201,19 +243,24 @@ export default {
   },
   data() {
     return {
-      page:1,
+
+      bottom:false,
+      input:null,
+      newData:null,
+      page:0,
       pageSize:18,
       total:0,
       loading:false,
       skip: 0,
       take: 10,
       sort: [
-              { field: 'createdDate' }
-              ],
+              { field: 'createdDate', dir: 'desc' }
+            ],
       filter: null,
       componentKey: 0,
       currentImage:null,
       dialog:false,
+      dialog1:false,
       imageURLs:[],
       photosData:[],
       is_data_fetched: false,
@@ -229,19 +276,34 @@ export default {
     },
   },
   methods: {
+    editHandler: function() {
+    this.$emit('edit', {dataItem:this.dataItem});
+    },
+    activateReadMore(photo){
+      photo.readMoreActivated = true;
+    },
     isScrollToPageBottom(){
-       if(page == floor(this.total / this.pageSize))
-           return true
-        else 
-            return false
+      console.log(this.total / this.pageSize);
+      console.log(Math.floor(this.total / this.pageSize));
+       if(this.page >= Math.floor(this.total / this.pageSize)){
+          this.bottom = true;
+       }
+        else {
+          console.log("not bottom")
+          this.bottom = false;
+        }
+            
     },
     handScroll(){
       console.log("scrolling");
-      debugger
-     if(this.scrollTop() + this.windowHeight() >= (this.documentHeight() - 50/*滾動響應區域高度取50px*/)){
-        console.log("fetchdata");
-        debugger
-        //TODO: show loading icon
+      if(!this.loading && this.scrollTop() + this.windowHeight() >= (this.documentHeight() - 150/*滾動響應區域高度取150px*/)){
+        this.isScrollToPageBottom();
+       if(!this.bottom){
+          console.log("fetchdata");
+          
+          this.postData();
+          //DONE: show loading icon
+       }
       }
     },
     scrollTop(){
@@ -261,93 +323,96 @@ export default {
       return (document.compatMode == "CSS1Compat") ? document.documentElement.clientHeight : document.body.clientHeight;
     },
     postData:function(){
+    let state2 = {   
+                take: 10,
+                skip: 0,
+                sort: this.sort
+                  };
+      const queryStr = toDataSourceRequestString(state2);
+      console.log(queryStr);
+
+      if(this.page==0)  this.page++;
+      
       this.loading = true;
-      let kendoState = {   
-                    skip: 1,
-                    take: 10};
       let state = {   
                     page: this.page,
-                    pageSize: this.pageSize};
-      const queryStr = toDataSourceRequestString(state);
-      const config =  {'Authorization': ' Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6Ik9NZzNCcDJ6b1g0b3pJZEJfdHc1ZlEiLCJ0eXAiOiJhdCtqd3QifQ.eyJuYmYiOjE2MDY3MTYzMDksImV4cCI6MTYwNjcxOTkwOSwiaXNzIjoiaHR0cHM6Ly9pZGVudGl0eS1kZXYuc3luY29ib3guY29tIiwiYXVkIjoicGFubzphbGwiLCJjbGllbnRfaWQiOiJzeW5jb2JveC1hcGktc3dhZ2dlciIsInN1YiI6ImI4MDZiMTZmLWEzY2YtNDJkZS1iN2Q4LWFjOGQzZTgyYzk4MSIsImF1dGhfdGltZSI6MTYwNjcxNjMwOSwiaWRwIjoibG9jYWwiLCJBc3BOZXQuSWRlbnRpdHkuU2VjdXJpdHlTdGFtcCI6IkFZN0dFTlFERkhQQk8zVVZYWUlXMkhZTjdVVVlLM01aIiwiZm9yZ2VfZXhwaXJlc19kYXRlIjoiMDAwMeW5tDHmnIgx5pelIOaYn-acn-S4gCIsInByZWZlcnJlZF91c2VybmFtZSI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwibmFtZSI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwiZW1haWwiOiJxd2Vyb28wNTI4QGdtYWlsLmNvbSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImI4MDZiMTZmLWEzY2YtNDJkZS1iN2Q4LWFjOGQzZTgyYzk4MSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJxd2Vyb28wNTI4QGdtYWlsLmNvbSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6InF3ZXJvbzA1MjhAZ21haWwuY29tIiwic2NvcGUiOlsicGFubzphbGwiXSwiYW1yIjpbInB3ZCJdfQ.qbs_olTJpe62kYyhUxmuHe6OII_tCEjJy7nXuk9x9-5T9VonEsSnL6W5mK1XpAicXqJHGRCvBbfIFI_8X0qGNUddjlDZQOse2ToTal5W_xLlNq-AZrJqQRqIhDjs6omdenfhYvXDKGY9Ai6XfefxTdpzwNQWFiXxFXCXPPzMrSbPCjQ_poEzoYNtrS34RXZShH2m4zZFNQk0nvL6VF8m50PqarCFx5Xwq0Hjl5kPPceUCaQ5dJvB_ZmbdmdusuBIO9O5n1LPFd1_d8uJcdZ02OD8jVgjVdHmMex-5HnRQlqWVaTjpUAm9TipiBd1RfGHq6RzLzvb8uGUVEK_IQTQZg'};
-      const options = {
-        method: 'POST',
-        headers: {...config, 'content-type': 'application/json-patch+json'  },
-        data: state,
-        url: 'https://api-dev.syncobox.com/Project/5252057b-5fa6-4eba-9e75-a9b9cd972b2f/Photo/All',
-      };
-      const axios = require('axios');
+                    pageSize: this.pageSize,
+                  };
+
       let vm = this;
-      axios(options)
-      .then(function (response) {
-        // handle success
-        console.log(response);
-        //DONE: page count = response.total/ page size
-        //DONE: page ++, but consider the page bottom case Loading = false
-        //TODO: photos data array 
-        //TODO: remove the loading icon
-        //TODO: get photos and put it in the DOM (arranging total photos)
-        if(vm.total == 0){
-          vm.total = response.data.total;
-        }
-        vm.loading = false;
-        vm.page++;
-        vm.photosData.push(response.data);
-        vm.getPhotos(response.data);
+      this.$API.api.main.projectPhoto.all(this.projectId,state,this.ConfigJSON)
+          .then(res => {
+          // handle success
+          //DONE: page count = response.total/ page size
+          //DONE: page ++, but consider the page bottom case Loading = false
+          //DONE: photos data array 
+          //DONE: remove the loading icon
+          //DONE: get photos and put it in the DOM (vue updates)
+          console.log(res);
+          this.total = res.data.total;
+          this.loading = false;
+
+          //CONCAT CONCAT CONCAT!!!!!
+          this.photosData = vm.photosData.concat(res.data.data);
+          this.newData = res.data.data;
+          this.page++;
+      })
+      .then(function(){
+        vm.getPhotos(vm.newData);
+        
       })
       .catch(function (error) {
-        // handle error
-        console.log(error);
+          console.log(error);
       });
-      // let vm = this;
-      // this.$API.api.main.projectPhoto.all(this.projectId,state,this.ConfigJSON)
-      //     .then(res => {
-          
-      //     console.log(res);
-      //     debugger
-      // })
-      // .catch(function (error) {
-      //     console.log(error);
-      // });
     },
     time(date){
         let time = moment(date).format('YYYY/MM/DD hh:mm');
         return time;
-    },
-    forceRerender() {
-      this.componentKey += 1;
-      console.log("forced");
     },
     myUpload:function(){
       var file = this.file;    //name = file
       var formdata = new FormData();
       formdata.append('file',file);
       let vm = this;
-
-      vm.$API.api.main.projectPhoto.post(this.projectId,'GeneralPicture',formdata)            
+      this.$API.api.main.projectPhoto.post(this.projectId,'GeneralPicture',formdata)            
       .then(res => {
-        console.log(this);
-        console.log("uploaded");
-        (async ()=>{
-
-        await this.getProjectPhotosId();
-        await vm.$forceUpdate();     
-        })();
-        console.log("out of");
+        console.log(res);
+        //TODO: update datas get ID? metadata
+        // let index = this.photosData.findIndex(p => p.id === input);
+        // let updated = Object.assign({},this.photosData[index], this.photosData[index]);
+        // this.photosData.splice(index, 1, updated);
+        this.file = null;
+        this.$API.api.main.photo.get(this.projectId,'GeneralPicture',formdata) 
+      })
+      .catch(function (error) {
+          console.log(error);
+      });
+    },
+    myDelete:function(input){
+      if (input) {
+        console.log(this.photosData.length);
+        let index = this.photosData.findIndex(p => p.id === input);
+        this.photosData.splice(index, 1);
+         console.log(this.photosData.length);
+      }
+      this.$API.api.main.photo.delete(input)            
+      .then(res => {
+        //DONE:update datas
+        //empty input
+        this.input = null;
           
       })
       .catch(function (error) {
           console.log(error);
       });
     },
-    buttonDisable(){
-      if(this.file)
+    buttonDisable(stuff){
+      if(stuff)
           return false;
       else 
           return true;
     },
     checkCurrentImage(image){
-      console.log(image);
       this.currentImage = image;
     },
     Config(e) {
@@ -358,23 +423,28 @@ export default {
     e.headers['content-type'] = "application/json-patch+json";
     return e
     },
-    async getPhotos(datas){
+    getPhotos(datas){
       let vm = this;
       for (let i = 0; i < datas.length; i++) {
-        await this.$API.api.main.photo.getData(datas[i].id,null,this.Config)            
+        this.$API.api.main.photo.getData(datas[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
           if (res.data) {
-            vm.photosData.find(x => x.id == datas[i].id).image = reader.readAsDataURL(res.data);
+            let index = vm.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
+            reader.readAsDataURL(res.data);
+           
+            //vm.set(vm.photosData[index],image,reader.readAsDataURL(res.data));
             //vm.photosData[i]["image"] = reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
-            vm.photosData.find(x => x.id == datas[i].id).image = reader.result;       
+            vm.$set(vm.photosData[index],'image',reader.result);
+            vm.$set(vm.photosData[index],'readMoreActivated',false);
              //vm.$forceUpdate();      
             };
           }
         })
         .catch(function (error) {
             console.log(error);
+            console.log("can't find photo");
         }); 
       }
     },
@@ -430,8 +500,8 @@ export default {
   .text-bottom {
     vertical-align: bottom;
     width: auto;
-    height: 5vh;
-    max-height: 3rem;
+    height: auto;
+    min-height: 2rem;
     word-wrap: break-word;
   }
   .overflow-textbox{
@@ -443,8 +513,18 @@ export default {
     padding-right: 1rem;
   }
   .border-card{
-    padding: clamp(1rem, 10vw, 2rem); 
+    padding-left: clamp(1rem, 10vw, 2rem); 
+    padding-right: clamp(1rem, 10vw, 2rem);
   }
-
+  .row123{
+    height : auto;
+  }
+  .edit-icon{
+    margin:5px;
+    float: right;
+  }
+  .image-grid-card{
+    padding:5px;
+  }
 
 </style>

@@ -116,7 +116,9 @@ export default {
         rules: [
             v => !!v || 'Required Content',
         ],
-        sort:null,
+        sort: [
+                { field: 'createdDate', dir: 'desc' }
+                ],
         total:null,
         skip: 0,
         take: 5,
@@ -319,10 +321,11 @@ export default {
         let state = {   take: this.take,
                         skip: this.skip,
                         filter: this.filter,
-                        sort: this.sort
+                        sort: null
                          };
         let name = "nameee";
         const queryStr = toDataSourceRequestString(state);
+        console.log("queryStr is : "+queryStr)
         let vm = this;
         this.$API.api.main.formFormResultTemplate.all(this.formId,queryStr)
             .then(res => {

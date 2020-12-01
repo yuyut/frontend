@@ -207,6 +207,7 @@ export default {
         let str = this.dataResult[index].note;
         let id = this.dataResult[index].id;
         const queryStr = toDataSourceRequestString(str);
+        console.log("queryStr"+queryStr);
         this.$API.api.main.documentReportTemplate.putNote(id,str)
         .then(res => {
         })
@@ -366,10 +367,9 @@ export default {
     padding:16px;
     font-size: 1.25rem
 }
-#uploadBtn{
-    position: absolute;
-    right:16px;
-    margin-right: 0;
+#uploadBtn{ 
+ margin:8px;
+ margin-right:0px;
 }
 
 
