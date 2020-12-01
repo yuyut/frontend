@@ -1,34 +1,22 @@
 <template>
   <div>
     <v-card >
-      <v-card-title >
+      <v-card-title>
         Photos
-        <v-menu offset-x open-on-hover>
-              <template v-slot:activator="{ on, attrs }">
-               <v-icon class="edit-icon"
-                v-bind="attrs"
-                v-on="on"
-                @click="editHandler"
-                color="primary"
-                >  mdi-sort-variant
-                </v-icon> 
-              </template>
-              <v-list>
-                <v-list-item  >
-                  <v-checkbox
-                      v-model="checkbox"
-                      label="新增時間"
-                    ></v-checkbox>
-                </v-list-item>
-                <v-list-item link @click="myDelete(photo.id)">
-                   <v-checkbox
-                      v-model="checkbox"
-                      label="修改時間"
-                    ></v-checkbox>
-                </v-list-item>
-              </v-list>
-            </v-menu>
         <v-spacer/>
+        <p style="margin-bottom:0px;">排序:
+        <a>
+          時間
+          人員
+          </a>
+        </p>
+        |
+        <p style="margin-bottom:0px;">順序:
+        <a>
+          遞增
+          遞減
+          </a>
+        </p>
         <v-dialog
           v-model="dialog"
           persistent
@@ -526,5 +514,7 @@ export default {
   .image-grid-card{
     padding:5px;
   }
-
+  .sorting-text{
+    margin-bottom:0px;
+  }
 </style>
