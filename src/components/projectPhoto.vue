@@ -5,17 +5,17 @@
         Photos
         <v-spacer/>
         <p style="margin-bottom:0px;">排序:
-        <a class="sorting-text">
+        <a class="sorting-text" @click="changeSortField('createdDate');">
           時間 </a>
-        <a class="sorting-text">
+        <a class="sorting-text" @click="changeSortField('createdUserName');">
           人員 </a>
         </p>
         &numsp; | &#160;
         <p style="margin-bottom:0px;">順序:
-        <a class="sorting-text">
+        <a class="sorting-text" @click="changeSortDir('asc');">
           遞增 </a>
-        <a class="sorting-text">
-        遞減 </a>
+        <a class="sorting-text" @click="changeSortDir('desc');">
+          遞減 </a>
         </p>
         <v-dialog
           v-model="dialog"
@@ -279,7 +279,7 @@ export default {
       input:null,
       newData:null,
       page:0,
-      pageSize:24,
+      pageSize:10,
       total:0,
       loading:false,
       skip: 0,
@@ -307,14 +307,20 @@ export default {
         return this.$route.params.projectId;
     },
   },
-  methods: {
-    noImage(){
-      const reader = new FileReader();
-      //../assets/Noimage.jpg
-      reader.readAsDataURL("../assets/Noimage.jpg");
-      reader.onloadend = function() { 
-        return reader.result;    
-      }
+  methods: { 
+    changeSortField(data){
+      this.page = 0;
+      this.photosData = [];
+      console.log(data);
+      this.sort.field = data;
+      this.postData();
+    },
+    changeSortDir(data){
+      this.page = 0;
+      this.photosData = [];
+      console.log(data);
+      this.sort.dir = data;
+      this.postData();
     },
     changeCurrentImage(image){
       this.currentImage = image;
@@ -327,8 +333,8 @@ export default {
     },
     isScrollToPageBottom(){
       console.log(this.total / this.pageSize);
-      console.log(Math.floor(this.total / this.pageSize));
-       if(this.page >= Math.floor(this.total / this.pageSize)){
+      console.log(Math.ceil(this.total / this.pageSize));
+       if(this.page >= Math.ceil(this.total / this.pageSize)){
           this.bottom = true;
        }
         else {
@@ -366,25 +372,19 @@ export default {
       return (document.compatMode == "CSS1Compat") ? document.documentElement.clientHeight : document.body.clientHeight;
     },
     postData:function(){
-    let state2 = {   
-                take: 10,
-                skip: 0,
-                sort: this.sort
-                  };
-      const queryStr = toDataSourceRequestString(state2);
-      console.log(queryStr);
-
-      if(this.page==0)  this.page++;
-      
       this.loading = true;
-      let state = {   
-                    page: this.page,
-                    pageSize: this.pageSize,
-                  };
-
+      console.log(queryStr);
+      if(this.page==0)  this.page++;
+      let state2 = {   
+                  take: this.pageSize,
+                  skip: this.page*this.pageSize,
+                  sort: this.sort
+                    };
+      const queryStr = toDataSourceRequestString(state2);
       let vm = this;
-      this.$API.api.main.projectPhoto.all(this.projectId,state,this.ConfigJSON)
+      this.$API.api.main.projectPhoto.get(this.projectId,queryStr,this.ConfigJSON)
           .then(res => {
+
           // handle success
           //DONE: page count = response.total/ page size
           //DONE: page ++, but consider the page bottom case Loading = false
@@ -399,6 +399,10 @@ export default {
           this.photosData = vm.photosData.concat(res.data.data);
           this.newData = res.data.data;
           this.page++;
+          this.isScrollToPageBottom();
+          if(this.documentHeight()-this.windowHeight()-this.scrollTop() < this.windowHeight()*0.1 && !this.bottom){
+              this.postData();
+          }
       })
       .then(function(){
         vm.getPhotos(vm.newData);
@@ -469,14 +473,12 @@ export default {
     getPhotos(datas){
       let vm = this;
       for (let i = 0; i < datas.length; i++) {
-        let index = this.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
+        let index = this.photosData.findIndex(x => x.id == datas[i].id); 
         this.$API.api.main.photo.getData(datas[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
           if (res.data) {
             reader.readAsDataURL(res.data);
-            //vm.set(vm.photosData[index],image,reader.readAsDataURL(res.data));
-            //vm.photosData[i]["image"] = reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
             vm.$set(vm.photosData[index],'image',reader.result);
             vm.$set(vm.photosData[index],'readMoreActivated',false);
@@ -492,33 +494,16 @@ export default {
       }
     },
 
-    // async getProjectPhotosId() {
-    //   let vm = this;
-    //   await this.$API.api.main.projectPhoto.get(this.projectId)            
-    //   .then(res => {
-    //       if (res.data) {
-    //         vm.photosData = res.data;
-    //         //vm.getPhotos();
-    //       }
-    //       return new Promise ((resolve, reject) => {
-    //         console.log(resolve);
-    //       })
-    //   })
-    //   .catch(function (error) {
-    //       console.log(error);
-    //   }); 
-       
-    // },
+
     
   },
   created() {
-    //this.getProjectPhotosId();
     this.postData();
     window.addEventListener('scroll', this.handScroll)
-    
+        
   },
   mounted() {
-    
+
   },
   beforeDestroy() {
     
