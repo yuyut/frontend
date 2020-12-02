@@ -80,7 +80,7 @@
         <v-row  class="row123" >
           <v-col
             cols="12"  lg="2" sm="3" md="4" xs="6"
-            v-for="(photo, index) in photosData"
+            v-for="(photo, index) in images"
             :key="index"
           > 
           <v-hover
@@ -273,6 +273,7 @@ export default {
   },
   data() {
     return {
+      images:[],
       bottom:false,
       input:null,
       newData:null,
@@ -291,7 +292,6 @@ export default {
       imageDialog:false,      
       dialog:false,
       dialog1:false,
-      imageURLs:[],
       photosData:[],
       is_data_fetched: false,
       file:null,
@@ -459,25 +459,26 @@ export default {
     getPhotos(datas){
       let vm = this;
       for (let i = 0; i < datas.length; i++) {
+        //let index = this.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
+        let currentIndex = this.images.length - 1; //.image = reader.readAsDataURL(res.data);
         this.$API.api.main.photo.getData(datas[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
           if (res.data) {
-            let index = vm.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
             reader.readAsDataURL(res.data);
-           
             //vm.set(vm.photosData[index],image,reader.readAsDataURL(res.data));
             //vm.photosData[i]["image"] = reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
-            vm.$set(vm.photosData[index],'image',reader.result);
-            vm.$set(vm.photosData[index],'readMoreActivated',false);
+            vm.$set(vm.images[currentIndex],'image',reader.result);
+            vm.$set(vm.images[currentIndex],'readMoreActivated',false);
              //vm.$forceUpdate();      
             };
           }
         })
         .catch(function (error) {
-            console.log(error);
-            console.log("can't find photo");
+          vm.photosData.splice(index, 1);
+          console.log(error);
+          console.log("can't find photo");
         }); 
       }
     },
