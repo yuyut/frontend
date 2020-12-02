@@ -5,17 +5,17 @@
         Photos
         <v-spacer/>
         <p style="margin-bottom:0px;">排序:
-        <a>
-          時間
-          人員
-          </a>
+        <a class="sorting-text">
+          時間 </a>
+        <a class="sorting-text">
+          人員 </a>
         </p>
-        |
+        &numsp; | &#160;
         <p style="margin-bottom:0px;">順序:
-        <a>
-          遞增
-          遞減
-          </a>
+        <a class="sorting-text">
+          遞增 </a>
+        <a class="sorting-text">
+        遞減 </a>
         </p>
         <v-dialog
           v-model="dialog"
@@ -38,7 +38,7 @@
           <v-card>
             <v-card-title>
                 <span class="headline">新增圖片</span>
-            </v-card-title>
+              </v-card-title>
             <v-card-text>
               <v-file-input 
               v-model="file"
@@ -66,29 +66,33 @@
               {{$t('save')}}
               </v-btn>
           </v-card-actions>
-          </v-card>
-      </v-dialog>
-
-     
+        </v-card>
+      </v-dialog>   
       </v-card-title>
+      <v-dialog
+        v-model="imageDialog"
+        persistent
+        max-width="1200px"
+      >
       <v-spacer></v-spacer>
+      <template v-slot:activator="{ on, attrs }">
       <v-card-text> 
         <v-row  class="row123" >
           <v-col
             cols="12"  lg="2" sm="3" md="4" xs="6"
             v-for="(photo, index) in photosData"
             :key="index"
-
           > 
           <v-hover
             v-slot="{ hover }"
             open-delay="200"
           >
           <v-card class="image-grid-card"
-          :elevation="hover ? 12 : 2">
-          
-          
+          :elevation="hover ? 12 : 2"> 
             <v-img 
+            v-on="on"
+            v-bind="attrs"
+            @click="changeCurrentImage(photo.image)"
             max-height="350"
             contain
             :src="(photo.image == undefined) ? 'https://picsum.photos/id/11/10/6': photo.image"
@@ -142,6 +146,45 @@
           </v-col>
         </v-row>
         </v-card-text>
+        </template>
+        <v-card>
+         <div id="right-drawer">
+          <v-icon
+            id="navigation-close-btn"
+            color="blue darken-1"
+            text
+            @click="imageDialog = false;"
+            >
+            mdi-close
+            </v-icon>
+          <v-list-item two-line>
+            <v-list-item-avatar>
+              <img src="https://randomuser.me/api/portraits/women/81.jpg">
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title>System Admin</v-list-item-title>
+              <v-list-item-subtitle>六天前</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+            <v-textarea
+            solo
+            label="textarea"           
+          ></v-textarea>
+          <v-divider></v-divider>
+          </div>
+        <v-card-title>
+        <span class="headline">Preview</span>
+        </v-card-title>
+          <v-card-text>
+            <div :style="{height:'500px', width:'800px',padding:'10px'}" class="justify-center">
+              <sb-markup-viewer
+                :image-url='currentImage'
+              ></sb-markup-viewer>
+            </div>
+          </v-card-text>
+        </v-card>
+      </v-dialog>   
         <v-progress-circular v-if="loading && (!bottom)"
           indeterminate
           color="primary"
@@ -162,7 +205,6 @@ export default {
       inserted: el => {
         async function loadImage() {
          var result;
-         
           //console.log(result);
             await Vue.prototype.$API.api.main.photo.getData(el.id,null,Vue.prototype.$Config)            
             .then(res => {
@@ -231,12 +273,11 @@ export default {
   },
   data() {
     return {
-
       bottom:false,
       input:null,
       newData:null,
       page:0,
-      pageSize:18,
+      pageSize:24,
       total:0,
       loading:false,
       skip: 0,
@@ -247,6 +288,7 @@ export default {
       filter: null,
       componentKey: 0,
       currentImage:null,
+      imageDialog:false,      
       dialog:false,
       dialog1:false,
       imageURLs:[],
@@ -264,6 +306,9 @@ export default {
     },
   },
   methods: {
+    changeCurrentImage(image){
+      this.currentImage = image;
+    },
     editHandler: function() {
     this.$emit('edit', {dataItem:this.dataItem});
     },
@@ -517,4 +562,27 @@ export default {
   .sorting-text{
     margin-bottom:0px;
   }
+  .sorting-text:link{
+    color:gray;
+  }
+   .sorting-text:visited{
+    color:gray;
+  }
+  .sorting-text:hover{
+    background-color:gray;
+    color:white;
+  }
+  #navigation-close-btn{
+    position:absolute;
+    top:0;
+    right:0;
+    margin-top:5px;
+    margin-right:5px;
+    z-index: 15;
+  }
+  #right-drawer{
+    float:right;
+    width:350px;
+  }
+
 </style>
