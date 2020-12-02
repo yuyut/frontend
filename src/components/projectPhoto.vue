@@ -80,8 +80,8 @@
         <v-row  class="row123" >
           <v-col
             cols="12"  lg="2" sm="3" md="4" xs="6"
-            v-for="(photo, index) in images"
-            :key="index"
+            v-for="(photo) in photosData"
+            :key="photo.id"
           > 
           <v-hover
             v-slot="{ hover }"
@@ -95,7 +95,7 @@
             @click="changeCurrentImage(photo.image)"
             max-height="350"
             contain
-            :src="(photo.image == undefined) ? 'https://picsum.photos/id/11/10/6': photo.image"
+            :src="(photo.image == undefined) ? '' : photo.image"
             aspect-ratio="1.7"
             class="image-inside-card"
             alt="random image"
@@ -198,6 +198,7 @@ import { toDataSourceRequestString  } from '@progress/kendo-data-query';
 import moment from 'moment'
 import UserMenu from './SystemUserMenu'
 import axios from 'axios'
+import NoImageAtAll from '../assets/Noimage.jpg'
 export default {
 
   directives:{
@@ -273,7 +274,7 @@ export default {
   },
   data() {
     return {
-      images:[],
+      NoImageAtAll:NoImageAtAll,
       bottom:false,
       input:null,
       newData:null,
@@ -292,6 +293,7 @@ export default {
       imageDialog:false,      
       dialog:false,
       dialog1:false,
+      imageURLs:[],
       photosData:[],
       is_data_fetched: false,
       file:null,
@@ -306,6 +308,14 @@ export default {
     },
   },
   methods: {
+    noImage(){
+      const reader = new FileReader();
+      //../assets/Noimage.jpg
+      reader.readAsDataURL("../assets/Noimage.jpg");
+      reader.onloadend = function() { 
+        return reader.result;    
+      }
+    },
     changeCurrentImage(image){
       this.currentImage = image;
     },
@@ -459,8 +469,7 @@ export default {
     getPhotos(datas){
       let vm = this;
       for (let i = 0; i < datas.length; i++) {
-        //let index = this.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
-        let currentIndex = this.images.length - 1; //.image = reader.readAsDataURL(res.data);
+        let index = this.photosData.findIndex(x => x.id == datas[i].id); //.image = reader.readAsDataURL(res.data);
         this.$API.api.main.photo.getData(datas[i].id,null,this.Config)            
         .then(res => {
           const reader = new FileReader();
@@ -469,14 +478,14 @@ export default {
             //vm.set(vm.photosData[index],image,reader.readAsDataURL(res.data));
             //vm.photosData[i]["image"] = reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
-            vm.$set(vm.images[currentIndex],'image',reader.result);
-            vm.$set(vm.images[currentIndex],'readMoreActivated',false);
+            vm.$set(vm.photosData[index],'image',reader.result);
+            vm.$set(vm.photosData[index],'readMoreActivated',false);
              //vm.$forceUpdate();      
             };
           }
         })
         .catch(function (error) {
-          vm.photosData.splice(index, 1);
+          vm.$set(vm.photosData[index],'image',vm.NoImageAtAll);
           console.log(error);
           console.log("can't find photo");
         }); 
@@ -506,6 +515,7 @@ export default {
     //this.getProjectPhotosId();
     this.postData();
     window.addEventListener('scroll', this.handScroll)
+    
   },
   mounted() {
     
