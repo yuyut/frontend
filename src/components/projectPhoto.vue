@@ -23,16 +23,71 @@
           max-width="600px"
           >
         <template v-slot:activator="{ on, attrs }">
-            <v-btn 
-                v-bind="attrs"
+          <v-btn 
+              v-bind="attrs"
+              color="primary"
+              dark
+              v-on="on"
+              id="titleBtn"
+              class:="px-3"
+          >
+              新增圖片
+          </v-btn>
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn id="titleBtn"
                 color="primary"
                 dark
+                v-bind="attrs"
                 v-on="on"
-                id="uploadBtn"
-                class:="px-3"
-            >
-                新增圖片
-          </v-btn>
+              >
+                排序 
+                 <v-icon 
+                    color="white"
+                    >  mdi-sort-variant
+                    </v-icon> 
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-checkbox
+                  v-model="sort[0].field"
+                  color="primary"
+                  label="時間"
+                  value="createdDate"
+                  :disabled="!ifSame(sort[0].field,'createdDate')"
+                  hide-details
+                ></v-checkbox>
+                 <v-checkbox
+                  v-model="sort[0].field"
+                  color="primary"
+                  label="人員"
+                  value="createdUserName"
+                  :disabled="!ifSame(sort[0].field,'createdUserName')"
+                  hide-details
+                ></v-checkbox>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item>
+               <v-checkbox
+                  v-model="sort[0].dir"
+                  color="primary"
+                  label="遞增"
+                  value="asc"
+                  :disabled="!ifSame(sort[0].dir,'asc')"
+                  hide-details
+                ></v-checkbox>
+                 <v-checkbox
+                  v-model="sort[0].dir"
+                  color="primary"
+                  label="遞減"
+                  value="desc"
+                  :disabled="!ifSame(sort[0].dir,'desc')"
+                  hide-details
+                ></v-checkbox>
+              </v-list-item>
+            </v-list>
+          </v-menu>
         </template>
         <v-spacer></v-spacer>  
           <v-card>
@@ -100,6 +155,7 @@
             class="image-inside-card"
             alt="random image"
             > 
+            <div class="fill-height bottom-gradient"></div>
               <template v-slot:placeholder>
                 <v-row
                   class="fill-height ma-0"
@@ -132,13 +188,11 @@
                 </v-list-item>
               </v-list>
             </v-menu>
-            <div class="text-bottom"> 
-               ID: {{photo.id}}
-               <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
+            <div id="text-bottom"> 
+              <!-- <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
               Read more...
-              </a>
-              <p v-if="photo.readMoreActivated" >
-              建立者: {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}  </p>
+              </a> -->
+              {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}  
             <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> -->
             </div>
           </v-card>
@@ -260,20 +314,28 @@ export default {
 
   },
   watch:{
-    // photosData: {
-    //   deep: true,
-      
-    //   // We have to move our method to a handler field
-    //   handler(){
-    //     console.log('The list of colours has changed!');
-    //     this.$forceUpdate();
-    //   }
-      
-    // }
-
+  sort:{
+    deep: true,
+    handler(){
+      if(this.sort[0].field != null){
+        if(this.sort[0].field != this.lastField){
+          this.lastField = this.sort[0].field;
+          this.changeSortField(this.sort[0].field);
+        }
+      }
+      if(this.sort[0].dir != null){
+        if(this.sort[0].dir != this.lastDir){
+            this.lastDir = this.sort[0].dir;
+            this.changeSortDir(this.sort[0].dir);
+          }
+        }
+      }
+    }
   },
   data() {
     return {
+      lastField:"createdDate",
+      lastDir:"desc",
       NoImageAtAll:NoImageAtAll,
       bottom:false,
       input:null,
@@ -308,6 +370,14 @@ export default {
     },
   },
   methods: { 
+    
+    ifSame(a,b){
+      if(a==null) return true;
+      if(a==b)  return true;
+      else {
+         return false;
+      }  
+    },
     changeSortField(data){
       this.page = 0;
       this.photosData = [];
@@ -332,8 +402,6 @@ export default {
       photo.readMoreActivated = true;
     },
     isScrollToPageBottom(){
-      console.log(this.total / this.pageSize);
-      console.log(Math.ceil(this.total / this.pageSize));
        if(this.page >= Math.ceil(this.total / this.pageSize)){
           this.bottom = true;
        }
@@ -526,12 +594,14 @@ export default {
     height: auto;
     object-fit: contain;
   }
-  .text-bottom {
+  #text-bottom {
     vertical-align: bottom;
     width: auto;
     height: auto;
     min-height: 2rem;
     word-wrap: break-word;
+    font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
+    font-size: 17px;
   }
   .overflow-textbox{
     overflow:hidden;
@@ -553,7 +623,7 @@ export default {
     float: right;
   }
   .image-grid-card{
-    padding:5px;
+    padding: 3px;
   }
   .sorting-text{
     margin-bottom:0px;
@@ -561,7 +631,7 @@ export default {
   .sorting-text:link{
     color:gray;
   }
-   .sorting-text:visited{
+  .sorting-text:visited{
     color:gray;
   }
   .sorting-text:hover{
@@ -580,5 +650,8 @@ export default {
     float:right;
     width:350px;
   }
-
+  #titleBtn{ 
+    margin:8px;
+    margin-right:0px;
+    }
 </style>
