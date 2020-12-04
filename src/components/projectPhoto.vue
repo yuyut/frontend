@@ -1,22 +1,23 @@
 <template>
   <div>
+    <v-btn 
+      @click="topFunction()" 
+      id="topBtn"
+      color="primary"
+      >Top</v-btn>
+    <v-alert v-if="alert"
+      class="alert-box"
+      border="bottom"
+      colored-border
+      type="warning"
+      elevation="2"
+    >
+      Upload / Delete failed
+    </v-alert>
     <v-card >
       <v-card-title>
-        Photos
+        <h1>專案照片</h1>
         <v-spacer/>
-        <p style="margin-bottom:0px;">排序:
-        <a class="sorting-text" @click="changeSortField('createdDate');">
-          時間 </a>
-        <a class="sorting-text" @click="changeSortField('createdUserName');">
-          人員 </a>
-        </p>
-        &numsp; | &#160;
-        <p style="margin-bottom:0px;">順序:
-        <a class="sorting-text" @click="changeSortDir('asc');">
-          遞增 </a>
-        <a class="sorting-text" @click="changeSortDir('desc');">
-          遞減 </a>
-        </p>
         <v-dialog
           v-model="dialog"
           persistent
@@ -30,22 +31,28 @@
               v-on="on"
               id="titleBtn"
               class:="px-3"
+              :height="btnHeight"
           >
-              新增圖片
+              <span v-if="!isSame(breakPointName,'xs')">新增圖片</span>
+              <v-icon 
+                color="white"
+                >  mdi-plus
+                </v-icon> 
           </v-btn>
-          <v-menu offset-y>
+          <v-menu offset-y :close-on-content-click="closeOnContentClick">
             <template v-slot:activator="{ on, attrs }">
               <v-btn id="titleBtn"
                 color="primary"
                 dark
                 v-bind="attrs"
                 v-on="on"
+                :height="btnHeight"
               >
-                排序 
+                <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
                  <v-icon 
-                    color="white"
-                    >  mdi-sort-variant
-                    </v-icon> 
+                  color="white"
+                  >  mdi-sort-variant
+                  </v-icon> 
               </v-btn>
             </template>
             <v-list>
@@ -55,7 +62,7 @@
                   color="primary"
                   label="時間"
                   value="createdDate"
-                  :disabled="!ifSame(sort[0].field,'createdDate')"
+                  :disabled="!isSame(sort[0].field,'createdDate')"
                   hide-details
                 ></v-checkbox>
                  <v-checkbox
@@ -63,7 +70,7 @@
                   color="primary"
                   label="人員"
                   value="createdUserName"
-                  :disabled="!ifSame(sort[0].field,'createdUserName')"
+                  :disabled="!isSame(sort[0].field,'createdUserName')"
                   hide-details
                 ></v-checkbox>
               </v-list-item>
@@ -74,7 +81,7 @@
                   color="primary"
                   label="遞增"
                   value="asc"
-                  :disabled="!ifSame(sort[0].dir,'asc')"
+                  :disabled="!isSame(sort[0].dir,'asc')"
                   hide-details
                 ></v-checkbox>
                  <v-checkbox
@@ -82,7 +89,7 @@
                   color="primary"
                   label="遞減"
                   value="desc"
-                  :disabled="!ifSame(sort[0].dir,'desc')"
+                  :disabled="!isSame(sort[0].dir,'desc')"
                   hide-details
                 ></v-checkbox>
               </v-list-item>
@@ -132,9 +139,9 @@
       <v-spacer></v-spacer>
       <template v-slot:activator="{ on, attrs }">
       <v-card-text> 
-        <v-row  class="row123" >
+        <v-row  class="row123"  >
           <v-col
-            cols="12"  lg="2" sm="3" md="4" xs="6"
+            cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
             v-for="(photo) in photosData"
             :key="photo.id"
           > 
@@ -142,7 +149,7 @@
             v-slot="{ hover }"
             open-delay="200"
           >
-          <v-card class="image-grid-card"
+          <v-card class="image-grid-card" 
           :elevation="hover ? 12 : 2"> 
             <v-img 
             v-on="on"
@@ -152,10 +159,68 @@
             contain
             :src="(photo.image == undefined) ? '' : photo.image"
             aspect-ratio="1.7"
-            class="image-inside-card"
             alt="random image"
             > 
-            <div class="fill-height bottom-gradient"></div>
+            <v-menu offset-y >
+              <template v-slot:activator="{ on, attrs }">
+               <v-icon class="edit-icon"
+                v-bind="attrs"
+                v-on="on"
+                @click="editHandler"
+                mdi-24px
+                >  mdi-settings-helper  mdi-24px
+                </v-icon> 
+              </template>
+              <v-list>
+                <v-list-item link>
+                  <v-list-item-title>EDIT</v-list-item-title>
+                </v-list-item>
+                <v-list-item link>
+                  <v-list-item-title>  
+                    <v-dialog
+                      v-model="deleteDialog"
+                      persistent
+                      max-width="290"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-list-item-title
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                         Delete
+                        </v-list-item-title>
+                      </template>
+                      <v-card>
+                        <v-card-title class="headline">
+                          Alert
+                        </v-card-title>
+                        <v-card-text class="text-box">Are you sure you want to delete this item?</v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="green darken-1"
+                            text
+                            @click="deleteDialog = false"
+                          >
+                            Cancel
+                          </v-btn>
+                          <v-btn
+                            color="green darken-1"
+                            text
+                            @click="deleteDialog = false; myDelete(photo.id)"
+                          >
+                            Delete
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
+                  </v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-menu>
+            <div v-if="hover" class="fill-height bottom-gradient">
+              <div  id="text-bottom">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}</div>
+              </div>
               <template v-slot:placeholder>
                 <v-row
                   class="fill-height ma-0"
@@ -169,32 +234,13 @@
                 </v-row>
               </template>
             </v-img> 
-              <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-               <v-icon class="edit-icon"
-                v-bind="attrs"
-                v-on="on"
-                @click="editHandler"
-                color="primary"
-                >  mdi-pencil
-                </v-icon> 
-              </template>
-              <v-list>
-                <v-list-item link>
-                  <v-list-item-title>EDIT</v-list-item-title>
-                </v-list-item>
-                <v-list-item link @click="myDelete(photo.id)">
-                  <v-list-item-title>DELETE</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-menu>
-            <div id="text-bottom"> 
-              <!-- <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
+            <!-- <div id="text-bottom"> 
+               <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
               Read more...
-              </a> -->
-              {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}  
-            <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> -->
-            </div>
+              </a> 
+               {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}   -->
+            <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> 
+            </div> -->
           </v-card>
           </v-hover>
           </v-col>
@@ -334,6 +380,8 @@ export default {
   },
   data() {
     return {
+      alert:false,
+      closeOnContentClick: false,
       lastField:"createdDate",
       lastDir:"desc",
       NoImageAtAll:NoImageAtAll,
@@ -355,6 +403,7 @@ export default {
       imageDialog:false,      
       dialog:false,
       dialog1:false,
+      deleteDialog:false,
       imageURLs:[],
       photosData:[],
       is_data_fetched: false,
@@ -365,13 +414,36 @@ export default {
     };
   },
   computed: {
+    breakPointName(){
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 'xs'
+        case 'sm': return 'sm'
+        case 'md': return 'md'
+        case 'lg': return 'lg'
+        case 'xl': return 'xl'
+        default: return 'md'
+      }
+    },
+    btnHeight () {
+      console.log( "current size " +this.$vuetify.breakpoint.name);
+      switch (this.$vuetify.breakpoint.name) {
+        case 'xs': return 30
+        case 'sm': return 35
+        case 'md': return 35
+        case 'lg': return 40
+        case 'xl': return 45
+        default: return 40
+      }
+    },
       projectId(){
         return this.$route.params.projectId;
     },
   },
   methods: { 
-    
-    ifSame(a,b){
+    onResize () {
+        this.isMobile = window.innerWidth < 600
+      },
+    isSame(a,b){
       if(a==null) return true;
       if(a==b)  return true;
       else {
@@ -381,7 +453,6 @@ export default {
     changeSortField(data){
       this.page = 0;
       this.photosData = [];
-      console.log(data);
       this.sort.field = data;
       this.postData();
     },
@@ -492,18 +563,18 @@ export default {
       this.$API.api.main.projectPhoto.post(this.projectId,'GeneralPicture',formdata)            
       .then(res => {
         console.log(res);
-        //TODO: update datas get ID? metadata
-        // let index = this.photosData.findIndex(p => p.id === input);
-        // let updated = Object.assign({},this.photosData[index], this.photosData[index]);
-        // this.photosData.splice(index, 1, updated);
         this.file = null;
-        this.$API.api.main.photo.get(this.projectId,'GeneralPicture',formdata) 
+        this.page = 0;
+        this.photosData = [];
+        this.postData();
       })
       .catch(function (error) {
           console.log(error);
+          vm.alert=true;
       });
     },
     myDelete:function(input){
+      let vm = this;
       if (input) {
         console.log(this.photosData.length);
         let index = this.photosData.findIndex(p => p.id === input);
@@ -518,7 +589,8 @@ export default {
           
       })
       .catch(function (error) {
-          console.log(error);
+         vm.alert=true;
+        console.log(error);
       });
     },
     buttonDisable(stuff){
@@ -561,21 +633,35 @@ export default {
         }); 
       }
     },
-
-
-    
+    scrollFunction() {
+      var mybutton = document.getElementById("topBtn");
+      if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+        mybutton.style.display = "block";
+      } else {
+        mybutton.style.display = "none";
+      }
+    },
+    // When the user clicks on the button, scroll to the top of the document
+    topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
   },
   created() {
     this.postData();
-    window.addEventListener('scroll', this.handScroll)
+    window.addEventListener('scroll', this.handScroll);
+    window.addEventListener('scroll', this.scrollFunction);
         
   },
   mounted() {
-
+    this.onResize()
+    window.addEventListener('resize', this.onResize, { passive: true })
   },
   beforeDestroy() {
-    
+    if (typeof window === 'undefined') return
+    window.removeEventListener('resize', this.onResize, { passive: true })
   },
+
   
 }
 </script>
@@ -594,10 +680,16 @@ export default {
     height: auto;
     object-fit: contain;
   }
-  #text-bottom {
-    vertical-align: bottom;
+  #text-bottom { 
+    position: absolute;
+    text-align: center;
+    margin-right: auto;
+    margin-left: auto;
+    bottom: 10px;
     width: auto;
+    color:white;
     height: auto;
+    right: 18%;
     min-height: 2rem;
     word-wrap: break-word;
     font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
@@ -621,9 +713,6 @@ export default {
   .edit-icon{
     margin:5px;
     float: right;
-  }
-  .image-grid-card{
-    padding: 3px;
   }
   .sorting-text{
     margin-bottom:0px;
@@ -653,5 +742,34 @@ export default {
   #titleBtn{ 
     margin:8px;
     margin-right:0px;
+    width:auto;
     }
+  .hide {
+  display: none;
+  }
+  .myDIV:hover  .hide {
+    display: inline-block;
+  }
+  .text-box{
+    text-align: left;
+  }
+  .alert-box{
+    width:20%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  #topBtn {
+    opacity: 80%;
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 99;
+    font-size: 18px;
+    color: white;
+    padding: 15px;
+  }
+  #topBtn:hover {
+    background-color: #555;
+  }
 </style>
