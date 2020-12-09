@@ -39,62 +39,6 @@
                 >  mdi-plus
                 </v-icon> 
           </v-btn>
-          <v-menu offset-y :close-on-content-click="closeOnContentClick">
-            <template v-slot:activator="{ on, attrs }">
-              <v-btn id="titleBtn"
-                color="primary"
-                dark
-                v-bind="attrs"
-                v-on="on"
-                :height="btnHeight"
-              >
-                <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
-                 <v-icon 
-                  color="white"
-                  >  mdi-sort-variant
-                  </v-icon> 
-              </v-btn>
-            </template>
-            <v-list>
-              <v-list-item>
-                <v-checkbox
-                  v-model="sort[0].field"
-                  color="primary"
-                  label="時間"
-                  value="createdDate"
-                  :disabled="!isSame(sort[0].field,'createdDate')"
-                  hide-details
-                ></v-checkbox>
-                 <v-checkbox
-                  v-model="sort[0].field"
-                  color="primary"
-                  label="人員"
-                  value="createdUserName"
-                  :disabled="!isSame(sort[0].field,'createdUserName')"
-                  hide-details
-                ></v-checkbox>
-              </v-list-item>
-              <v-divider></v-divider>
-              <v-list-item>
-               <v-checkbox
-                  v-model="sort[0].dir"
-                  color="primary"
-                  label="遞增"
-                  value="asc"
-                  :disabled="!isSame(sort[0].dir,'asc')"
-                  hide-details
-                ></v-checkbox>
-                 <v-checkbox
-                  v-model="sort[0].dir"
-                  color="primary"
-                  label="遞減"
-                  value="desc"
-                  :disabled="!isSame(sort[0].dir,'desc')"
-                  hide-details
-                ></v-checkbox>
-              </v-list-item>
-            </v-list>
-          </v-menu>
         </template>
         <v-spacer></v-spacer>  
           <v-card>
@@ -130,161 +74,264 @@
           </v-card-actions>
         </v-card>
       </v-dialog>   
+        <v-menu offset-y :close-on-content-click="closeOnContentClick">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn id="titleBtn"
+              color="primary"
+              dark
+              v-bind="attrs"
+              v-on="on"
+              :height="btnHeight"
+            >
+              <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
+                <v-icon 
+                color="white"
+                >  mdi-sort-variant
+                </v-icon> 
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item>
+              <v-radio-group
+                v-model="sort[0].field"
+                mandatory
+              >
+                <v-radio
+                  label="時間"
+                  value="createdDate"
+                ></v-radio>
+                <v-radio
+                  label="人員"
+                  value="createdUserName"
+                ></v-radio>
+              </v-radio-group>
+            </v-list-item>
+            <v-list-item>
+              <v-radio-group
+                v-model="sort[0].dir"
+                mandatory
+              >
+                <v-radio
+                  label="遞增"
+                  value="asc"
+                ></v-radio>
+                <v-radio
+                  label="遞減"
+                  value="desc"
+                ></v-radio>
+              </v-radio-group>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-card-title>
       <v-dialog
         v-model="imageDialog"
         persistent
-        max-width="1200px"
+        max-width=80%
       >
-      <v-spacer></v-spacer>
+      <v-spacer></v-spacer>   
       <template v-slot:activator="{ on, attrs }">
-      <v-card-text> 
-        <v-row  class="row123"  >
-          <v-col
-            cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
-            v-for="(photo) in photosData"
-            :key="photo.id"
+     <v-card-text>
+      <v-row  class="row123"  >
+        <v-col
+          cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
+          v-for="(photo) in photosData"
+          :key="photo.id"
+        >
+        <v-hover
+          v-slot="{ hover }"
+          open-delay="0"
+        >
+        <v-card class="image-grid-card" 
+        :elevation="hover ? 12 : 2"> 
+          <v-img 
+          class="image-card"
+          v-on="on"
+          v-bind="attrs"
+          @click="changeCurrentImage(photo.image);changeCurrentName(photo.createdUserName);changeCurrentTime(photo.createdDate);activateDrawer()"
+          max-height="350"
+          contain
+          :src="(photo.image == undefined) ? '' : photo.image"
+          aspect-ratio="1.7"
+          alt="random image"
           > 
-          <v-hover
-            v-slot="{ hover }"
-            open-delay="200"
+          <!-- <img class="image-card" :src="(photo.image == undefined) ? '' : photo.image"> -->
+         
+          <div v-if="hover" class="lower-gradient">
+            <div  id="text-bottom">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
+            </div>
+            <template v-slot:placeholder>
+              <v-row
+                class="fill-height ma-0"
+                align="center"
+                justify="center"
+              >
+                <v-progress-circular
+                  indeterminate
+                  color="primary"
+                ></v-progress-circular>
+              </v-row>
+            </template>
+          </v-img> 
+        </v-card>
+        </v-hover>
+      </v-col>
+      </v-row>  
+      </v-card-text>
+      </template>
+      <v-card id="preview-list-content">
+        <v-navigation-drawer
+          ref='imageDrawer'
+          v-model="imageDialog"
+          :input="mini"
+          :mini-variant.sync="mini"
+          right
+          width=25%
+          id="right-drawer"
+          permanent
           >
-          <v-card class="image-grid-card" 
-          :elevation="hover ? 12 : 2"> 
-            <v-img 
-            v-on="on"
-            v-bind="attrs"
-            @click="changeCurrentImage(photo.image)"
-            max-height="350"
-            contain
-            :src="(photo.image == undefined) ? '' : photo.image"
-            aspect-ratio="1.7"
-            alt="random image"
-            > 
-            <v-menu offset-y >
-              <template v-slot:activator="{ on, attrs }">
-               <v-icon class="edit-icon"
-                v-bind="attrs"
-                v-on="on"
-                @click="editHandler"
-                mdi-24px
-                >  mdi-settings-helper  mdi-24px
-                </v-icon> 
-              </template>
-              <v-list>
-                <v-list-item link>
-                  <v-list-item-title>EDIT</v-list-item-title>
-                </v-list-item>
-                <v-list-item link>
-                  <v-list-item-title>  
-                    <v-dialog
-                      v-model="deleteDialog"
-                      persistent
-                      max-width="290"
+        <div class="nev-top-bar">
+          <v-list-item class="px-2" two-line>
+            <v-list-item-avatar>
+              <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
+            </v-list-item-avatar>
+            <v-list-item-content>
+              <v-list-item-title>{{currentName}}</v-list-item-title>
+              <v-list-item-subtitle>{{fromNow(currentTime)}}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-btn
+              icon
+              @click.stop="mini = !mini"
+            >
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+          </v-list-item>
+        </div>
+        <v-divider></v-divider>
+        <div class="nav-right-bar">
+          <v-list dense >
+            <v-list-item
+              v-for="item in items"
+              :key="item.title"
+              link
+            >
+              <v-icon :color="item.color">{{ item.icon }}</v-icon>            
+            </v-list-item> 
+            <v-list-item link>                
+              <v-dialog
+                v-model="deleteDialog"
+                persistent
+                max-width="290"
+              >
+                <template v-slot:activator="{ on, attrs }">
+                  <v-icon
+                    v-bind="attrs"
+                    v-on="on"
+                  >
+                    mdi-delete-outline
+                  </v-icon>
+                </template>
+                <v-card>
+                  <v-card-title class="headline">
+                    Alert
+                  </v-card-title>
+                  <v-card-text class="text-box">Are you sure you want to delete this item?</v-card-text>
+                  <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn
+                      color="green darken-1"
+                      text
+                      @click="deleteDialog = false"
                     >
-                      <template v-slot:activator="{ on, attrs }">
-                        <v-list-item-title
-                          v-bind="attrs"
-                          v-on="on"
-                        >
-                         Delete
-                        </v-list-item-title>
-                      </template>
-                      <v-card>
-                        <v-card-title class="headline">
-                          Alert
-                        </v-card-title>
-                        <v-card-text class="text-box">Are you sure you want to delete this item?</v-card-text>
-                        <v-card-actions>
-                          <v-spacer></v-spacer>
-                          <v-btn
-                            color="green darken-1"
-                            text
-                            @click="deleteDialog = false"
-                          >
-                            Cancel
-                          </v-btn>
-                          <v-btn
-                            color="green darken-1"
-                            text
-                            @click="deleteDialog = false; myDelete(photo.id)"
-                          >
-                            Delete
-                          </v-btn>
-                        </v-card-actions>
-                      </v-card>
-                    </v-dialog>
-                  </v-list-item-title>
+                      Cancel
+                    </v-btn>
+                    <v-btn
+                      color="green darken-1"
+                      text
+                      @click="deleteDialog = false; myDelete(photo.id)"
+                    >
+                      Delete
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-dialog>
+            </v-list-item>            
+          </v-list> 
+          <span></span>           
+        </div>
+        <div class="nav-content" v-if="!mini">
+          <div class="nav-comment" v-if="!mini">
+            <v-textarea 
+            label="請在此輸入您的想法"
+            prepend-icon="mdi-comment"
+            clear-icon="mdi-close-circle"
+            clearable
+            auto-grow
+            rows="1"
+            row-height="15"
+            filled
+            ></v-textarea>
+              <div class="nav-reply">
+                <v-list-item>
+                <v-list-item-avatar>
+                  <v-img src="https://randomuser.me/api/portraits/women/81.jpg"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  Someone: 這邊要改! &nbsp; (5天前)
+                </v-list-item-content>
                 </v-list-item>
-              </v-list>
-            </v-menu>
-            <div v-if="hover" class="fill-height bottom-gradient">
-              <div  id="text-bottom">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}</div>
+                <v-text-field 
+                  v-model="reply"
+                  label="回覆..."
+                  height="5"
+                  solo
+                  flat
+                ></v-text-field>
               </div>
-              <template v-slot:placeholder>
-                <v-row
-                  class="fill-height ma-0"
-                  align="center"
-                  justify="center"
-                >
-                  <v-progress-circular
-                    indeterminate
-                    color="primary"
-                  ></v-progress-circular>
-                </v-row>
-              </template>
-            </v-img> 
-            <!-- <div id="text-bottom"> 
-               <a class="" v-if="!photo.readMoreActivated" @click="activateReadMore(photo)" >
-              Read more...
-              </a> 
-               {{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}}   -->
-            <!-- <UserMenu :userInfo="{id:12,name:'asdfasdfsdf' }" /> 
-            </div> -->
-          </v-card>
-          </v-hover>
-          </v-col>
-        </v-row>
-        </v-card-text>
-        </template>
-        <v-card>
-         <div id="right-drawer">
+              <div class="nav-reply">
+                <v-list-item>
+                <v-list-item-avatar>
+                  <v-img src="https://randomuser.me/api/portraits/women/81.jpg"></v-img>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  Someone: 這邊不要改! &nbsp; (8天前)
+                </v-list-item-content>
+                </v-list-item>
+                <v-text-field
+                  v-model="reply"
+                  label="回覆..."
+                  height="5"
+                  solo
+                  flat
+                ></v-text-field>
+              </div>
+          </div>
+        </div>
+        
+        </v-navigation-drawer>
+        <v-card-title class="justify-space-between preview-title">
           <v-icon
-            id="navigation-close-btn"
             color="blue darken-1"
             text
             @click="imageDialog = false;"
+            class="preview-back"
+            @click.stop="mini = true"
             >
-            mdi-close
-            </v-icon>
-          <v-list-item two-line>
-            <v-list-item-avatar>
-              <img src="https://randomuser.me/api/portraits/women/81.jpg">
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title>System Admin</v-list-item-title>
-              <v-list-item-subtitle>六天前</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-            <v-textarea
-            solo
-            label="textarea"           
-          ></v-textarea>
-          <v-divider></v-divider>
-          </div>
-        <v-card-title>
-        <span class="headline">Preview</span>
+            mdi-keyboard-backspace
+          </v-icon>
+        Preview
+        <span></span>
         </v-card-title>
-          <v-card-text>
-            <div :style="{height:'500px', width:'800px',padding:'10px'}" class="justify-center">
+          <v-card-text :style="{height:'94%', width:'auto'}" class="preview-text">
+            <div :style="{height:'100%', width:'100%'}" >
               <sb-markup-viewer
                 :image-url='currentImage'
+                background-color="white"
               ></sb-markup-viewer>
             </div>
           </v-card-text>
         </v-card>
-      </v-dialog>   
+      </v-dialog> 
         <v-progress-circular v-if="loading && (!bottom)"
           indeterminate
           color="primary"
@@ -292,15 +339,32 @@
     </v-card>
   </div>
 </template>
-
 <script>
 import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
 import moment from 'moment'
 import UserMenu from './SystemUserMenu'
 import axios from 'axios'
 import NoImageAtAll from '../assets/Noimage.jpg'
-export default {
 
+moment.locale('zh-tw', {
+    relativeTime: {
+        future: '%s内',
+        past: '%s前',
+        s: '幾秒',
+        ss: '%d秒',
+        m: '1分',
+        mm: '%d分鐘',
+        h: '1小時',
+        hh: '%d小時',
+        d: '1天',
+        dd: '%d天',
+        M: '1個月',
+        MM: '%d個月',
+        y: '1年',
+        yy: '%d年'
+    },
+})
+export default {
   directives:{
     lazyLoad: {
       inserted: el => {
@@ -380,6 +444,12 @@ export default {
   },
   data() {
     return {
+      reply:null,
+      items: [
+        { title: 'comment', icon: 'mdi-comment-outline',color:'primary' },
+        { title: 'Home', icon: 'mdi-information-outline', color:'' },
+      ],
+      mini: true,
       alert:false,
       closeOnContentClick: false,
       lastField:"createdDate",
@@ -399,6 +469,8 @@ export default {
             ],
       filter: null,
       componentKey: 0,
+      currentName:null,
+      currentTime:null,
       currentImage:null,
       imageDialog:false,      
       dialog:false,
@@ -440,6 +512,10 @@ export default {
     },
   },
   methods: { 
+    activateDrawer(){
+      console.log(this.$refs.imageDrawer);
+      this.$refs.imageDrawer.isActive=true;
+    },
     onResize () {
         this.isMobile = window.innerWidth < 600
       },
@@ -465,6 +541,12 @@ export default {
     },
     changeCurrentImage(image){
       this.currentImage = image;
+    },
+    changeCurrentName(name){
+      this.currentName = name;
+    },
+    changeCurrentTime(date){
+      this.currentTime = date;
     },
     editHandler: function() {
     this.$emit('edit', {dataItem:this.dataItem});
@@ -553,6 +635,11 @@ export default {
     },
     time(date){
         let time = moment(date).format('YYYY/MM/DD hh:mm');
+        return time;
+    },
+    fromNow(date){
+      moment.locale(this.$i18n.locale);
+      let time = moment(date).fromNow();
         return time;
     },
     myUpload:function(){
@@ -673,24 +760,19 @@ export default {
     height: 100%;
   }
   .image-card{
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
-    max-width:100%;
-    max-height:100%;
+    max-height: 210px;
+
     width: auto;
-    height: auto;
+    height: 210px;
     object-fit: contain;
   }
   #text-bottom { 
     position: absolute;
     text-align: center;
-    margin-right: auto;
-    margin-left: auto;
-    bottom: 10px;
-    width: auto;
+    bottom: 15px;
+    width: 100%;
     color:white;
     height: auto;
-    right: 18%;
-    min-height: 2rem;
     word-wrap: break-word;
     font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif;
     font-size: 17px;
@@ -735,10 +817,7 @@ export default {
     margin-right:5px;
     z-index: 15;
   }
-  #right-drawer{
-    float:right;
-    width:350px;
-  }
+  
   #titleBtn{ 
     margin:8px;
     margin-right:0px;
@@ -772,4 +851,74 @@ export default {
   #topBtn:hover {
     background-color: #555;
   }
+  .lower-gradient{
+    width:100%; 
+    height:100%;
+    display:inline-block;
+    background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2),rgba(0,0,0,0.6),rgba(0,0,0,0.6));
+  }
+  #preview-list-content{
+    height:85vh;
+    overflow: hidden;
+  }
+  .preview-title-info{
+    text-align:left;
+    padding-left:20px;
+    
+  }
+  .markup-box{
+    display: table-cell;
+    vertical-align: middle;
+  }
+  .preview-text{
+    display:flex;
+    
+  }
+  .navigation-edit-btn{
+    text-align: left;
+  }
+  .preview-title{
+    position: relative;
+    height:70px;
+  }
+  .nav-content{
+
+
+    float:left;
+    width: calc(100% - 57px);
+    padding:8px;
+  }
+  .nav-comment{
+    float:left;
+    width: 100%;
+  }
+  .nav-right-bar{
+  
+    float:right;
+    width: 56px;
+    height:calc(100% - 73px);
+    border-left: 0.5px solid #ededed;
+  }
+  .nev-top-bar{
+    display:flex;
+    height: 70px;
+  }
+  #right-drawer{
+
+    float:right;
+    height:100%;
+    overflow: hidden;
+    display:flex;
+  }
+  .nav-reply:hover{
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: #ededed;
+  }
+  .nav-reply{
+    border-style: solid;
+    border-width: 0.5px;
+    border-color: transparent;
+  }
+
 </style>

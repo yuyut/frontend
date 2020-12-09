@@ -23,10 +23,6 @@ import store from './store'
 import syncoboxFormio from "syncobox-formio"
 import "syncobox-formio/dist/syncobox-formio.css"
 
-//markup
-import SyncoboxMarkup from "syncobox-markup";
-import 'syncobox-markup/dist/syncobox-markup.css'
-Vue.use(SyncoboxMarkup, { store });  //Vuex.Store instance
 
 //
 import syncoboxsharedui from "syncobox-shared-ui";
