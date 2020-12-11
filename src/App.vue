@@ -1,12 +1,9 @@
 <template>
   <v-app>
 
-      <div id="nav">
-      <router-link :to="{name: 'Enter', params: {formVersionId:formVersionId}}"></router-link> 
-      <router-link :to="{name: 'formVersion', params: {formId:formId}}"></router-link> 
-      <router-link :to="{name: 'projectPhoto', params: {projectId:projectId}}"></router-link> 
+      
       <router-view/>
-       </div>
+
 
 
   

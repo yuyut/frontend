@@ -15,11 +15,22 @@
     >
       Upload / Delete failed
     </v-alert>
-    <v-card >
-      <v-card-title>
-        <h1>專案照片</h1>
-        <v-spacer/>
-        <v-dialog
+
+    <v-toolbar class="toolbar" elevation="0">
+      <v-toolbar-title>專案照片</v-toolbar-title>
+      <v-divider class="mx-4" inset vertical></v-divider>
+      <v-icon class="mr-1">mdi-magnify</v-icon>
+      <v-text-field
+          class="search-bar"
+          placeholder="搜尋標註資料"
+          outlined
+          dense
+          hide-details
+          @keydown="searching($event)"
+      ></v-text-field>
+      <v-divider class="mx-4" inset vertical></v-divider>
+      <v-spacer></v-spacer>
+      <v-dialog
           v-model="dialog"
           persistent
           max-width="600px"
@@ -27,18 +38,16 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn 
               v-bind="attrs"
-              color="primary"
-              dark
               v-on="on"
               id="titleBtn"
-              class:="px-3"
+     
               :height="btnHeight"
+                color="#ffffff"
           >
-              <span v-if="!isSame(breakPointName,'xs')">新增圖片</span>
-              <v-icon 
-                color="white"
-                >  mdi-plus
-                </v-icon> 
+          <span v-if="!isSame(breakPointName,'xs')">新增圖片</span>
+          <v-icon> 
+              mdi-plus
+            </v-icon> 
           </v-btn>
         </template>
         <v-spacer></v-spacer>  
@@ -75,56 +84,54 @@
           </v-card-actions>
         </v-card>
       </v-dialog>   
-        <v-menu offset-y :close-on-content-click="closeOnContentClick">
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn id="titleBtn"
-              color="primary"
-              dark
-              v-bind="attrs"
-              v-on="on"
-              :height="btnHeight"
+      <v-menu offset-y :close-on-content-click="closeOnContentClick">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn id="titleBtn"                 
+            v-bind="attrs"
+            v-on="on"
+            :height="btnHeight"
+
+            color="#ffffff" 
+          >
+            <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
+              <v-icon >  mdi-sort-variant
+              </v-icon> 
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item>
+            <v-radio-group
+              v-model="sort[0].field"
+              mandatory
             >
-              <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
-                <v-icon 
-                color="white"
-                >  mdi-sort-variant
-                </v-icon> 
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item>
-              <v-radio-group
-                v-model="sort[0].field"
-                mandatory
-              >
-                <v-radio
-                  label="時間"
-                  value="createdDate"
-                ></v-radio>
-                <v-radio
-                  label="人員"
-                  value="createdUserName"
-                ></v-radio>
-              </v-radio-group>
-            </v-list-item>
-            <v-list-item>
-              <v-radio-group
-                v-model="sort[0].dir"
-                mandatory
-              >
-                <v-radio
-                  label="遞增"
-                  value="asc"
-                ></v-radio>
-                <v-radio
-                  label="遞減"
-                  value="desc"
-                ></v-radio>
-              </v-radio-group>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </v-card-title>
+              <v-radio
+                label="時間"
+                value="createdDate"
+              ></v-radio>
+              <v-radio
+                label="人員"
+                value="createdUserName"
+              ></v-radio>
+            </v-radio-group>
+          </v-list-item>
+          <v-list-item>
+            <v-radio-group
+              v-model="sort[0].dir"
+              mandatory
+            >
+              <v-radio
+                label="遞增"
+                value="asc"
+              ></v-radio>
+              <v-radio
+                label="遞減"
+                value="desc"
+              ></v-radio>
+            </v-radio-group>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+    </v-toolbar>
       <v-dialog
         v-model="imageDialog"
         max-width=90%
@@ -142,7 +149,7 @@
           v-slot="{ hover }"
           open-delay="0"
         >
-        <v-card class="image-grid-card" 
+        <v-card class="image-grid-card card" 
         :elevation="hover ? 12 : 2"> 
           
           <v-img 
@@ -205,12 +212,12 @@
               </v-card>
             </v-dialog>
           </v-menu>
-          <div v-if="hover" class="lower-gradient">
-            <div  id="text-bottom">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
+          <div v-if="hover" class="gradient">
+            <div  id="image-text">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
             </div>
                   
-          <div class=" d-sm-none fill-height bottom-gradient">
-            <div  id="text-bottom">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
+          <div class=" d-sm-none fill-height mini-gradient">
+            <div  id="image-text">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
             </div>
             <template v-slot:placeholder>
               <v-row
@@ -552,7 +559,6 @@
           indeterminate
           color="primary"
         ></v-progress-circular>
-    </v-card>
   </div>
 </template>
 <script>
@@ -677,6 +683,23 @@ export default {
           { comment: '還要吃嗎?', time: '2天前', },
           { comment: 'ok!', time: '5天前', },
           { comment: '這邊還要改!', time: '6天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
+          { comment: '這邊還要改!', time: '7天前', },
           { comment: '這邊還要改!', time: '7天前', },
         
       ],
@@ -1019,22 +1042,22 @@ export default {
 </script>
 
 <style >
-  .bottom-gradient {
-    background-image: linear-gradient(to top, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
+  .mini-gradient {
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0%, transparent 72px);
     vertical-align: bottom;
     height: 100%;
   }
   .image-card{
-    max-height: 210px;
+    
 
     width: auto;
     height: 210px;
     object-fit: contain;
   }
-  #text-bottom { 
+  #image-text { 
     position: absolute;
     text-align: center;
-    bottom: 15px;
+    top: 15px;
     width: 100%;
     color:white;
     height: auto;
@@ -1050,11 +1073,16 @@ export default {
     -webkit-line-clamp: 2;
     padding-right: 1rem;
   }
-  .border-card{
-    padding-left: clamp(1rem, 10vw, 2rem); 
-    padding-right: clamp(1rem, 10vw, 2rem);
-  }
+  .card{
+    width: 320px;
+    height: auto;
+    /* max-height: 274px; */
+    margin: 10px;
+    /* padding-bottom: 20px; */
+}
   .row123{
+    margin: 0px !important;
+    padding: 5px 10px;
     height : auto;
   }
   .edit-icon{
@@ -1086,8 +1114,9 @@ export default {
   
   #titleBtn{ 
     margin:8px;
-    margin-right:0px;
+    float:right;
     width:auto;
+
     }
   .hide {
   display: none;
@@ -1115,11 +1144,11 @@ export default {
     padding: 15px;
   }
 
-  .lower-gradient{
+  .gradient{
     width:100%; 
     height:100%;
     display:inline-block;
-    background: linear-gradient(to bottom, rgba(0,0,0,0), rgba(0,0,0,0.2),rgba(0,0,0,0.6),rgba(0,0,0,0.6));
+    background: linear-gradient(to top, rgba(0,0,0,0), rgba(0,0,0,0.2),rgba(0,0,0,0.6),rgba(0,0,0,0.6));
   }
   #preview-list-content{
     height:90vh;
@@ -1243,5 +1272,12 @@ export default {
     /* font-family: "Helvetica", "Arial","LiHei Pro","黑體-繁","微軟正黑體", sans-serif; */
     font-size: 18px;
   }
-
+  .search-bar{
+    width: 250px;
+    max-width: 250px;
+  }
+  .toolbar{
+    margin: -20px;
+    max-width: calc(100% + 40px) !important;
+}
 </style>

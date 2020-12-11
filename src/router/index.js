@@ -16,6 +16,11 @@ const routes = [
     component: MainLayout,
     children: [
       {
+        path: '/viewer-header',
+        name: 'viewer-header',
+        component: () => import( '../components/viewer-header.vue'),
+
+      },{
         path: '/FormVersion/:formVersionId/DocumentReportTemplate',
         //path: '/FormVersion/DocumentReportTemplate',/FormVersion/2778a5f3-1024-4c97-9e09-892319689f6a/DocumentReportTemplate'
         name: 'Enter',
@@ -48,6 +53,11 @@ const routes = [
         params: {projectId:null}
       }
     ]
+  }, {
+    path: '/test/Project/:projectId/Photo',
+    name: 'projectPhoto',
+    component: () => import( '../components/projectPhoto.vue'),
+    params: {projectId:null}
   }
 ]
 
