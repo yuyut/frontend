@@ -49,6 +49,46 @@ export default [{
             ...viewPermission["projectPhoto"]
         }
     },
+    {
+        id: "server",
+        name: "server",
+        header: "FullPage",
+        text: "server",
+        icon: "mdi-view-dashboard",
+        meta: {
+            ...viewPermission["server"]
+        }
+    },
+    {
+        id: "tawan-webim",
+        name: "server-setting",
+        header: "FullPage",
+        text: "taiwan-webim",
+        icon: "mdi-view-dashboard",
+        meta: {
+            ...viewPermission["webim"]
+        }
+    },
+    {
+        id: "company-list",
+        name: "company-list",
+        header: "FullPage",
+        text: "company-list",
+        icon: "mdi-view-dashboard",
+        meta: {
+            ...viewPermission["company-list"]
+        }
+    },
+    {
+        id: "company-setting",
+        name: "company-setting",
+        header: "FullPage",
+        text: "company-setting",
+        icon: "mdi-view-dashboard",
+        meta: {
+            ...viewPermission["company-setting"]
+        }
+    },
     
     // =============================================================================
     // PROJECT

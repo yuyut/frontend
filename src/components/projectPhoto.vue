@@ -673,6 +673,7 @@ export default {
   },
   data() {
     return {
+      searchValue:null,
       infoColor:'',
       commentColor:'primary',
       comment:true,
@@ -773,6 +774,11 @@ export default {
     },
   },
   methods: { 
+    searching(event){
+        if(event.key==="Enter" || event.target._value===""){
+            this.searchValue = event.target.value
+        }
+    },
     changeNavContent(str){
       if(str=='comment'){
         this.comment=true;
@@ -1114,7 +1120,6 @@ export default {
   
   #titleBtn{ 
     margin:8px;
-    float:right;
     width:auto;
 
     }

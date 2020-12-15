@@ -1,59 +1,61 @@
 <template>
-  <v-card
-    class="d-flex black"
-    width="100%"
-    height="100%"
-    :style="{backgroundColor: backgroundColor, borderRadius: 0, overflow:'hidden'}"
-    ref="card"
-  >
-    <img
-      v-show="false"
-      ref="wb-image"
-      class="wb-image"
-      :src="imgUrl"
-      alt="img"
-      @load="loadCompleted();"
-    />
-    <svg id="svg-webim" ref="svg-webim" class="wb-svg" :width="svgWidth" :height="svgHeight">
-      <image
-        ref="image-svg"
-        class="wb-image-svg"
-        :xlink:href="imgUrl"
-        :x="offsetX"
-        :y="offsetY"
-        :width="imgWidth"
-        :height="imgHeight"
+  <div>
+    <v-card
+      class="d-flex black"
+      width="100%"
+      height="100%"
+      :style="{backgroundColor: backgroundColor, borderRadius: 0, overflow:'hidden'}"
+      ref="card"
+    >
+      <img
+        v-show="false"
+        ref="wb-image"
+        class="wb-image"
+        :src="imgUrl"
+        alt="img"
+        @load="loadCompleted();"
       />
+      <svg id="svg-webim" ref="svg-webim" class="wb-svg" :width="svgWidth" :height="svgHeight">
+        <image
+          ref="image-svg"
+          class="wb-image-svg"
+          :xlink:href="imgUrl"
+          :x="offsetX"
+          :y="offsetY"
+          :width="imgWidth"
+          :height="imgHeight"
+        />
 
-      <image
-        v-for="markup in annotationData.Markup"
-        :key="markup.id"
-        :xlink:href="markup.url"
-        :x="offsetX"
-        :y="offsetY"
-        :width="imgWidth"
-        :height="imgHeight"
-      />
-    </svg>
-    <v-progress-circular
-      v-show="loading"
-      class="wb-loader"
-      :width="8"
-      :size="60"
-      color="primary"
-      indeterminate
-    ></v-progress-circular>
-    <div class="toolbar-editor" v-if="!loading">
-      <div class="toolbar-body">
-        <zoom-and-pan
-          :imageSvg="$refs['svg-webim']"
-          :imageData="imageData"
-          :containerData="containerData"
-          :markupsLength="annotationData.Markup.length"
-        ></zoom-and-pan>
+        <image
+          v-for="markup in annotationData.Markup"
+          :key="markup.id"
+          :xlink:href="markup.url"
+          :x="offsetX"
+          :y="offsetY"
+          :width="imgWidth"
+          :height="imgHeight"
+        />
+      </svg>
+      <v-progress-circular
+        v-show="loading"
+        class="wb-loader"
+        :width="8"
+        :size="60"
+        color="primary"
+        indeterminate
+      ></v-progress-circular>
+      <div class="toolbar-editor" v-if="!loading">
+        <div class="toolbar-body">
+          <zoom-and-pan
+            :imageSvg="$refs['svg-webim']"
+            :imageData="imageData"
+            :containerData="containerData"
+            :markupsLength="annotationData.Markup.length"
+          ></zoom-and-pan>
+        </div>
       </div>
-    </div>
-  </v-card>
+    </v-card>
+  </div>
 </template>
 
 <script>

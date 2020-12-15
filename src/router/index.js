@@ -52,12 +52,31 @@ const routes = [
         component: () => import( '../components/projectPhoto.vue'),
         params: {projectId:null}
       }
+      , {
+        path: '/server',
+        name: 'server',
+        component: () => import( '../components/server.vue'),
+       
+      },
+      {
+        path: '/server/taiwan-webim',
+        name: 'server-setting',
+        component: () => import( '../components/tawan-webim.vue'),
+       
+      },
+      {
+        path: '/company-list',
+        name: 'company-list',
+        component: () => import( '../components/company-list.vue'),
+       
+      },
+      {
+        path: '/company-setting',
+        name: 'company-setting',
+        component: () => import( '../components/company-setting.vue'),
+       
+      },
     ]
-  }, {
-    path: '/test/Project/:projectId/Photo',
-    name: 'projectPhoto',
-    component: () => import( '../components/projectPhoto.vue'),
-    params: {projectId:null}
   }
 ]
 
