@@ -1,72 +1,71 @@
 <template>
-    <div class="upload">
-         <v-card>
-             <v-card-title class="v-card__title" >
-                <v-icon
-                left
-                class:="pr-3"
-                >
-                mdi-file-document-multiple-outline
-                </v-icon>
-                    授權公司列表
-                <v-spacer></v-spacer>
 
-                <v-btn 
-                    color="primary"
-                    dark
-                    class:="px-3"
-                    @click='addRecord'
-                >
-                    {{$t('form.form.add')}}
-                </v-btn>
-                <v-divider class="mx-4" inset vertical></v-divider>
-                <v-text-field
-                    class="search-bar"
-                    placeholder="搜尋標註資料"
-                    outlined
-                    dense
-                    hide-details
-                    @keydown="searching($event)"
-                ></v-text-field>
-            </v-card-title>
-            <v-card-text>
-                <grid
-                    :pageable="pageable"
-                    :page-size="pageSize"                 
-                    :data-items="dataResult"
-                    :columns="columns"
-                    :skip="skip"
-                    :take="take"
-                    :total="total"
-                    @filterchange = "filterChange"
-                    @pagechange="pageChangeHandler"
-                    @sortchange="sortChangeHandler"
-                    @itemchange="itemChange"
-                    >
-                    <template v-slot:change="data">
-                        <td :dataItem="data.props.dataItem"
-                        >
-                        <router-link :to="{name: 'company-setting'}">
-                            <v-btn >  設定
-                            </v-btn> 
-                            </router-link>
-                        </td>
-                    </template>
-                    <template v-slot:delete="data">
-                        <td>
-                         <change :dataItem="data.props.dataItem"
-                                :title="'刪除'"
-                                @edit="deleteItem"
-                                
-                        ></change>
-                        </td>
-                    </template>
-                </grid> 
-                </v-card-text>
-        </v-card> 
+<v-card class="list-card">
+    <v-card-title class="v-card__title" >
+        <v-icon
+        left
+        class:="pr-3"
+        >
+        mdi-file-document-multiple-outline
+        </v-icon>
+            授權公司列表
+        <v-spacer></v-spacer>
+        <router-link :to="{name: 'company-addRecord'}">
+            <v-btn 
+                color="primary"
+                dark
+                class:="px-3"
+                @click='addRecord'
+            >
+                {{$t('form.form.add')}}
+            </v-btn>
+        </router-link>
+        <v-divider class="mx-4" inset vertical></v-divider>
+        <v-icon class="mr-1">mdi-magnify</v-icon>
+        <v-text-field
+            class="search-bar"
+            placeholder="搜尋標註資料"
+            outlined
+            dense
+            hide-details
+            @keydown="searching($event)"
+        ></v-text-field>
+    </v-card-title>
+    <grid
+        class="list-view"
+        :pageable="pageable"
+        :page-size="pageSize"                 
+        :data-items="dataResult"
+        :columns="columns"
+        :skip="skip"
+        :take="take"
+        :total="total"
+        @filterchange = "filterChange"
+        @pagechange="pageChangeHandler"
+        @sortchange="sortChangeHandler"
+        @itemchange="itemChange"
+        >
+        <template v-slot:change="data">
+            <td :dataItem="data.props.dataItem"
+            >
+            <router-link :to="{name: 'company-setting'}">
+                <v-btn >  設定
+                </v-btn> 
+                </router-link>
+            </td>
+        </template>
+        <template v-slot:delete="data">
+            <td>
+                <change :dataItem="data.props.dataItem"
+                    :title="'刪除'"
+                    @edit="deleteItem"
+                    
+            ></change>
+            </td>
+        </template>
+    </grid> 
+</v-card> 
 
-     
-    </div>
 </template>
 <script>
 import VueI18n from 'vue-i18n'
@@ -102,7 +101,7 @@ export default {
         ],
        
         skip: 0,
-        take: 5,
+        take: 10,
         pageSize: 10,
         pageable: {
                 buttonCount: 5,
@@ -147,7 +146,6 @@ export default {
     },
     created(){   
 
- 
     },
     beforeMount(){
     },
@@ -155,15 +153,22 @@ export default {
 
     },
     computed:{
-        dataResult(){ return this.$store.state.authorize.data.slice(this.skip,this.skip+this.take)},
+        dataResult(){ return this.$store.state.authorize.data.slice(this.skip,this.skip + this.take)},
         total(){return this.$store.state.authorize.data.length}
  
     }
  }
 </script>
-<style>
+<style scoped>
+.list-view{
+    height: 90% !important;
+    max-height: 90% !important;
+}
+.list-card{  
+    max-height: calc(100vh - 140px);
+    height: calc(100vh - 140px);
 
-
+}
 .search-bar{
     width: 250px;
     max-width: 250px;

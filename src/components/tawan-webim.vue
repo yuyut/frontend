@@ -1,14 +1,59 @@
 <template>
-    <div class="server">
-         <v-card class="server-setting">
-             <v-card-title class="v-card__title" >
+    <v-card class="server">
+        <div class="server-setting">
+            <v-card-title class="v-card__title" >
+            <v-icon
+            left
+            class:="pr-3"
+            >
+            mdi-file-document-multiple-outline
+            </v-icon>
+                目前伺服器成員
+            <v-spacer></v-spacer>
+            <v-icon class="mr-1">mdi-magnify</v-icon>
+            <v-text-field
+                class="search-bar"
+                placeholder="搜尋標註資料"
+                outlined
+                dense
+                hide-details
+                @keydown="searching($event)"
+            ></v-text-field>
+        </v-card-title>
+        <grid
+            class="list-view"
+            :pageable="pageable1"
+            :page-size="pageSize1"                 
+            :data-items="addedUsers"
+            :columns="addedColumns"
+            :skip="skip1"
+            :take="take1"
+            :total="total1"
+            @filterchange = "filterChange"
+            @pagechange="pageChangeHandler1"
+            @sortchange="sortChangeHandler"
+            @itemchange="itemChange"
+            >
+            <template v-slot:change="data">
+                <td>
+                    <change :dataItem="data.props.dataItem"
+                        :title="'移除'"
+                        :btnColor="'primary'"
+                        @edit="removeEdit"
+                ></change>
+                </td>
+            </template>
+        </grid> 
+        </div>
+        <div class="server-setting">
+            <v-card-title class="v-card__title" >
                 <v-icon
                 left
                 class:="pr-3"
                 >
                 mdi-file-document-multiple-outline
                 </v-icon>
-                    目前伺服器成員
+                    可加入的成員
                 <v-spacer></v-spacer>
                 <v-icon class="mr-1">mdi-magnify</v-icon>
                 <v-text-field
@@ -19,81 +64,33 @@
                     hide-details
                     @keydown="searching($event)"
                 ></v-text-field>
-            </v-card-title>
-            <v-card-text>
-                <grid
-                    :pageable="pageable"
-                    :page-size="pageSize"                 
-                    :data-items="addedUsers"
-                    :columns="addedColumns"
-                    :skip="skip1"
-                    :take="take1"
-                    :total="total1"
-                    @filterchange = "filterChange"
-                    @pagechange="pageChangeHandler1"
-                    @sortchange="sortChangeHandler"
-                    @itemchange="itemChange"
-                    >
-                    <template v-slot:change="data">
-                        <td>
-                          <change :dataItem="data.props.dataItem"
-                                :title="'移除'"
-                                :btnColor="'primary'"
-                                @edit="removeEdit"
-                        ></change>
-                        </td>
-                    </template>
-                </grid> 
-                </v-card-text>
-        </v-card> 
-          <v-card class="server-setting">
-             <v-card-title class="v-card__title" >
-                    <v-icon
-                    left
-                    class:="pr-3"
-                    >
-                    mdi-file-document-multiple-outline
-                    </v-icon>
-                        可加入的成員
-                    <v-spacer></v-spacer>
-                    <v-icon class="mr-1">mdi-magnify</v-icon>
-                    <v-text-field
-                        class="search-bar"
-                        placeholder="搜尋標註資料"
-                        outlined
-                        dense
-                        hide-details
-                        @keydown="searching($event)"
-                    ></v-text-field>
-            </v-card-title>
-            <v-card-text>
-                <grid
-                    :pageable="pageable"
-                    :page-size="pageSize"                 
-                    :data-items="currentUsers"
-                    :columns="columns"
-                    :skip="skip"
-                    :take="take"
-                    :total="total"
-                    @filterchange = "filterChange"
-                    @pagechange="pageChangeHandler"
-                    @sortchange="sortChangeHandler"
-                    @itemchange="itemChange"
-                    >
-                    <template v-slot:change="data">
-                        <td>
-                        <change :dataItem="data.props.dataItem"
-                                :title="'加入'"
-                                :btnColor="'primary'"
-                                @edit="addEdit"
-                        ></change>
-                        </td>
-                    </template>
-                </grid> 
-                </v-card-text>
-        </v-card> 
-     
-    </div>
+        </v-card-title>
+        <grid
+            class="list-view"
+            :pageable="pageable"
+            :page-size="pageSize"                 
+            :data-items="currentUsers"
+            :columns="columns"
+            :skip="skip"
+            :take="take"
+            :total="total"
+            @filterchange = "filterChange"
+            @pagechange="pageChangeHandler"
+            @sortchange="sortChangeHandler"
+            @itemchange="itemChange"
+            >
+            <template v-slot:change="data">
+                <td>
+                <change :dataItem="data.props.dataItem"
+                        :title="'加入'"
+                        :btnColor="'primary'"
+                        @edit="addEdit"
+                ></change>
+                </td>
+            </template>
+        </grid> 
+        </div>
+    </v-card>
 </template>
 <script>
 import VueI18n from 'vue-i18n'
@@ -135,8 +132,8 @@ export default {
         ],
       
         skip: 0,
-        take: 5,
-        pageSize: 10,
+        take: 20,
+        pageSize: 20,
         pageable: {
             buttonCount: 5,
             info: true,
@@ -146,8 +143,8 @@ export default {
         },
        
         skip1: 0,
-        take1: 5,
-        pageSize1: 10,
+        take1: 20,
+        pageSize1: 20,
         pageable1: {
             buttonCount: 5,
             info: true,
@@ -226,14 +223,24 @@ export default {
     }
  }
 </script>
-<style>
+<style scoped>
 .server{
     display: flex;
     flex-direction: row;
+    height: 100%;
+}
+.server-setting{
+    margin: 8px;
 }
 .search-bar{
     width: 250px;
     max-width: 250px;
 }
-
+.list-view{
+    height: 90% !important;
+}
+.list-card{
+   max-height: calc(100vh - 140px);
+    height: calc(100vh - 140px);
+}
 </style>

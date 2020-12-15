@@ -89,7 +89,16 @@ export default [{
             ...viewPermission["company-setting"]
         }
     },
-    
+     {
+        id: "company-addRecord",
+        name: "company-addRecord",
+        header: "FullPage",
+        text: "company-addRecord",
+        icon: "mdi-view-dashboard",
+        meta: {
+            ...viewPermission["company-addRecord"]
+        }
+    },
     // =============================================================================
     // PROJECT
     // =============================================================================

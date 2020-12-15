@@ -8,10 +8,23 @@
         >
         mdi-file-document-multiple-outline
         </v-icon>
-        <router-link style="text-decoration: none; color: inherit;" :to="{name: 'company-list'}">授權公司列表</router-link> > 修改授權公司資料
+       <router-link style="text-decoration: none; color: inherit;" :to="{name: 'company-list'}">授權公司列表</router-link> > 新增授權公司資料
         </v-card-title>
         <form @submit.prevent="submit">
             <v-row>
+                <v-col
+                    cols="12"
+                    md="12"
+                    >
+                <v-text-field
+                    v-model="name"
+                    :counter="20"
+                    :rules="nameRules"
+                    label="公司名稱"
+                    required
+                    ></v-text-field>
+                </v-col>
+
                 <v-col
                 cols="12"
                 md="6"
@@ -138,7 +151,7 @@ export default {
 
 </script>
 
-<style>
+<style scoped>
 .form-card{
     padding:12px;
     width:60%;

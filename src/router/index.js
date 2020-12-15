@@ -76,6 +76,12 @@ const routes = [
         component: () => import( '../components/company-setting.vue'),
        
       },
+      {
+        path: '/company-addRecord',
+        name: 'company-addRecord',
+        component: () => import( '../components/company-addRecord.vue'),
+       
+      },
     ]
   }
 ]

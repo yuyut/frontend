@@ -28,6 +28,11 @@ import "syncobox-formio/dist/syncobox-formio.css"
 import syncoboxsharedui from "syncobox-shared-ui";
 Vue.use(syncoboxsharedui);
 
+//gallery
+import syncoboxGalleryCard from "syncobox-gallery-card";
+import "syncobox-gallery-card/dist/syncobox-gallery-card.css";
+Vue.use(syncoboxGalleryCard);
+
 const apiConfig = {
     identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,
     redirectBaseUrl: process.env.VUE_APP_REDIRECT_BASE_URL,

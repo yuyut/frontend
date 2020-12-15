@@ -1,54 +1,52 @@
 <template>
-    <div class="upload">
-         <v-card>
-             <v-card-title class="v-card__title" >
-                <v-icon
-                left
-                class:="pr-3"
-                >
-                mdi-file-document-multiple-outline
-                </v-icon>
-                    伺服器列表
-                <v-spacer></v-spacer>
-                <v-icon class="mr-1">mdi-magnify</v-icon>
-                <v-text-field
-                    class="search-bar"
-                    placeholder="搜尋標註資料"
-                    outlined
-                    dense
-                    hide-details
-                    @keydown="searching($event)"
-                ></v-text-field>
-            </v-card-title>
-            <v-card-text>
-                <grid
-                    :pageable="pageable"
-                    :page-size="pageSize"                 
-                    :data-items="dataResult"
-                    :columns="columns"
-                    :skip="skip"
-                    :take="take"
-                    :total="total"
-                    @filterchange = "filterChange"
-                    @pagechange="pageChangeHandler"
-                    @sortchange="sortChangeHandler"
-                    @itemchange="itemChange"
-                    >
-                    <template v-slot:change="data">
-                        <td :dataItem="data.props.dataItem"
-                        >
-                        <router-link :to="{name: 'server-setting'}">
-                            <v-btn color=primary>  Edit
-                            </v-btn> 
-                            </router-link>
-                        </td>
-                    </template>
-                </grid> 
-                </v-card-text>
-        </v-card> 
+    <v-card class="list-card"> 
+        <v-card-title class="v-card__title" >
+        <v-icon
+        left
+        class:="pr-3"
+        >
+        mdi-file-document-multiple-outline
+        </v-icon>
+            伺服器列表
+        <v-spacer></v-spacer>
+        <v-icon class="mr-1">mdi-magnify</v-icon>
+        <v-text-field
+            class="search-bar"
+            placeholder="搜尋標註資料"
+            outlined
+            dense
+            hide-details
+            @keydown="searching($event)"
+        ></v-text-field>
+    </v-card-title>
 
-     
-    </div>
+        <grid
+            class="list-view"
+            :pageable="pageable"
+            :page-size="pageSize"                 
+            :data-items="dataResult"
+            :columns="columns"
+            :skip="skip"
+            :take="take"
+            :total="total"
+            @filterchange = "filterChange"
+            @pagechange="pageChangeHandler"
+            @sortchange="sortChangeHandler"
+            @itemchange="itemChange"
+            >
+            <template v-slot:change="data">
+                <td :dataItem="data.props.dataItem"
+                >
+                <router-link :to="{name: 'server-setting'}">
+                    <v-btn color=primary>  Edit
+                    </v-btn> 
+                    </router-link>
+                </td>
+            </template>
+        </grid> 
+
+</v-card> 
+
 </template>
 <script>
 import VueI18n from 'vue-i18n'
@@ -82,7 +80,7 @@ export default {
         ],
         total:this.$store.state.server.total,
         skip: 0,
-        take: 5,
+        take: 10,
         pageSize: 10,
         pageable: {
                 buttonCount: 5,
@@ -129,8 +127,14 @@ export default {
     }
  }
 </script>
-<style>
-
+<style scoped>
+.list-view{
+    height: 90% !important;
+}
+.list-card{
+    max-height: calc(100vh - 140px);
+    height: calc(100vh - 140px);
+}
 .search-bar{
     width: 250px;
     max-width: 250px;
