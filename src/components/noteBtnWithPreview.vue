@@ -12,11 +12,11 @@
             </v-icon> 
         </template>
     </v-tooltip>
-    <sb-layout-dialog-withTitle 
+    <sb-layout-dialogWithTitle
         :title="$i18n.t('flow.formBuilder.preview')"
         :tooltip="$i18n.t('flow.formBuilder.preview')"
         :iconText="'mdi-eye'"
-        :buttonSetting="{  icon: true, color:'primary' }"
+        :buttonSetting="btnSetting"
         @click="checkTemplate(); printdefaultResult()"
         >
         <template v-slot:buttons>
@@ -33,7 +33,8 @@
             dataType="formComponents"
             :formComponents="formComponents"
             :defaultResult="defaultResult"/>
-        </template></sb-layout-dialog-withTitle>
+        </template>
+        </sb-layout-dialogWithTitle>
 </td>
 <td v-else>
     <v-icon 
@@ -52,11 +53,11 @@
     >
         mdi-cancel
         </v-icon>
-        <sb-layout-dialog-withTitle
+        <sb-layout-dialogWithTitle
         :title="$i18n.t('flow.formBuilder.preview')"
         :tooltip="$i18n.t('flow.formBuilder.preview')"
         :iconText="'mdi-eye'"
-        :buttonSetting="{  icon: true, color:'primary' }"
+        :buttonSetting="btnSetting"
         @click="checkTemplate(); printdefaultResult()"
         >
         <template v-slot:buttons>
@@ -73,20 +74,8 @@
             dataType="formComponents"
             :formComponents="formComponents"
             :defaultResult="defaultResult"/>
-        </template></sb-layout-dialog-withTitle>
-    <!-- <v-tooltip bottom>
-    <span>{{this.$i18n.t('flow.formBuilder.preview')}}</span>
-    <template v-slot:activator="{ on }">
-        <v-icon
-            v-on="on"
-            class="mx-2" 
-            v-model="dialog" 
-            @click.stop="$emit('update:dialog', dialog = true);  checkTemplat()"
-            color="primary">
-                mdi-eye
-            </v-icon>
-    </template>
-    </v-tooltip> -->
+        </template>
+        </sb-layout-dialogWithTitle>
     </td>
 </template>
 <script>
@@ -96,23 +85,13 @@ export default {
         formComponents:Array,
         showRender:Boolean,
         gotSchema:Boolean,
-        dialog:Boolean,
-        field: String,
         dataItem: Object,
-        format: String,
-        className: String,
-        columnIndex: Number,
-        columnsCount: Number,
-        rowType: String,
-        level: Number,
-        expanded: Boolean,
-        editor: String,
-        currentTemplateResult: Object,
     },
     data: function(){   
         return{
             defaultResult:{},
-            currentId,
+            currentId:null,
+            btnSetting:{  icon: true, color:'primary' },
         }
     },
     methods: {

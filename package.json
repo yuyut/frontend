@@ -1,11 +1,15 @@
 {
   "name": "syncobox-report",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.20",
+  "private": false,
+  "main": "dist/syncobox-report.common.js",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "serve": "vue-cli-service serve --port 9002",
     "build": "vue-cli-service build",
-    "build-bundle": "vue-cli-service build --target lib --name syncobox-app-page ./src/package/index.js",
+    "build-bundle": "vue-cli-service build --target lib --name syncobox-report ./src/package/index.js",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -26,10 +30,11 @@
     "bootstrap-vue": "^2.19.0",
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
-    "syncobox-gallery-card": "^0.1.7",
+    "syncobox-gallery-card": "^0.1.12",
     "syncobox-markup": "^0.3.4",
-    "syncobox-shared": "^1.2.17",
+    "syncobox-shared": "^1.2.37",
     "syncobox-shared-api": "^1.1.50",
+    "syncobox-shared-ui": "^0.1.10",
     "syncobox-style": "^0.1.12",
     "vue": "^2.6.12",
     "vue-router": "^3.2.0",

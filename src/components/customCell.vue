@@ -30,6 +30,9 @@ export default {
     props:{
         currentId:String,
         id: String,
+           formVersionId:{
+            type:String,
+        },
     },
 
     data: function() {
@@ -73,9 +76,7 @@ export default {
         }
     },
    computed:{
-      formVersionId(){
-          return this.$route.params.formVersionId;
-      },
+     
   }
 }
     

@@ -1,7 +1,5 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Enter from '../Enter.vue'
-import formVersion from '../formVersion.vue'
 import MainLayout from '@/layouts/Main.vue'
 import store from "@/store";
 import { vuexOidcCreateRouterMiddleware } from 'vuex-oidc'
@@ -23,8 +21,8 @@ const routes = [
       },{
         path: '/FormVersion/:formVersionId/DocumentReportTemplate',
         //path: '/FormVersion/DocumentReportTemplate',/FormVersion/2778a5f3-1024-4c97-9e09-892319689f6a/DocumentReportTemplate'
-        name: 'Enter',
-        component: Enter,
+        name: 'uploadFile',
+        component: () => import( '../components/uploadFile.vue'),
         params:{ formVersionId:null}
         //props: true
 
@@ -33,7 +31,7 @@ const routes = [
         path: '/Form/:formId/FormResultTemplate',
         //path: '/Form/51bb96ec-30e2-4697-869c-94c47b43cc14/formVersion'
         name: 'formVersion',
-        component: formVersion,
+        component: () => import( '../components/FormResultUpolad.vue'),
         params:{ formId:null}
         //props: true
 

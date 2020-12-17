@@ -91,8 +91,13 @@ export default {
                 'change' : change,
                 'UserMenu' : UserMenu
               },
-
-  data: function(){
+     props: {
+        formId: {
+            type:String,
+            //default:'88787421-5690-451e-a1ed-e41797d0d822'
+        },
+    },
+    data: function(){
         
     return{
         gotSchema : false,
@@ -106,10 +111,10 @@ export default {
         //destinationId:this.$route.params.id,
         columnMenu: true,
         columns: [
-            { field: 'name', title:this.$i18n.t('panorama.name') },
-            { field: 'isEnable', title:this.$i18n.t('company.is_enable'), editable:false,cell:"isEnable" },
-            { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'), editable:false,cell:"name"},
-            { title: this.$i18n.t('flow.actions.edit'),  cell:"change" , width:'240px',filterable:false, sortable: false, columnMenu:false },
+            { field: 'name', title:this.$t('panorama.name') },
+            { field: 'isEnable', title:this.$t('company.is_enable'), editable:false,cell:"isEnable" },
+            { field: 'createdUserName', title:this.$t('form.dataGrid.createdUser'), editable:false,cell:"name"},
+            { title: this.$t('flow.actions.edit'),  cell:"change" , width:'240px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
@@ -353,9 +358,9 @@ export default {
         this.postData();
     },
     computed:{
-    formId(){
-        return this.$route.params.formId;
-      },
+    // formId(){
+    //     return this.$route.params.formId;
+    //   },
     
     }
  }

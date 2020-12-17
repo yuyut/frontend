@@ -21,7 +21,7 @@
                             color="primary"
                             dark
                             v-on="on"
-                            id="uploadBtn"
+                            id="addnew"
                             class:="px-3"
                         >
                             {{$t('flow.form.add')}}
@@ -98,7 +98,7 @@
                         ></noteBtn>
                     </template>
                     <template v-slot:aa="data">
-                        <customeButton  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" > </customeButton>
+                        <customeButton :formVersionId="formVersionId"  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" > </customeButton>
                     </template>
                     <template v-slot:day="data">
                         <td > {{time(data.props.dataItem.createdDate)}} </td>
@@ -135,6 +135,12 @@ export default {
                 'noteBtn' : noteBtn,
                 'UserMenu' : UserMenu
               },
+    props: {
+        formVersionId:{
+            type:String,
+            //default:'51bb96ec-30e2-4697-869c-94c47b43cc14'
+        },
+    },
 
   data: function(){
       
@@ -346,14 +352,15 @@ export default {
     //this.formData();
   },
   computed:{
-      formVersionId(){
-          return this.$route.params.formVersionId;
-      },
+    //   formVersionId(){
+    //     console.log(this.$route.params.formVersionId);
+    //     return this.$route.params.formVersionId;
+    //   },
 
   }
  }
 </script>
-<style>
+<style scoped>
 
 #upload{
     text-align: left;
@@ -367,9 +374,12 @@ export default {
     padding:16px;
     font-size: 1.25rem
 }
-#uploadBtn{ 
- margin:8px;
- margin-right:0px;
+
+#addnew{
+    position: absolute;
+    right:16px;
+    top:16px;
+    margin-right: 0;
 }
 
 

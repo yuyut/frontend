@@ -145,95 +145,22 @@
           v-for="(photo) in photosData"
           :key="photo.id"
         >
-        <v-hover
-          v-slot="{ hover }"
-          open-delay="0"
-        >
-        <v-card class="image-grid-card card" 
-        :elevation="hover ? 12 : 2"> 
-          
-          <v-img 
-          class="image-card"
-          v-on="on"
-          v-bind="attrs"
-          @click="changeCurrentId(photo.id);changeCurrentImage(photo.image);changeCurrentName(photo.createdUserName);changeCurrentTime(photo.createdDate);activateDrawer()"
-          max-height="350"
-          contain
-          :src="(photo.image == undefined) ? '' : photo.image"
-          aspect-ratio="1.7"
-          alt="random image"
-          > 
-          <!-- <img class="image-card" :src="(photo.image == undefined) ? '' : photo.image"> -->
-         <v-menu offset-y>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon class="edit-icon d-md-none"
-                v-bind="attrs"
+          <div @click="changeCurrentId(photo.id);changeCurrentImage(photo.imgSrc);changeCurrentName(photo.author);changeCurrentTime(photo.date);activateDrawer()" 
+          :key="photo.id"
+          >
+          <v-hover v-slot="{hover}">
+            <sb-gallery-card
                 v-on="on"
-                @click="changeCurrentId(photo.id)"
-                >mdi-dots-horizontal
-              </v-icon>
-            </template>
-              <v-dialog
-                v-model="deleteDialog"
-                persistent
-                max-width="290"
-              > 
-              <template v-slot:activator="{ on, attrs }">
-                <v-list>
-                  <v-list-item link 
-                  v-bind="attrs"
-                  v-on="on">
-                    <v-list-item-title>DELETE</v-list-item-title>
-                  </v-list-item>
-                </v-list>
-              </template>
-              <v-card>
-                <v-card-title class="headline">
-                  Alert
-                </v-card-title>
-                <v-card-text class="text-box">Are you sure you want to delete this item?</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="green darken-1"
-                    text
-                    @click="deleteDialog = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                    color="green darken-1"
-                    text
-                    @click="deleteDialog = false; myDelete(currentId); imageDialog = false; "
-                  >
-                    Delete
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-menu>
-          <div v-if="hover" class="gradient">
-            <div  id="image-text">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
-            </div>
-                  
-          <div class=" d-sm-none fill-height mini-gradient">
-            <div  id="image-text">{{photo.createdUserName}} &nbsp;  <br/>建立時間: {{time(photo.createdDate)}} ({{fromNow(photo.createdDate)}})</div>
-            </div>
-            <template v-slot:placeholder>
-              <v-row
-                class="fill-height ma-0"
-                align="center"
-                justify="center"
-              >
-                <v-progress-circular
-                  indeterminate
-                  color="primary"
-                ></v-progress-circular>
-              </v-row>
-            </template>           
-          </v-img> 
-        </v-card>
-        </v-hover>
+                v-bind="attrs"
+                :hover="hover"
+                :item="photo"
+                :hasRelativeTime="true"
+                :isShowHead="false"
+                :isShowTitle="true"
+                :isShowDescription ="false"
+            ></sb-gallery-card>
+            </v-hover>
+        </div>
       </v-col>
       </v-row>  
       </v-card-text>
@@ -276,7 +203,6 @@
             </template>
             <span>留言</span>
           </v-tooltip>
-
           <v-tooltip bottom>
             <template v-slot:activator="{ on, attrs }">
               <v-list-item link>
@@ -774,6 +700,10 @@ export default {
     },
   },
   methods: { 
+   renameKey ( obj, oldKey, newKey ) {
+      obj[newKey] = obj[oldKey];
+      delete obj[oldKey];
+    },
     searching(event){
         if(event.key==="Enter" || event.target._value===""){
             this.searchValue = event.target.value
@@ -898,25 +828,30 @@ export default {
       let vm = this;
       this.$API.api.main.projectPhoto.get(this.projectId,queryStr,this.ConfigJSON)
           .then(res => {
+          const arr = res.data.data;
+          console.log("before" + arr);
+          arr.forEach( obj => {this.$set(obj,'formatTime',vm.time(obj.createdDate) );
+              this.renameKey( obj, 'createdUserName', 'author' );
+              this.renameKey( obj, 'createdDate', 'date' ) 
+          } );
+         
+          console.log("after" + arr);
+          
 
-          // handle success
-          //DONE: page count = response.total/ page size
-          //DONE: page ++, but consider the page bottom case Loading = false
-          //DONE: photos data array 
-          //DONE: remove the loading icon
-          //DONE: get photos and put it in the DOM (vue updates)
           console.log(res);
           this.total = res.data.total;
           this.loading = false;
 
           //CONCAT CONCAT CONCAT!!!!!
-          this.photosData = vm.photosData.concat(res.data.data);
+          this.photosData = vm.photosData.concat(arr);
+          console.log(this.photosData);
           this.newData = res.data.data;
           this.page++;
           this.isScrollToPageBottom();
           if(this.documentHeight()-this.windowHeight()-this.scrollTop() < this.windowHeight()*0.1 && !this.bottom){
               this.postData();
           }
+
       })
       .then(function(){
         vm.getPhotos(vm.newData);
@@ -1001,14 +936,13 @@ export default {
           if (res.data) {
             reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
-            vm.$set(vm.photosData[index],'image',reader.result);
-            vm.$set(vm.photosData[index],'readMoreActivated',false);
+            vm.$set(vm.photosData[index],'imgSrc',reader.result);
              //vm.$forceUpdate();      
             };
           }
         })
         .catch(function (error) {
-          vm.$set(vm.photosData[index],'image',vm.NoImageAtAll);
+          vm.$set(vm.photosData[index],'imgSrc',vm.NoImageAtAll);
           console.log(error);
           console.log("can't find photo");
         }); 
@@ -1054,8 +988,6 @@ export default {
     height: 100%;
   }
   .image-card{
-    
-
     width: auto;
     height: 210px;
     object-fit: contain;

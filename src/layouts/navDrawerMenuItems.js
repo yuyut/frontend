@@ -26,10 +26,22 @@ export default [{
         }
     },
     {
+        id: "uploadFile",
+        name: "uploadFile",
+        header: "FullPage",
+        text: "uploadFile",
+        icon: "mdi-view-dashboard",
+        params: { formVersionId: '51bb96ec-30e2-4697-869c-94c47b43cc14' },
+        subMenuItems: [],
+        meta: {
+            ...viewPermission["uploadFile"]
+        }
+    },
+    {
         id: "formVersion",
         name: "formVersion",
         header: "FullPage",
-        text: "formVersion",
+        text: "FormResultUpolad",
         icon: "mdi-view-dashboard",
         params: { formId: '88787421-5690-451e-a1ed-e41797d0d822' },
         subMenuItems: [],

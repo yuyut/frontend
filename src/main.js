@@ -7,6 +7,7 @@ import router from './router'
 Vue.config.productionTip = false
 
 
+
 // main.js
 import API from 'syncobox-shared-api'
 //
@@ -24,9 +25,6 @@ import syncoboxFormio from "syncobox-formio"
 import "syncobox-formio/dist/syncobox-formio.css"
 
 
-//
-import syncoboxsharedui from "syncobox-shared-ui";
-Vue.use(syncoboxsharedui);
 
 //gallery
 import syncoboxGalleryCard from "syncobox-gallery-card";
