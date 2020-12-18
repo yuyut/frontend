@@ -8,7 +8,7 @@
             class="mx-2" 
             @click="editHandler"
             color="primary"
-            >  mdi-pencil
+            >  mdi-pencil 
             </v-icon> 
         </template>
     </v-tooltip>

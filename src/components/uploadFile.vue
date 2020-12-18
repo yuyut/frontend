@@ -20,6 +20,7 @@
                         <v-btn 
                             color="primary"
                             dark
+                            outlined
                             v-on="on"
                             id="addnew"
                             class:="px-3"
@@ -138,7 +139,7 @@ export default {
     props: {
         formVersionId:{
             type:String,
-            //default:'51bb96ec-30e2-4697-869c-94c47b43cc14'
+            default:'51bb96ec-30e2-4697-869c-94c47b43cc14'
         },
     },
 
@@ -157,7 +158,7 @@ export default {
             { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'),editable:false,cell:'name'},
             { field: 'fileName', title:this.$i18n.t('panorama.file_name'),editable:false},
             { field: 'note', title:this.$i18n.t('company.note'), columnMenu:false },
-            { title: "",  cell:"note" , width:'120px',filterable:false, sortable: false, columnMenu:false },
+            { title: this.$t('flow.actions.edit'),  cell:"note" , width:'150px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),

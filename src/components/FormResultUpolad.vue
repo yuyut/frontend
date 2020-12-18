@@ -11,9 +11,10 @@
                         {{$t('sidebar.form.companyForms')}} : {{realformName}} 
                     <v-spacer></v-spacer>
                     <v-btn 
-                        color="primary"
+                       color="primary"
                         dark
-                        id="addnew"
+                        outlined
+                        v-on="on"
                         class:="px-3"
                         @click='addRecord'
                     >
@@ -94,7 +95,7 @@ export default {
      props: {
         formId: {
             type:String,
-            //default:'88787421-5690-451e-a1ed-e41797d0d822'
+            default:'88787421-5690-451e-a1ed-e41797d0d822'
         },
     },
     data: function(){
@@ -114,7 +115,7 @@ export default {
             { field: 'name', title:this.$t('panorama.name') },
             { field: 'isEnable', title:this.$t('company.is_enable'), editable:false,cell:"isEnable" },
             { field: 'createdUserName', title:this.$t('form.dataGrid.createdUser'), editable:false,cell:"name"},
-            { title: this.$t('flow.actions.edit'),  cell:"change" , width:'240px',filterable:false, sortable: false, columnMenu:false },
+            { title: this.$t('flow.actions.edit'),  cell:"change" , width:'180px',filterable:false, sortable: false, columnMenu:false },
         ],
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),

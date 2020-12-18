@@ -132,40 +132,48 @@
         </v-list>
       </v-menu>
     </v-toolbar>
-      <v-dialog
+      <!-- <v-dialog
         v-model="imageDialog"
         max-width=90%
       >
       <v-spacer></v-spacer>   
-      <template v-slot:activator="{ on, attrs }">
-     <v-card-text>
+      <template v-slot:activator="{ on, attrs }"> -->
+     
       <v-row  class="row123"  >
         <v-col
           cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
           v-for="(photo) in photosData"
           :key="photo.id"
+          @click="changeCurrentItem(photo);changeCurrentId(photo.id);changeCurrentImage(photo.imgSrc);changeCurrentName(photo.author);changeCurrentTime(photo.date);showViewer= true"
         >
-          <div @click="changeCurrentId(photo.id);changeCurrentImage(photo.imgSrc);changeCurrentName(photo.author);changeCurrentTime(photo.date);activateDrawer()" 
-          :key="photo.id"
-          >
+   
           <v-hover v-slot="{hover}">
             <sb-gallery-card
-                v-on="on"
-                v-bind="attrs"
                 :hover="hover"
                 :item="photo"
                 :hasRelativeTime="true"
                 :isShowHead="false"
                 :isShowTitle="true"
                 :isShowDescription ="false"
-            ></sb-gallery-card>
+                
+              ></sb-gallery-card>
             </v-hover>
-        </div>
+            
+          
       </v-col>
       </v-row>  
-      </v-card-text>
-      </template>
-      <v-card id="preview-list-content">
+      <v-dialog v-model="showViewer">
+        <sb-media-viewer
+            :showViewer="showViewer"
+            :markupData="{'imgSrc': currentImage}" 
+            :dataItem="currentItem" 
+            :showPrevBtn="true" 
+            :showNextBtn="true"
+            
+        ></sb-media-viewer>
+          </v-dialog>
+      <!-- </template> -->
+      <!-- <v-card id="preview-list-content">
         <v-navigation-drawer  class="d-none d-md-block" 
           ref='imageDrawer'
           id="right-drawer"
@@ -480,7 +488,7 @@
             </div>
           </v-card-text>
         </v-card>
-      </v-dialog> 
+      </v-dialog>  -->
         <v-progress-circular v-if="loading && (!bottom)"
           indeterminate
           color="primary"
@@ -572,12 +580,17 @@ export default {
 
   },
   watch:{
-    imageDialog:{
-      handler(){
-        if(this.imageDialog == true){
-          this.$refs.imageDrawer.isActive=true;
-        }
-      }
+    // imageDialog:{
+    //   handler(){
+    //     if(this.imageDialog == true){
+    //       this.$refs.imageDrawer.isActive=true;
+    //     }
+    //   }
+    // },
+    showViewer:{
+       handler(){
+         console.log(this.showViewer);
+       }
     },
     sort:{
       deep: true,
@@ -599,6 +612,7 @@ export default {
   },
   data() {
     return {
+      showViewer:false,
       searchValue:null,
       infoColor:'',
       commentColor:'primary',
@@ -656,6 +670,7 @@ export default {
       filter: null,
       componentKey: 0,
       currentName:null,
+      currentItem:null,
       currentId:null,
       currentTime:null,
       currentImage:null,
@@ -700,6 +715,9 @@ export default {
     },
   },
   methods: { 
+    closeImgDialog(value){
+      this.showViewer=value;
+    },
    renameKey ( obj, oldKey, newKey ) {
       obj[newKey] = obj[oldKey];
       delete obj[oldKey];
@@ -758,6 +776,9 @@ export default {
       console.log(data);
       this.sort.dir = data;
       this.postData();
+    },
+    changeCurrentItem(item){
+      this.currentItem = item;
     },
     changeCurrentId(id){
       this.currentId = id;
@@ -969,15 +990,16 @@ export default {
         
   },
   mounted() {
-    this.onResize()
-    window.addEventListener('resize', this.onResize, { passive: true })
+    this.onResize();
+    window.addEventListener('resize', this.onResize, { passive: true });
+    this.$root.$on("closeMediaViewer",(value)=>{
+      this.closeImgDialog(value);
+    });
   },
   beforeDestroy() {
     if (typeof window === 'undefined') return
     window.removeEventListener('resize', this.onResize, { passive: true })
-  },
-
-  
+  },  
 }
 </script>
 

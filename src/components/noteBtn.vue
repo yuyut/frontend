@@ -1,10 +1,22 @@
 <template>
 <td v-if="!dataItem['inEdit']">
-    <v-icon 
-    @click="editHandler"
-    color="primary"
-    >  mdi-pencil
-    </v-icon> 
+    <v-tooltip bottom>
+    <span>{{this.$t('flow.actions.edit')}}</span>
+        <template v-slot:activator="{ on}">
+            <v-btn
+            outlined
+            color="primary">
+            <v-icon 
+            color="primary"
+            v-on="on"
+            class="mx-2" 
+            @click="editHandler"
+            >  mdi-pencil 
+            </v-icon> 
+            {{$t('flow.actions.edit')}}
+            </v-btn>
+        </template>
+    </v-tooltip>
 </td>
 <td v-else>
     <v-icon 
@@ -51,3 +63,7 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+
+</style>

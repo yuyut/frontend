@@ -2,14 +2,8 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 
-
-
 Vue.config.productionTip = false
 
-
-
-// main.js
-import API from 'syncobox-shared-api'
 //
 import vuetify from './plugins/vuetify';
 import moment from 'moment';
@@ -24,6 +18,10 @@ import store from './store'
 import syncoboxFormio from "syncobox-formio"
 import "syncobox-formio/dist/syncobox-formio.css"
 
+//media viewer
+import syncoboxMediaViewer from "syncobox-media-viewer";
+import "syncobox-media-viewer/dist/syncobox-media-viewer.css";
+Vue.use(syncoboxMediaViewer);
 
 
 //gallery
