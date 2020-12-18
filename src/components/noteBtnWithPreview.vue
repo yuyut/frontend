@@ -17,7 +17,7 @@
         :tooltip="$i18n.t('flow.formBuilder.preview')"
         :iconText="'mdi-eye'"
         :buttonSetting="btnSetting"
-        @click="checkTemplate(); printdefaultResult()"
+        @click="checkTemplate()"
         >
         <template v-slot:buttons>
             <v-icon
@@ -71,7 +71,7 @@
         :tooltip="$i18n.t('flow.formBuilder.preview')"
         :iconText="'mdi-eye'"
         :buttonSetting="btnSetting"
-        @click="checkTemplate(); printdefaultResult()"
+        @click="checkTemplate()"
         >
         <template v-slot:buttons>
             <v-icon
@@ -132,19 +132,13 @@ export default {
             console.log(error);
         });      
         },
-        printdefaultResult(){
-            console.log(this.defaultResult);
-            console.log(this.showRender && this.gotSchema);
-            console.log("formComponents"+this.formComponents);
-        },
+
         async formSave(){
         var result = await this.$refs.formRender.getSubmiton();
         var resultJson = await JSON.stringify(result);
         var resultJson2 = JSON.stringify(resultJson);
-        console.log(this.currentId);
         this.$API.api.main.formResultTemplate.putContent(this.currentId, resultJson2, APICONFIG.getJsonConfig)
             .then(res => {
-                    console.log("success", res );
                 })
             .catch(function (error) {
                 console.log(error);

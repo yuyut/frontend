@@ -525,8 +525,7 @@ export default {
     lazyLoad: {
       inserted: el => {
         async function loadImage() {
-         var result;
-          //console.log(result);
+         var result;;
             await Vue.prototype.$API.api.main.photo.getData(el.id,null,Vue.prototype.$Config)            
             .then(res => {
               const reader = new FileReader();
@@ -535,8 +534,6 @@ export default {
                 reader.onloadend = function() { 
                   result = reader.result; 
                   el.src=result;
-                  //Vue.prototype.$img[el.id]=result;
-                  //console.log(Vue.prototype.$img[el.id]);
                   
                 };
               }
@@ -544,7 +541,6 @@ export default {
             .catch(function (error) {
                 console.log(error);
             }); 
-            console.log("loadImage DONE");
         }
 
         function handleIntersect(entries, observer) {
@@ -580,18 +576,6 @@ export default {
 
   },
   watch:{
-    // imageDialog:{
-    //   handler(){
-    //     if(this.imageDialog == true){
-    //       this.$refs.imageDrawer.isActive=true;
-    //     }
-    //   }
-    // },
-    showViewer:{
-       handler(){
-         console.log(this.showViewer);
-       }
-    },
     sort:{
       deep: true,
       handler(){
@@ -700,7 +684,6 @@ export default {
       }
     },
     btnHeight () {
-      console.log( "current size " +this.$vuetify.breakpoint.name);
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return 30
         case 'sm': return 35
@@ -749,8 +732,6 @@ export default {
       this.note=null;
     },
     activateDrawer(){
-      console.log(this.$refs.imageDrawer);
-      console.log(this.$refs.imageDrawerMini);
       this.$refs.imageDrawer.isActive=true;
       this.$refs.imageDrawerMini.isActive=true;
     },
@@ -773,7 +754,6 @@ export default {
     changeSortDir(data){
       this.page = 0;
       this.photosData = [];
-      console.log(data);
       this.sort.dir = data;
       this.postData();
     },
@@ -803,20 +783,16 @@ export default {
           this.bottom = true;
        }
         else {
-          console.log("not bottom")
           this.bottom = false;
         }
             
     },
     handScroll(){
-      console.log("scrolling");
       if(!this.loading && this.scrollTop() + this.windowHeight() >= (this.documentHeight() - 150/*滾動響應區域高度取150px*/)){
         this.isScrollToPageBottom();
-       if(!this.bottom){
-          console.log("fetchdata");
-          
+       if(!this.bottom){       
           this.postData();
-          //DONE: show loading icon
+
        }
       }
     },
@@ -838,7 +814,6 @@ export default {
     },
     postData:function(){
       this.loading = true;
-      console.log(queryStr);
       if(this.page==0)  this.page++;
       let state2 = {   
                   take: this.pageSize,
@@ -850,22 +825,17 @@ export default {
       this.$API.api.main.projectPhoto.get(this.projectId,queryStr,this.ConfigJSON)
           .then(res => {
           const arr = res.data.data;
-          console.log("before" + arr);
           arr.forEach( obj => {this.$set(obj,'formatTime',vm.time(obj.createdDate) );
               this.renameKey( obj, 'createdUserName', 'author' );
               this.renameKey( obj, 'createdDate', 'date' ) 
           } );
-         
-          console.log("after" + arr);
-          
 
-          console.log(res);
           this.total = res.data.total;
           this.loading = false;
 
           //CONCAT CONCAT CONCAT!!!!!
           this.photosData = vm.photosData.concat(arr);
-          console.log(this.photosData);
+
           this.newData = res.data.data;
           this.page++;
           this.isScrollToPageBottom();
@@ -898,7 +868,6 @@ export default {
       let vm = this;
       this.$API.api.main.projectPhoto.post(this.projectId,'GeneralPicture',formdata)            
       .then(res => {
-        console.log(res);
         this.file = null;
         this.page = 0;
         this.photosData = [];
@@ -918,10 +887,8 @@ export default {
         //empty input
         
         if (input) {
-        console.log(this.photosData.length);
         let index = this.photosData.findIndex(p => p.id === input);
         this.photosData.splice(index, 1);
-         console.log(this.photosData.length);
         }
         this.input = null;
       })
@@ -965,7 +932,6 @@ export default {
         .catch(function (error) {
           vm.$set(vm.photosData[index],'imgSrc',vm.NoImageAtAll);
           console.log(error);
-          console.log("can't find photo");
         }); 
       }
     },

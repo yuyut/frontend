@@ -219,7 +219,6 @@ export default {
         let str = this.dataResult[index].note;
         let id = this.dataResult[index].id;
         const queryStr = toDataSourceRequestString(str);
-        console.log("queryStr"+queryStr);
         this.$API.api.main.documentReportTemplate.putNote(id,str)
         .then(res => {
         })
@@ -286,7 +285,6 @@ export default {
         });
     },
     changeCurrentId(id){
-        console.log(id);
         this.parentCurrentId=id;
     },
     pageChangeHandler: function(event) {
@@ -358,10 +356,7 @@ export default {
     //this.formData();
   },
   computed:{
-    //   formVersionId(){
-    //     console.log(this.$route.params.formVersionId);
-    //     return this.$route.params.formVersionId;
-    //   },
+
 
   }
  }

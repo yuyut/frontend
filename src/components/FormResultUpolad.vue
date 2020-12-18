@@ -150,11 +150,7 @@ export default {
         var result = await this.$refs.formRender.getSubmiton();
         var resultJson = await JSON.stringify(result);
         var resultJson2 = JSON.stringify(resultJson);
-        console.log(this.currentId);
         this.$API.api.main.formResultTemplate.putContent(this.currentId, resultJson2, APICONFIG.getJsonConfig)
-            .then(res => {
-                    console.log("success", res );
-                })
             .catch(function (error) {
                 console.log(error);
             });      
@@ -336,7 +332,6 @@ export default {
                          };
         let name = "nameee";
         const queryStr = toDataSourceRequestString(state);
-        console.log("queryStr is : "+queryStr)
         let vm = this;
         this.$API.api.main.formFormResultTemplate.all(this.formId,queryStr)
             .then(res => {
