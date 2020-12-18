@@ -22,6 +22,7 @@
         <template v-slot:buttons>
             <v-icon
                 @click.stop="formSave()"
+                
                 class="mx-2" 
                 color="primary">
                     mdi-content-save
@@ -37,15 +38,25 @@
         </sb-layout-dialogWithTitle>
 </td>
 <td v-else>
+    <v-tooltip bottom>
+    <span>確認</span>
+    <template v-slot:activator="{ on}">
     <v-icon 
         left
+        v-on="on"
         class="mx-2" 
         @click="addUpdateHandler"
         color="primary"
         >
         mdi-check
         </v-icon  >
+        </template>
+    </v-tooltip>
+     <v-tooltip bottom>
+    <span>取消</span>
+    <template v-slot:activator="{ on}">
     <v-icon
+        v-on="on"
         right
         class="mx-2" 
         @click="cancelDiscardHandler"
@@ -53,6 +64,8 @@
     >
         mdi-cancel
         </v-icon>
+        </template>
+        </v-tooltip>
         <sb-layout-dialogWithTitle
         :title="$i18n.t('flow.formBuilder.preview')"
         :tooltip="$i18n.t('flow.formBuilder.preview')"

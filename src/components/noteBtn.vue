@@ -4,13 +4,13 @@
     <span>{{this.$t('flow.actions.edit')}}</span>
         <template v-slot:activator="{ on}">
             <v-btn
+            v-on="on"
+            @click="editHandler"
             outlined
             color="primary">
             <v-icon 
             color="primary"
-            v-on="on"
             class="mx-2" 
-            @click="editHandler"
             >  mdi-pencil 
             </v-icon> 
             {{$t('flow.actions.edit')}}
@@ -19,13 +19,20 @@
     </v-tooltip>
 </td>
 <td v-else>
+    <span>
+    <v-tooltip bottom>
+    <span>確認</span>
+    <template v-slot:activator="{ on}">
     <v-icon 
+        v-on="on"
         left
         @click="addUpdateHandler"
         color="primary"
         >
         mdi-check
         </v-icon  >
+        </template>
+        </v-tooltip>
     <v-icon
         right
         @click="cancelDiscardHandler"
@@ -33,6 +40,7 @@
     >
         mdi-cancel
         </v-icon>
+    </span>
     </td>
 </template>
 <script>

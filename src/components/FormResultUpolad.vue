@@ -10,6 +10,9 @@
                     </v-icon>
                         {{$t('sidebar.form.companyForms')}} : {{realformName}} 
                     <v-spacer></v-spacer>
+                    <v-tooltip bottom>
+                    <span>{{this.$t('form.form.add')}}</span>
+                    <template v-slot:activator="{ on}">
                     <v-btn 
                        color="primary"
                         dark
@@ -20,6 +23,8 @@
                     >
                         {{$t('form.form.add')}}
                     </v-btn>
+                    </template>
+                    </v-tooltip>
             </v-card-title>
             <v-card-text>
                 <grid 

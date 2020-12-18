@@ -10,13 +10,11 @@
                     mdi-file-document-multiple-outline
                     </v-icon>
                         {{$t('flow.dataGrid.formName')}} : {{formName}} - {{versionNumber}}
-                    <v-dialog
-                        v-model="dialog"
-                        persistent
-                        max-width="600px"
-                    >
+                    
                     <v-spacer></v-spacer>
-                        <template v-slot:activator="{ on }">
+                        <v-tooltip bottom>
+                        <span>{{this.$t('form.form.add')}}</span>
+                        <template v-slot:activator="{ on}">
                         <v-btn 
                             color="primary"
                             dark
@@ -24,10 +22,17 @@
                             v-on="on"
                             id="addnew"
                             class:="px-3"
+                            @click="dialog=true"
                         >
                             {{$t('flow.form.add')}}
                         </v-btn>
                         </template>
+                        </v-tooltip>
+                        <v-dialog
+                        v-model="dialog"
+                        persistent
+                        max-width="600px"
+                    >
                         <v-card>
                         <v-card-title>
                             <span class="headline">{{$t('uploadTemplate')}}</span>

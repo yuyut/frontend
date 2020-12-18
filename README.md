@@ -1,24 +1,37 @@
-# grid2
+# syncobox-report
 
-## Project setup
+## 安裝
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
+npm install syncobox-report
 ```
 
-### Compiles and minifies for production
+### 使用方式
+
+## main.js
+
 ```
-npm run build
+import syncoboxReport from "syncobox-report";
+import "syncobox-report/dist/syncobox-report.css";
+Vue.use(syncoboxReport);
 ```
 
-### Lints and fixes files
+### Usage
 ```
-npm run lint
+<!-- 用formId來渲染表單 -->
+<FormResultUpolad
+      :formId="id"
+      >
+    </FormResultUpolad>
+    
+<!-- 用formVersionId來渲染表單 -->    
+<UploadFile :formVersionId="id">
+    </UploadFile>
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Props
+
+|name |type |required|default |description |
+|-----|-----|--------|--------|------------|
+|formId|String|true|" "|-|
+|formVersionId|String|true|	""|-|
+
