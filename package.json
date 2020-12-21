@@ -1,6 +1,6 @@
 {
   "name": "syncobox-report",
-  "version": "0.1.23",
+  "version": "0.1.25",
   "private": false,
   "main": "dist/syncobox-report.common.js",
   "files": [

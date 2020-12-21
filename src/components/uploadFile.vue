@@ -35,7 +35,7 @@
                     >
                         <v-card>
                         <v-card-title>
-                            <span class="headline">{{$t('uploadTemplate')}}</span>
+                            <span class="headline">{{$t('form.dataGrid.uploadFile')}}</span>
                         </v-card-title>
                         <v-card-text>
                             <v-file-input 
@@ -157,14 +157,7 @@ export default {
         columnMenu: true,
         file:null,
         jsonfile:null,
-        columns: [
-            { title: this.$i18n.t('form.actions.apply'), cell:"aa", width:'120px',editable:false, columnMenu:false }, 
-            { field: 'createdDate', title:this.$i18n.t('form.dataGrid.createdTime'),filter: 'numeric',cell:"day",editable:false },
-            { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'),editable:false,cell:'name'},
-            { field: 'fileName', title:this.$i18n.t('panorama.file_name'),editable:false},
-            { field: 'note', title:this.$i18n.t('company.note'), columnMenu:false },
-            { title: this.$t('flow.actions.edit'),  cell:"note" , width:'150px',filterable:false, sortable: false, columnMenu:false },
-        ],
+      
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
@@ -357,7 +350,16 @@ export default {
   },
   computed:{
 
-
+        columns(){
+            return [
+            { title: this.$i18n.t('form.actions.apply'), cell:"aa", width:'120px',editable:false, columnMenu:false }, 
+            { field: 'createdDate', title:this.$i18n.t('form.dataGrid.createdTime'),filter: 'numeric',cell:"day",editable:false },
+            { field: 'createdUserName', title:this.$i18n.t('form.dataGrid.createdUser'),editable:false,cell:'name'},
+            { field: 'fileName', title:this.$i18n.t('panorama.file_name'),editable:false},
+            { field: 'note', title:this.$i18n.t('company.note'), columnMenu:false },
+            { title: this.$t('flow.actions.edit'),  cell:"note" , width:'150px',filterable:false, sortable: false, columnMenu:false },
+            ]
+        }
   }
  }
 </script>

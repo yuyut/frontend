@@ -1,7 +1,7 @@
 <template>
 <td v-if="!dataItem['inEdit']">
     <v-tooltip bottom>
-    <span>{{this.$t('flow.actions.edit')}}</span>
+    <span>{{$t('flow.actions.edit')}}</span>
         <template v-slot:activator="{ on}">
             <v-btn
             v-on="on"
@@ -10,7 +10,7 @@
             color="primary">
             <v-icon 
             color="primary"
-            class="mx-2" 
+            class="me-2" 
             >  mdi-pencil 
             </v-icon> 
             {{$t('flow.actions.edit')}}

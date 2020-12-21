@@ -18,14 +18,14 @@ Vue.use(syncoboxReport);
 ### Usage
 ```
 <!-- 用formId來渲染表單 -->
-<FormResultUpolad
+<sb-report-formResultTemplate
       :formId="id"
       >
-    </FormResultUpolad>
+    </sb-report-formResultTemplate>
     
 <!-- 用formVersionId來渲染表單 -->    
-<UploadFile :formVersionId="id">
-    </UploadFile>
+<sb-report-documentReportTemplate :formVersionId="id">
+    </sb-report-documentReportTemplate>
 ```
 
 ## Props

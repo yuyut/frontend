@@ -7,8 +7,8 @@ import FormResultUpolad from "../components/FormResultUpolad.vue";
 export function install(Vue) {
 	if (install.installed) return;
 	install.installed = true;
-    Vue.component('UploadFile', uploadFile);
-    Vue.component('FormResultUpolad', FormResultUpolad);
+    Vue.component('sb-report-documentReportTemplate', uploadFile);
+    Vue.component('sb-report-formResultTemplate', FormResultUpolad);
 }
 
 // Create module definition for Vue.use()

@@ -116,12 +116,7 @@ export default {
         isAdd:false,
         //destinationId:this.$route.params.id,
         columnMenu: true,
-        columns: [
-            { field: 'name', title:this.$t('panorama.name') },
-            { field: 'isEnable', title:this.$t('company.is_enable'), editable:false,cell:"isEnable" },
-            { field: 'createdUserName', title:this.$t('form.dataGrid.createdUser'), editable:false,cell:"name"},
-            { title: this.$t('flow.actions.edit'),  cell:"change" , width:'180px',filterable:false, sortable: false, columnMenu:false },
-        ],
+        
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
@@ -359,9 +354,14 @@ export default {
         this.postData();
     },
     computed:{
-    // formId(){
-    //     return this.$route.params.formId;
-    //   },
+        columns(){
+            return [
+                    { field: 'name', title:this.$t('panorama.name') },
+                    { field: 'isEnable', title:this.$t('company.is_enable'), editable:false,cell:"isEnable" },
+                    { field: 'createdUserName', title:this.$t('form.dataGrid.createdUser'), editable:false,cell:"name"},
+                    { title: this.$t('flow.actions.edit'),  cell:"change" , width:'180px',filterable:false, sortable: false, columnMenu:false },
+                ]
+        } 
     
     }
  }

@@ -5,7 +5,7 @@
         <template v-slot:activator="{ on}">
             <v-icon 
             v-on="on"
-            class="mx-2" 
+            class="me-3" 
             @click="editHandler"
             color="primary"
             >  mdi-pencil 
@@ -23,7 +23,7 @@
             <v-icon
                 @click.stop="formSave()"
                 
-                class="mx-2" 
+                class="me-3" 
                 color="primary">
                     mdi-content-save
             </v-icon>
@@ -44,7 +44,7 @@
     <v-icon 
         left
         v-on="on"
-        class="mx-2" 
+        class="me-3" 
         @click="addUpdateHandler"
         color="primary"
         >
@@ -58,7 +58,7 @@
     <v-icon
         v-on="on"
         right
-        class="mx-2" 
+        class="me-3" 
         @click="cancelDiscardHandler"
         color="primary"
     >
@@ -76,7 +76,7 @@
         <template v-slot:buttons>
             <v-icon
                 @click.stop=" formSave()"
-                class="mx-2" 
+                class="me-3" 
                 color="primary">
                     mdi-content-save
             </v-icon>

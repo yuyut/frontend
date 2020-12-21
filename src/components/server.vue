@@ -1,6 +1,6 @@
 <template>
-    <v-card class="list-card"> 
-        <v-card-title class="v-card__title" >
+    <v-card class="list-card px-5 py-4"> 
+        <v-card-title class="v-card__title px-0" >
         <v-icon
         left
         class:="pr-3"
@@ -34,13 +34,19 @@
             @sortchange="sortChangeHandler"
             @itemchange="itemChange"
             >
-            <template v-slot:change="data">
-                <td :dataItem="data.props.dataItem"
-                >
-                <router-link :to="{name: 'server-setting'}">
-                    <v-btn color=primary>  Edit
-                    </v-btn> 
-                    </router-link>
+            <template v-slot:edit="data">
+                <td :dataItem="data.props.dataItem ">
+                    <v-tooltip bottom>
+                    <span>{{$t('flow.actions.edit')}}</span>
+                        <template v-slot:activator="{ on}">
+                            <v-btn
+                            v-on="on"
+                            @click="editHandler"
+                            color="primary">
+                            {{$t('flow.actions.edit')}}
+                            </v-btn>
+                        </template>
+                    </v-tooltip>
                 </td>
             </template>
         </grid> 
@@ -49,21 +55,10 @@
 
 </template>
 <script>
-import VueI18n from 'vue-i18n'
-import axios from 'axios';
 import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
-import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
-import moment from 'moment'
-import { skip } from '@progress/kendo-data-query/dist/npm/transducers';
-
-
-//import store from "@/store.js";
-
 
 export default {
 
-    name: 'FormResultUpolad', 
-  
     components: { 
                 'grid':Grid,
               },
@@ -76,7 +71,7 @@ export default {
             { field: 'machineName', title:'機器名稱' },
             { field: 'serverName', title:'伺服器名稱', editable:false },
             { field: 'description', title:'描述', editable:false},
-            { title: this.$i18n.t('flow.actions.edit'),  cell:"change" , width:'240px',filterable:false, sortable: false, columnMenu:false },
+            { title: this.$i18n.t('flow.actions.edit'),  cell:"edit" , width:'160px',filterable:false, sortable: false, columnMenu:false },
         ],
         total:this.$store.state.server.total,
         skip: 0,

@@ -1,52 +1,55 @@
 <template>
-    <v-card class="server">
-        <div class="server-setting">
-            <v-card-title class="v-card__title" >
-            <v-icon
-            left
-            class:="pr-3"
-            >
-            mdi-file-document-multiple-outline
-            </v-icon>
-                目前伺服器成員
-            <v-spacer></v-spacer>
-            <v-icon class="mr-1">mdi-magnify</v-icon>
-            <v-text-field
-                class="search-bar"
-                placeholder="搜尋標註資料"
-                outlined
-                dense
-                hide-details
-                @keydown="searching($event)"
-            ></v-text-field>
-        </v-card-title>
-        <grid
-            class="list-view"
-            :pageable="pageable1"
-            :page-size="pageSize1"                 
-            :data-items="addedUsers"
-            :columns="addedColumns"
-            :skip="skip1"
-            :take="take1"
-            :total="total1"
-            @filterchange = "filterChange"
-            @pagechange="pageChangeHandler1"
-            @sortchange="sortChangeHandler"
-            @itemchange="itemChange"
-            >
-            <template v-slot:change="data">
-                <td>
-                    <change :dataItem="data.props.dataItem"
-                        :title="'移除'"
-                        :btnColor="'primary'"
-                        @edit="removeEdit"
-                ></change>
-                </td>
-            </template>
-        </grid> 
-        </div>
-        <div class="server-setting">
-            <v-card-title class="v-card__title" >
+    <v-card class="px-5 py-4">
+        <v-row>
+            <v-col class="py-0">
+                <v-card-title class="v-card__title px-0" >
+                <v-icon
+                left
+                class:="pr-3"
+                >
+                mdi-file-document-multiple-outline
+                </v-icon>
+                    目前伺服器成員
+                <v-spacer></v-spacer>
+                <v-icon class="mr-1">mdi-magnify</v-icon>
+                    <v-text-field
+                        class="search-bar"
+                        placeholder="搜尋標註資料"
+                        outlined
+                        dense
+                        hide-details
+                        @keydown="searching($event)"
+                    ></v-text-field>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                    <grid
+                        class="list-view"
+                        :pageable="pageable1"
+                        :page-size="pageSize1"                 
+                        :data-items="addedUsers"
+                        :columns="addedColumns"
+                        :skip="skip1"
+                        :take="take1"
+                        :total="total1"
+                        @filterchange = "filterChange"
+                        @pagechange="pageChangeHandler1"
+                        @sortchange="sortChangeHandler"
+                        @itemchange="itemChange"
+                        >
+                        <template v-slot:change="data">
+                            <td>
+                                <change :dataItem="data.props.dataItem"
+                                    :title="'移除'"
+                                    :btnColor="'primary'"
+                                    @edit="removeEdit"
+                            ></change>
+                            </td>
+                        </template>
+                    </grid> 
+                </v-card-text>
+            </v-col>
+            <v-col  class="py-0">
+            <v-card-title class="v-card__title px-0" >
                 <v-icon
                 left
                 class:="pr-3"
@@ -56,53 +59,49 @@
                     可加入的成員
                 <v-spacer></v-spacer>
                 <v-icon class="mr-1">mdi-magnify</v-icon>
-                <v-text-field
-                    class="search-bar"
-                    placeholder="搜尋標註資料"
-                    outlined
-                    dense
-                    hide-details
-                    @keydown="searching($event)"
-                ></v-text-field>
-        </v-card-title>
-        <grid
-            class="list-view"
-            :pageable="pageable"
-            :page-size="pageSize"                 
-            :data-items="currentUsers"
-            :columns="columns"
-            :skip="skip"
-            :take="take"
-            :total="total"
-            @filterchange = "filterChange"
-            @pagechange="pageChangeHandler"
-            @sortchange="sortChangeHandler"
-            @itemchange="itemChange"
-            >
-            <template v-slot:change="data">
-                <td>
-                <change :dataItem="data.props.dataItem"
-                        :title="'加入'"
-                        :btnColor="'primary'"
-                        @edit="addEdit"
-                ></change>
-                </td>
-            </template>
-        </grid> 
-        </div>
+                    <v-text-field
+                        class="search-bar"
+                        placeholder="搜尋標註資料"
+                        outlined
+                        dense
+                        hide-details
+                        @keydown="searching($event)"
+                    ></v-text-field>
+                </v-card-title>
+                <v-card-text class="pa-0">
+                <grid
+                    class="list-view"
+                    :pageable="pageable"
+                    :page-size="pageSize"                 
+                    :data-items="currentUsers"
+                    :columns="columns"
+                    :skip="skip"
+                    :take="take"
+                    :total="total"
+                    @filterchange = "filterChange"
+                    @pagechange="pageChangeHandler"
+                    @sortchange="sortChangeHandler"
+                    @itemchange="itemChange"
+                    >
+                    <template v-slot:change="data">
+                        <td>
+                        <change :dataItem="data.props.dataItem"
+                                :title="'加入'"
+                                :btnColor="'primary'"
+                                @edit="addEdit"
+                        ></change>
+                        </td>
+                    </template>
+                </grid> 
+                </v-card-text>
+            </v-col>
+        </v-row>
     </v-card>
 </template>
 <script>
-import VueI18n from 'vue-i18n'
-import axios from 'axios';
+
 import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
-import { toDataSourceRequestString  } from '@progress/kendo-data-query'; 
-import moment from 'moment'
 import change from './editBtn'
-import { skip } from '@progress/kendo-data-query/dist/npm/transducers';
-
-
-//import store from "@/store.js";
 
 
 export default {
@@ -122,13 +121,13 @@ export default {
             { field: 'company.name', title:'公司' },
             { field: 'user.name', title:'姓名'},
             { field: 'user.email', title:'Email'},
-            { title: this.$i18n.t('flow.actions.edit'),  cell:"change" , width:'240px' },
+            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"change"  },
         ],
         columns: [
             { field: 'company.name', title:'公司' },
             { field: 'user.name', title:'姓名'},
             { field: 'user.email', title:'Email'},
-            { title: this.$i18n.t('flow.actions.edit'),  cell:"change" , width:'240px' },
+            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"change"  },
         ],
       
         skip: 0,
@@ -224,14 +223,6 @@ export default {
  }
 </script>
 <style scoped>
-.server{
-    display: flex;
-    flex-direction: row;
-    height: 100%;
-}
-.server-setting{
-    margin: 8px;
-}
 .search-bar{
     width: 250px;
     max-width: 250px;
