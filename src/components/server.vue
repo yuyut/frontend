@@ -29,19 +29,16 @@
             :skip="skip"
             :take="take"
             :total="total"
-            @filterchange = "filterChange"
             @pagechange="pageChangeHandler"
-            @sortchange="sortChangeHandler"
-            @itemchange="itemChange"
             >
             <template v-slot:edit="data">
-                <td :dataItem="data.props.dataItem ">
+                <td :dataItem="data.props.dataItem">
                     <v-tooltip bottom>
                     <span>{{$t('flow.actions.edit')}}</span>
-                        <template v-slot:activator="{ on}">
+                        <template v-slot:activator="{on}">
                             <v-btn
                             v-on="on"
-                            @click="editHandler"
+                            :to="{name: 'ServerSetting' ,params:{serverId: data.props.dataItem.id}}"
                             color="primary">
                             {{$t('flow.actions.edit')}}
                             </v-btn>
@@ -66,6 +63,73 @@ export default {
   data: function(){
         
     return{
+        server:{
+            "data": [
+                {
+                "id": 1,
+                "machineName": "WEBIM-SERVER02",
+                "serverName": "Taiwan-WeBIM",
+                "description": "衛武資訊台灣BIM服務客戶"
+                },
+                {
+                "id": 4,
+                "machineName": "China-Drxcd",
+                "serverName": "China-Drxcd_Intranet",
+                "description": "迪瑞成都內部網路專用"
+                },
+                {
+                "id": 5,
+                "machineName": "WEBIM-SERVER02",
+                "serverName": "Taiwan-建國總公司區網_02",
+                "description": "建國內部網路專用"
+                },
+                {
+                "id": 8,
+                "machineName": "WeBIM-Server",
+                "serverName": "Taiwan-WeBIM-02",
+                "description": "衛武資訊台灣BIM服務客戶"
+                },
+                {
+                "id": 9,
+                "machineName": "Taiwan-Drxcd",
+                "serverName": "Taiwan-Drxcd_Intranet",
+                "description": "迪瑞台北內部伺服器"
+                },
+                {
+                "id": 11,
+                "machineName": "WeBIM-Server03",
+                "serverName": "建國總公司_01",
+                "description": "建國工程專用伺服器-區網"
+                },
+                {
+                "id": 12,
+                "machineName": "WeBIM-Server03",
+                "serverName": "衛武資訊-台灣",
+                "description": "衛武資訊台灣伺服器"
+                },
+                {
+                "id": 14,
+                "machineName": "WeBIM-Server04",
+                "serverName": "建國總公司區網_02",
+                "description": "建國內部網路專用"
+                },
+                {
+                "id": 15,
+                "machineName": "WeBIM-Server03",
+                "serverName": "Taiwan-試用伺服器",
+                "description": "衛武資訊新版測試"
+                },
+                {
+                "id": 22,
+                "machineName": "WeBIM-Server03",
+                "serverName": "衛武資訊外部網路伺服器",
+                "description": "衛武資訊專案服務客戶"
+                }
+            ],
+            "total": 10,
+            "aggregateResults": null,
+            "errors": null
+        },
         searchValue:null,
         columns: [
             { field: 'machineName', title:'機器名稱' },
@@ -73,7 +137,7 @@ export default {
             { field: 'description', title:'描述', editable:false},
             { title: this.$i18n.t('flow.actions.edit'),  cell:"edit" , width:'160px',filterable:false, sortable: false, columnMenu:false },
         ],
-        total:this.$store.state.server.total,
+        
         skip: 0,
         take: 10,
         pageSize: 10,
@@ -117,7 +181,8 @@ export default {
 
     },
     computed:{
-        dataResult(){ return this.$store.state.server.data.slice(this.skip,this.skip+this.take)}
+        dataResult(){ return this.server.data.slice(this.skip,this.skip+this.take)},
+        total(){ return this.server.total}
  
     }
  }

@@ -1,7 +1,7 @@
 <template>
     <div class="upload">
-         <v-card>
-             <v-card-title class="v-card__title" >
+         <v-card class="px-5 py-4">
+             <v-card-title class="v-card__title px-0">
                     <v-icon
                     left
                     class:="pr-3"
@@ -26,13 +26,14 @@
                     </template>
                     </v-tooltip>
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pa-0">
+
                 <grid 
+                    :pageable="pageable"
                     :style="{height: '680px'}"
                     :data-items="dataResult"
                     :columns="columns"
                     :column-menu="columnMenu"
-                    :pageable="true"
                     :skip= "skip"
                     :take="take"
                     :total="total"
@@ -41,7 +42,7 @@
                     :resizable = "true"
                     :filter="filter"
                     :edit-field="'inEdit'"
-                    @filterchange = "filterChange"
+                    @filterchange ="filterChange"
                     @pagechange="pageChangeHandler"
                     @sortchange="sortChangeHandler"
                     @itemchange="itemChange"
@@ -62,7 +63,6 @@
                         <td >
                         <v-checkbox :label="$t('project.isEnable')" small v-model="data.props.dataItem.isEnable" :disabled ="(!isAdd &&data.props.dataItem.inEdit )? false : true"></v-checkbox>
                         </td>
-    
                     </template>
                     <template v-slot:name="data">
                         <td>
@@ -71,9 +71,7 @@
                     </template>
                 </grid> 
                 </v-card-text>
-        </v-card> 
-
-     
+        </v-card>     
     </div>
 </template>
 <script>
@@ -116,7 +114,13 @@ export default {
         isAdd:false,
         //destinationId:this.$route.params.id,
         columnMenu: true,
-        
+        pageable: {
+            buttonCount: 5,
+            info: true,
+            type: 'numeric',
+            pageSizes: true,
+            previousNext: true
+        },
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
@@ -130,7 +134,6 @@ export default {
         take: 5,
         filter: null,
         parentCurrentId:null,
-
         versionNumber:null,
         inEdit:true,
         updatedData: [],
@@ -155,8 +158,8 @@ export default {
         this.currentId=e.dataItem.id;
         this.$API.api.main.formResultTemplate.get(this.currentId)
             .then(res => {
-                vm.currentTemplateResult=res.data.content;
-                vm.showRender = true;
+                this.currentTemplateResult=res.data.content;
+                this.showRender = true;
             })
         .catch(function (error) {
             console.log(error);
@@ -224,9 +227,11 @@ export default {
             let vm = this;
             this.$API.api.main.formResultTemplate.put(this.dataResult[index].id,this.dataResult[index])
             .then(res => {
-                vm.postData();
+                this.postData();
             })
             .catch(function (error) {
+                const snackbar={type:'error', message:'請輸入表單名稱', value:true, timeout:4000};  
+                vm.$store.commit("notification/SET_ALERT", snackbar);
                 console.log(error);
             });
             
@@ -238,10 +243,12 @@ export default {
             let vm = this;
             this.$API.api.main.formFormResultTemplate.post(this.formId,this.dataResult[0].name)
             .then(res => {
-                vm.postData();
+                this.postData();
             })
             .catch(function (error) {
-                    console.log(error);
+                const snackbar={type:'error', message:'請輸入表單名稱', value:true, timeout:4000};  
+                vm.$store.commit("notification/SET_ALERT", snackbar);
+                console.log(error);
             });
         }
         this.isAdd=false;

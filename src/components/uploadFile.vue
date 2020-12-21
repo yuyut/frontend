@@ -1,8 +1,8 @@
 
 <template>
     <div class="upload">
-         <v-card>
-             <v-card-title class="v-card__title" >
+         <v-card class="px-5 py-4">
+             <v-card-title class="v-card__title px-0">
                     <v-icon
                     left
                     class:="pr-3"
@@ -20,7 +20,6 @@
                             dark
                             outlined
                             v-on="on"
-                            id="addnew"
                             class:="px-3"
                             @click="dialog=true"
                         >
@@ -76,13 +75,13 @@
                         </v-card>
                     </v-dialog>    
             </v-card-title>
-            <v-card-text>
+            <v-card-text class="pa-0">
                 <grid             
                     :style="{height: '680px'}"
                     :data-items="dataResult"
                     :columns="columns"
                     :column-menu="columnMenu"
-                    :pageable="true"
+                    :pageable="pageable"
                     :skip= "skip"
                     :take="take"
                     :total="total"
@@ -107,7 +106,7 @@
                         <customeButton :formVersionId="formVersionId"  :id="data.props.dataItem.id" :currentId="parentCurrentId" @change="changeCurrentId" > </customeButton>
                     </template>
                     <template v-slot:day="data">
-                        <td > {{time(data.props.dataItem.createdDate)}} </td>
+                        <td ><sb-ui-time-cell :time="data.props.dataItem.createdDate" /></td>
                     </template>
                       <template v-slot:name="data">
                         <td>
@@ -157,7 +156,13 @@ export default {
         columnMenu: true,
         file:null,
         jsonfile:null,
-      
+        pageable: {
+            buttonCount: 5,
+            info: true,
+            type: 'numeric',
+            pageSizes: true,
+            previousNext: true
+            },
         dataResult:[],
         //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
@@ -367,7 +372,7 @@ export default {
 
 #upload{
     text-align: left;
-     padding: 25px 50px 75px 100px;
+
 }
 .parent p {
   color: #42b883;
@@ -378,12 +383,6 @@ export default {
     font-size: 1.25rem
 }
 
-#addnew{
-    position: absolute;
-    right:16px;
-    top:16px;
-    margin-right: 0;
-}
 
 
 </style>

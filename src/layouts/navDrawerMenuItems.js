@@ -62,55 +62,47 @@ export default [{
         }
     },
     {
-        id: "server",
-        name: "server",
+        id: "Server",
+        name: "Server",
         header: "FullPage",
-        text: "server",
+        text: "Server",
         icon: "mdi-view-dashboard",
         meta: {
-            ...viewPermission["server"]
+            ...viewPermission["Server"]
         }
     },
     {
-        id: "tawan-webim",
-        name: "server-setting",
+        id: "ServerSetting",
+        name: "ServerSetting",
         header: "FullPage",
-        text: "taiwan-webim",
+        text: "ServerSetting",
         icon: "mdi-view-dashboard",
+        params: { serverId:"" },
         meta: {
-            ...viewPermission["webim"]
+            ...viewPermission["ServerSetting"]
         }
     },
     {
-        id: "company-list",
-        name: "company-list",
+        id: "CompanyList",
+        name: "CompanyList",
         header: "FullPage",
-        text: "company-list",
+        text: "CompanyList",
         icon: "mdi-view-dashboard",
         meta: {
-            ...viewPermission["company-list"]
+            ...viewPermission["CompanyList"]
         }
     },
     {
-        id: "company-setting",
-        name: "company-setting",
+        id: "CompanySetting",
+        name: "CompanySetting",
         header: "FullPage",
-        text: "company-setting",
+        text: "CompanySetting",
         icon: "mdi-view-dashboard",
         meta: {
-            ...viewPermission["company-setting"]
+            ...viewPermission["CompanySetting"]
         }
     },
-     {
-        id: "company-addRecord",
-        name: "company-addRecord",
-        header: "FullPage",
-        text: "company-addRecord",
-        icon: "mdi-view-dashboard",
-        meta: {
-            ...viewPermission["company-addRecord"]
-        }
-    },
+
     // =============================================================================
     // PROJECT
     // =============================================================================

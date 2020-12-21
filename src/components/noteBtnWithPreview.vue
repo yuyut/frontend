@@ -99,10 +99,10 @@ export default {
         showRender:Boolean,
         gotSchema:Boolean,
         dataItem: Object,
+        defaultResult: Array,
     },
     data: function(){   
         return{
-            defaultResult:{},
             currentId:null,
             btnSetting:{  icon: true, color:'primary' },
         }
@@ -117,21 +117,21 @@ export default {
         cancelDiscardHandler: function() {
             this.$emit('cancel', {dataItem:this.dataItem});
         },
-        // checkTemplate: function(){
-        //      this.$emit('checkTemplate', {dataItem:this.dataItem});
-        // },
-        checkTemplate(){
-        let vm = this;
-        this.currentId=this.dataItem.id;
-        this.$API.api.main.formResultTemplate.get(this.currentId)
-            .then(res => {
-                vm.defaultResult=res.data.content;
-                vm.showRender = true;
-            })
-        .catch(function (error) {
-            console.log(error);
-        });      
+        checkTemplate: function(){
+             this.$emit('checkTemplate', {dataItem:this.dataItem});
         },
+        // checkTemplate(){
+        // let vm = this;
+        // this.currentId=this.dataItem.id;
+        // this.$API.api.main.formResultTemplate.get(this.currentId)
+        //     .then(res => {
+        //         vm.defaultResult=res.data.content;
+        //         vm.showRender = true;
+        //     })
+        // .catch(function (error) {
+        //     console.log(error);
+        // });      
+        // },
 
         async formSave(){
         var result = await this.$refs.formRender.getSubmiton();

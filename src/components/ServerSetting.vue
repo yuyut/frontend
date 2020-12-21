@@ -31,12 +31,9 @@
                         :skip="skip1"
                         :take="take1"
                         :total="total1"
-                        @filterchange = "filterChange"
                         @pagechange="pageChangeHandler1"
-                        @sortchange="sortChangeHandler"
-                        @itemchange="itemChange"
                         >
-                        <template v-slot:change="data">
+                        <template v-slot:removeEdit="data">
                             <td>
                                 <change :dataItem="data.props.dataItem"
                                     :title="'移除'"
@@ -78,12 +75,9 @@
                     :skip="skip"
                     :take="take"
                     :total="total"
-                    @filterchange = "filterChange"
                     @pagechange="pageChangeHandler"
-                    @sortchange="sortChangeHandler"
-                    @itemchange="itemChange"
                     >
-                    <template v-slot:change="data">
+                    <template v-slot:addEdit="data">
                         <td>
                         <change :dataItem="data.props.dataItem"
                                 :title="'加入'"
@@ -106,8 +100,6 @@ import change from './editBtn'
 
 export default {
 
-    name: 'FormResultUpolad', 
-  
     components: { 
                 'grid':Grid,
                 'change' : change,
@@ -121,13 +113,13 @@ export default {
             { field: 'company.name', title:'公司' },
             { field: 'user.name', title:'姓名'},
             { field: 'user.email', title:'Email'},
-            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"change"  },
+            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"removeEdit"  },
         ],
         columns: [
             { field: 'company.name', title:'公司' },
             { field: 'user.name', title:'姓名'},
             { field: 'user.email', title:'Email'},
-            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"change"  },
+            { title: this.$i18n.t('flow.actions.edit'),  width:'150px', cell:"addEdit"  },
         ],
       
         skip: 0,
