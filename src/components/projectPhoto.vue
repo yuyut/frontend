@@ -137,7 +137,7 @@
           cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
           v-for="(photo,index) in photosData"
           :key="index"
-          @click="changeAll(photo)"
+          @click="changeAll(photo,index)"
         >
    
           <v-hover v-slot="{hover}">
@@ -155,7 +155,7 @@
       <v-dialog v-model="showViewer">
         <sb-media-viewer
             :showViewer="showViewer"
-            :markupData="markupData" 
+            :markupData="markupData"
             :dataItem="currentItem" 
             :showPrevBtn="true" 
             :showNextBtn="true"
@@ -269,38 +269,14 @@ export default {
   data() {
     return {
       showViewer:false,
-      markupData:null,
+      markupData:{imgSrc:null,svgSrc:null},
       searchValue:null,
       infoColor:'',
       commentColor:'primary',
       comment:true,
       info:false,
       note:null,
-      replys:[
-          { comment: '到底要不要吃?', time: '昨天', },
-          { comment: '還要吃嗎?', time: '2天前', },
-          { comment: 'ok!', time: '5天前', },
-          { comment: '這邊還要改!', time: '6天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-          { comment: '這邊還要改!', time: '7天前', },
-        
-      ],
+
       items: [
         { title: 'comment', icon: 'mdi-comment-outline',color:'primary' },
         { title: 'Home', icon: 'mdi-information-outline', color:'' },
@@ -369,10 +345,15 @@ export default {
     },
   },
   methods: { 
-    changeAll(photo){
+
+    changeAll(photo,index){
       this.currentItem=photo;
-      this.markupData=photo.markupData;
+      // this.markupData=photo.markupData;
+      this.markupData.imgSrc=photo.imgSrc;
+      console.log(this.markupData);
+      this.changeCurrentIndex(index);
       this.showViewer=true;
+      
     },
     closeImgDialog(value){
       this.showViewer=value;
@@ -594,7 +575,7 @@ export default {
             reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
             vm.$set(vm.photosData[index],'imgSrc',reader.result);
-            vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});
+            // vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});
              //vm.$forceUpdate();      
             };
           }
@@ -631,20 +612,21 @@ export default {
     this.$root.$on("closeMediaViewer",(value)=>{
       this.closeImgDialog(value);
     });
+    let vm = this;
     this.$root.$on("switchMediaData", (mode)=>{
     switch(mode){
         case "prev":
-            if(this.currentIndex>0){
-              this.currentIndex--;
-              this.currentItem = this.photosData[this.currentIndex];
-              this.markupData=this.currentItem.markupData;
+            if(vm.currentIndex>0){
+              vm.currentIndex--;
+              vm.currentItem = vm.photosData[vm.currentIndex];
+              vm.markupData=vm.currentItem.markupData;
             }
             break;
         case "next":
-             if(this.currentIndex < this.photosData.length-1){
-              this.currentIndex++;
-              this.currentItem = this.photosData[this.currentIndex]
-              this.markupData=this.currentItem.markupData;
+             if(vm.currentIndex < vm.photosData.length-1){
+              vm.currentIndex++;
+              vm.currentItem = vm.photosData[vm.currentIndex]
+              vm.markupData=vm.currentItem.markupData;
             }
             break;
      }
