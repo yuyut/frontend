@@ -29,6 +29,15 @@ import syncoboxGalleryCard from "syncobox-gallery-card";
 import "syncobox-gallery-card/dist/syncobox-gallery-card.css";
 Vue.use(syncoboxGalleryCard);
 
+//kendo
+import {
+  IntlProvider,
+  LocalizationProvider
+} from "@progress/kendo-vue-intl";
+
+Vue.use(IntlProvider);
+Vue.use(LocalizationProvider);
+
 const apiConfig = {
     identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,
     redirectBaseUrl: process.env.VUE_APP_REDIRECT_BASE_URL,

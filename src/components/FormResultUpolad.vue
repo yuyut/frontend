@@ -98,8 +98,17 @@ export default {
      props: {
         formId: {
             type:String,
-            default:'88787421-5690-451e-a1ed-e41797d0d822'
+            //default:'88787421-5690-451e-a1ed-e41797d0d822'
         },
+    },
+    watch:{
+        formId:{
+            handler(){        
+                this.getSchema();
+                this.formName();
+                this.postData(); 
+            }
+        }
     },
     data: function(){
         
@@ -109,10 +118,9 @@ export default {
         templatesResult:[],
         currentId:null,
         schema:null,
-        currentTemplateResult:[],
+        currentTemplateResult:{},
         realformName:null,
         isAdd:false,
-        //destinationId:this.$route.params.id,
         columnMenu: true,
         pageable: {
             buttonCount: 5,
@@ -122,13 +130,12 @@ export default {
             previousNext: true
         },
         dataResult:[],
-        //gridData: dataResult.map((dataEdit) => Object.assign({}, dataEdit)),
         rules: [
             v => !!v || 'Required Content',
         ],
         sort: [
                 { field: 'createdDate', dir: 'desc' }
-                ],
+            ],
         total:null,
         skip: 0,
         take: 5,
@@ -220,21 +227,25 @@ export default {
         if (e.dataItem.id!=undefined){ //edit existed item
             let index = this.dataResult.findIndex(p => p.id === e.dataItem.id);
             let item = this.dataResult[index];
-            let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
-            this.dataResult.splice(index, 1, updated);
-            let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
-            this.updatedData.splice(updateDataIndex, 1, updated);
-            let vm = this;
-            this.$API.api.main.formResultTemplate.put(this.dataResult[index].id,this.dataResult[index])
-            .then(res => {
-                this.postData();
-            })
-            .catch(function (error) {
+            if(item.name==""){
                 const snackbar={type:'error', message:'請輸入表單名稱', value:true, timeout:4000};  
-                vm.$store.commit("notification/SET_ALERT", snackbar);
-                console.log(error);
-            });
-            
+                this.$store.commit("notification/SET_ALERT", snackbar);
+                this.dataResult[index].inEdit=true;
+            }
+            else{
+                let updated = Object.assign(this.update(this.dataResult.slice(), item), {inEdit:undefined});
+                this.dataResult.splice(index, 1, updated);
+                let updateDataIndex = this.updatedData.findIndex(p => p.id === e.dataItem.id);
+                this.updatedData.splice(updateDataIndex, 1, updated);
+                let vm = this;
+                this.$API.api.main.formResultTemplate.put(this.dataResult[index].id,this.dataResult[index])
+                .then(res => {
+                    this.postData();
+                })
+                .catch(function (error) {
+                    console.log(error);
+                });
+            }
         }
         else{ //save new item
             const newRecord = e.dataItem;
@@ -352,7 +363,7 @@ export default {
     },
     created(){   
         this.getSchema();
-         this.formName();
+        this.formName();
  
     },
     beforeMount(){

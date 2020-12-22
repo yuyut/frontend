@@ -99,7 +99,7 @@ export default {
         showRender:Boolean,
         gotSchema:Boolean,
         dataItem: Object,
-        defaultResult: Array,
+        defaultResult: Object,
     },
     data: function(){   
         return{

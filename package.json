@@ -1,6 +1,6 @@
 {
   "name": "syncobox-report",
-  "version": "0.1.28",
+  "version": "0.1.32",
   "private": false,
   "main": "dist/syncobox-report.common.js",
   "files": [
@@ -16,7 +16,7 @@
     "core-js": "^3.6.5",
     "moment": "^2.29.1",
     "syncobox-gallery-card": "^0.1.12",
-    "syncobox-media-viewer": "^0.1.5",
+    "syncobox-media-viewer": "^0.1.6",
     "syncobox-shared": "^1.2.49",
     "vue": "^2.6.12",
     "vue-router": "^3.2.0",

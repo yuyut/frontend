@@ -35,11 +35,11 @@
                         >
                         <template v-slot:removeEdit="data">
                             <td>
-                                <change :dataItem="data.props.dataItem"
+                                <remove :dataItem="data.props.dataItem"
                                     :title="'移除'"
                                     :btnColor="'primary'"
                                     @edit="removeEdit"
-                            ></change>
+                            ></remove>
                             </td>
                         </template>
                     </grid> 
@@ -95,14 +95,14 @@
 <script>
 
 import { Grid,filterGroupByField } from '@progress/kendo-vue-grid';
-import change from './editBtn'
+import remove from './editBtn'
 
 
 export default {
 
     components: { 
                 'grid':Grid,
-                'change' : change,
+                'remove' : remove,
               },
 
   data: function(){

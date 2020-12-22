@@ -131,20 +131,13 @@
           </v-list-item>
         </v-list>
       </v-menu>
-    </v-toolbar>
-      <!-- <v-dialog
-        v-model="imageDialog"
-        max-width=90%
-      >
-      <v-spacer></v-spacer>   
-      <template v-slot:activator="{ on, attrs }"> -->
-     
+    </v-toolbar> 
       <v-row  class="row123"  >
         <v-col
           cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
-          v-for="(photo) in photosData"
-          :key="photo.id"
-          @click="changeCurrentItem(photo);changeCurrentId(photo.id);changeCurrentImage(photo.imgSrc);changeCurrentName(photo.author);changeCurrentTime(photo.date);showViewer= true"
+          v-for="(photo,index) in photosData"
+          :key="index"
+          @click="changeAll(photo)"
         >
    
           <v-hover v-slot="{hover}">
@@ -155,340 +148,19 @@
                 :isShowHead="false"
                 :isShowTitle="true"
                 :isShowDescription ="false"
-                
               ></sb-gallery-card>
             </v-hover>
-            
-          
       </v-col>
       </v-row>  
       <v-dialog v-model="showViewer">
         <sb-media-viewer
             :showViewer="showViewer"
-            :markupData="{'imgSrc': currentImage}" 
+            :markupData="markupData" 
             :dataItem="currentItem" 
             :showPrevBtn="true" 
             :showNextBtn="true"
-            
         ></sb-media-viewer>
-          </v-dialog>
-      <!-- </template> -->
-      <!-- <v-card id="preview-list-content">
-        <v-navigation-drawer  class="d-none d-md-block" 
-          ref='imageDrawer'
-          id="right-drawer"
-          v-model="imageDialog"
-          right
-          width=25%
-          permanent
-          >
-        <div class="nev-top-bar">
-          <v-list-item class="px-2" two-line>
-            <v-list-item-avatar>
-              <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{currentName}}</v-list-item-title>
-              <v-list-item-subtitle>{{fromNow(currentTime)}}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </div>
-        <v-divider></v-divider>
-        <div class="nav-right-bar">      
-          <v-list dense >
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-list-item link>
-              <v-icon
-                v-bind="attrs"
-                v-on="on"
-                :color="commentColor"
-                @click="changeNavContent('comment')"
-              >
-                mdi-comment-outline
-              </v-icon>           
-            </v-list-item> 
-            </template>
-            <span>留言</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on, attrs }">
-              <v-list-item link>
-              <v-icon
-                v-bind="attrs"
-                v-on="on"
-                :color="infoColor"
-                @click="changeNavContent('info')"
-              >
-                mdi-information-outline
-              </v-icon>           
-            </v-list-item> 
-            </template>
-            <span>關於</span>
-          </v-tooltip>
-          </v-list>
-          <v-spacer></v-spacer>
-
-          <v-list class="nav-bottom-icon">
-          <v-list-item link>                
-            <v-dialog
-                v-model="deleteDialog"
-                persistent
-                max-width="290"
-              >
-              <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  mdi-delete-outline
-                </v-icon>
-              </template>
-              <v-card>
-                <v-card-title class="headline">
-                  Alert
-                </v-card-title>
-                <v-card-text class="text-box">Are you sure you want to delete this item?</v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    color="green darken-1"
-                    text
-                    @click="deleteDialog = false"
-                  >
-                    Cancel
-                  </v-btn>
-                  <v-btn
-                    color="green darken-1"
-                    text
-                    @click="deleteDialog = false; myDelete(currentId); imageDialog = false; "
-                  >
-                    Delete
-                  </v-btn>
-                </v-card-actions>
-              </v-card>
-            </v-dialog>
-          </v-list-item>       
-          </v-list> 
-
-          <span></span>           
-        </div>
-        <div class="nav-content">
-          <div class="nav-comment"  v-if="!info">
-            <v-textarea 
-            dense
-            label="請在此輸入您的想法"
-            prepend-icon="mdi-comment"
-            clear-icon="mdi-close-circle"
-            clearable
-            auto-grow
-            rows="1"
-            row-height="15"
-            v-model="note"
-            filled
-            @keydown.enter="submitNote"
-            ></v-textarea>
-            <div class="nav-all-reply" >
-              <div class="nav-reply" v-for="reply in replys" :key="reply">
-                <v-list-item>
-                <v-list-item-avatar>
-                  <v-img src="https://randomuser.me/api/portraits/women/81.jpg"></v-img>
-                </v-list-item-avatar>
-                  <v-list-item-content class="left-side-text">
-                  <p class="text-title">Someone:</p>
-                  <span class="text-content">{{reply.comment}}</span>
-                  
-                   <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-icon 
-                      v-bind="attrs"
-                      v-on="on"
-                      >  mdi-dots-horizontal
-                      </v-icon> 
-                    </template>
-                    <v-list>
-                      <v-list-item link>
-                        <v-list-item-title>EDIT</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item link>
-                        <v-list-item-title>DELETE</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                  </v-list-item-content>
-                   <span class="right-side-sub-text">({{reply.time}})</span>
-                </v-list-item>
-              </div>
-            </div>
-            </div>
-          <div class="nav-info" v-if="info">
-            <v-list-item>
-              <v-list-item-content class="left-side-text">
-              <br/>
-              <p class="info-title">檔案名稱:</p> <p class="info-content">abc123</p>
-              <br/>
-              <p class="info-title">最後修改:</p> <p class="info-content">2014/7/21 下午10:02</p>
-              <br/>
-              <p class="info-title">上傳者:</p> <p class="info-content">Yu Tung</p>
-              <br/>
-              <p class="info-title">上傳日期:</p> <p class="info-content">2020/7/21 上午10:02</p>
-              </v-list-item-content>
-                <span class="right-side-sub-text"></span>
-              </v-list-item>
-            </div>
-        </div>
-        </v-navigation-drawer>
-        <v-navigation-drawer class="d-md-none" v-if="showNav"
-          ref='imageDrawerMini'
-          id="right-drawer-mini"
-          v-model="imageDialog"
-          width=100%
-          permanent
-          >
-        <div class="nev-top-bar">
-          <v-list-item class="px-2" two-line>
-            <v-list-item-avatar>
-              <v-img src="https://randomuser.me/api/portraits/men/85.jpg"></v-img>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title>{{currentName}}</v-list-item-title>
-              <v-list-item-subtitle>{{fromNow(currentTime)}}</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-                icon
-                @click.stop="showNav = !showNav"
-              >
-                <v-icon>mdi-chevron-right</v-icon>
-              </v-btn>
-          </v-list-item>
-        </div>
-        <v-divider></v-divider>
-       
-        <div class="nav-content-mini" >
-          <div class="nav-comment"  v-if="!info">
-            <v-textarea 
-            label="請在此輸入您的想法"
-            prepend-icon="mdi-comment"
-            clear-icon="mdi-close-circle"
-            clearable
-            auto-grow
-            rows="1"
-            v-model="note"
-            filled
-            @keydown.enter="submitNote"
-            :style="{padding:'8px'}"
-            ></v-textarea>
-            <div class="nav-all-reply" >
-              <div class="nav-reply" v-for="reply in replys" :key="reply">
-                <v-list-item>
-                <v-list-item-avatar>
-                  <v-img src="https://randomuser.me/api/portraits/women/81.jpg"></v-img>
-                </v-list-item-avatar>
-                  <v-list-item-content class="left-side-text">
-                  <p class="text-title">Someone:</p>
-                  <span class="text-content">{{reply.comment}}</span>
-                  
-                   <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                    <v-icon 
-                      v-bind="attrs"
-                      v-on="on"
-                      >  mdi-dots-horizontal
-                      </v-icon> 
-                    </template>
-                    <v-list>
-                      <v-list-item link>
-                        <v-list-item-title>EDIT</v-list-item-title>
-                      </v-list-item>
-                      <v-list-item link>
-                        <v-list-item-title>DELETE</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                  </v-list-item-content>
-                   <span class="right-side-sub-text">({{reply.time}})</span>
-                </v-list-item>
-              </div>
-            </div>
-            </div>
-          
-          <div class="nav-info"  v-if="info">
-            <v-list-item>
-              <v-list-item-content class="left-side-text">
-              <br/>
-              <p class="info-title">檔案名稱:</p> <p class="info-content">abc123</p>
-              <br/>
-              <p class="info-title">最後修改:</p> <p class="info-content">2014/7/21 下午10:02</p>
-              <br/>
-              <p class="info-title">上傳者:</p> <p class="info-content">Yu Tung</p>
-              <br/>
-              <p class="info-title">上傳日期:</p> <p class="info-content">2020/7/21 上午10:02</p>
-              </v-list-item-content>
-                <span class="right-side-sub-text"></span>
-              </v-list-item>
-            </div>
-           <div class="nav-bottom-bar ">         
-          <v-icon class="bottom-icon d-flex"                 
-            :color="commentColor"
-            @click="changeNavContent('comment')"
-          >
-            mdi-comment-outline
-          </v-icon>           
-          <v-icon class="bottom-icon d-flex"       
-            v-bind="attrs"
-            v-on="on"
-            :color="infoColor"
-            @click="changeNavContent('info')"
-          >
-            mdi-information-outline
-          </v-icon>     
-        
-        </div>
-        </div>
-        
-        </v-navigation-drawer>
-        <v-card-title class="justify-space-between preview-title ">
-          <v-icon
-            color="blue darken-1"
-            text
-            @click="imageDialog = false;"
-            class="preview-back"
-            @click.stop="mini = true"
-            >
-            mdi-keyboard-backspace
-          </v-icon>
-        <span>Preview</span><span class="d-none d-md-block"></span>
-        <span class="d-md-none">
-        <v-btn v-if="showNav"
-          v-bind="attrs"
-          v-on="on"
-          icon
-          @click="showNav = !showNav"
-          >
-            <v-icon>mdi-chevron-right</v-icon>
-          </v-btn>
-          <v-btn v-if="!showNav"
-          v-bind="attrs"
-          v-on="on"
-          icon
-          @click="showNav = !showNav"
-          >
-            <v-icon>mdi-chevron-left</v-icon>
-          </v-btn>
-        </span>
-        </v-card-title>      
-          <v-card-text :style="{height:'94%', width:'auto'}" class="preview-markup">
-            <div :style="{height:'100%', width:'100%'}" >
-              <sb-markup-viewer
-                :image-url='currentImage'
-                background-color="white"
-              ></sb-markup-viewer>
-            </div>
-          </v-card-text>
-        </v-card>
-      </v-dialog>  -->
+        </v-dialog>
         <v-progress-circular v-if="loading && (!bottom)"
           indeterminate
           color="primary"
@@ -597,6 +269,7 @@ export default {
   data() {
     return {
       showViewer:false,
+      markupData:null,
       searchValue:null,
       infoColor:'',
       commentColor:'primary',
@@ -653,11 +326,9 @@ export default {
             ],
       filter: null,
       componentKey: 0,
-      currentName:null,
-      currentItem:null,
-      currentId:null,
-      currentTime:null,
+      currentItem:{},
       currentImage:null,
+      currentIndex:null,
       imageDialog:false,      
       dialog:false,
       dialog1:false,
@@ -698,6 +369,11 @@ export default {
     },
   },
   methods: { 
+    changeAll(photo){
+      this.currentItem=photo;
+      this.markupData=photo.markupData;
+      this.showViewer=true;
+    },
     closeImgDialog(value){
       this.showViewer=value;
     },
@@ -757,21 +433,14 @@ export default {
       this.sort.dir = data;
       this.postData();
     },
+    changeCurrentIndex(index){
+      this.currentIndex = index;
+    },
     changeCurrentItem(item){
       this.currentItem = item;
     },
-    changeCurrentId(id){
-      this.currentId = id;
-    },
-    changeCurrentImage(image){
-      this.currentImage = image;
-    },
-    changeCurrentName(name){
-      this.currentName = name;
-    },
-    changeCurrentTime(date){
-      this.currentTime = date;
-    },
+
+
     editHandler: function() {
     this.$emit('edit', {dataItem:this.dataItem});
     },
@@ -925,6 +594,7 @@ export default {
             reader.readAsDataURL(res.data);
             reader.onloadend = function() { 
             vm.$set(vm.photosData[index],'imgSrc',reader.result);
+            vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});
              //vm.$forceUpdate();      
             };
           }
@@ -961,6 +631,24 @@ export default {
     this.$root.$on("closeMediaViewer",(value)=>{
       this.closeImgDialog(value);
     });
+    this.$root.$on("switchMediaData", (mode)=>{
+    switch(mode){
+        case "prev":
+            if(this.currentIndex>0){
+              this.currentIndex--;
+              this.currentItem = this.photosData[this.currentIndex];
+              this.markupData=this.currentItem.markupData;
+            }
+            break;
+        case "next":
+             if(this.currentIndex < this.photosData.length-1){
+              this.currentIndex++;
+              this.currentItem = this.photosData[this.currentIndex]
+              this.markupData=this.currentItem.markupData;
+            }
+            break;
+     }
+ })
   },
   beforeDestroy() {
     if (typeof window === 'undefined') return
