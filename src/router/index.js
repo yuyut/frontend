@@ -74,6 +74,12 @@ const routes = [
         component: () => import( '../components/CompanySetting.vue'),
        
       },
+      {
+        path: '/AccessControlDialog',
+        name: 'AccessControlDialog',
+        component: () => import( '../components/AccessControlDialog.vue'),
+       
+      },
 
     ]
   }

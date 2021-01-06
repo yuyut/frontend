@@ -38,6 +38,12 @@ import {
 Vue.use(IntlProvider);
 Vue.use(LocalizationProvider);
 
+
+//syncoboxMessage
+import syncoboxMessage from "syncobox-message";
+import "syncobox-message/dist/syncobox-message.css";
+Vue.use(syncoboxMessage)
+
 const apiConfig = {
     identityBaseUrl: process.env.VUE_APP_IDENTITY_BASE_URL,
     redirectBaseUrl: process.env.VUE_APP_REDIRECT_BASE_URL,

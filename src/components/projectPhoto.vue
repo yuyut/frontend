@@ -157,8 +157,8 @@
             :showViewer="showViewer"
             :markupData="markupData"
             :dataItem="currentItem" 
-            :showPrevBtn="true" 
-            :showNextBtn="true"
+            :showPrevBtn="showPrevBtn" 
+            :showNextBtn="showNextBtn"
         ></sb-media-viewer>
         </v-dialog>
         <v-progress-circular v-if="loading && (!bottom)"
@@ -268,8 +268,37 @@ export default {
   },
   data() {
     return {
+      comments:[
+                {
+                    id:0,
+                    content:"這是一棟房子嗎?",
+                    author:"神秘客",
+                    date:"2020-11-12T09:12:15.579458+00:00",
+                    replies:[
+                        {
+                            id:1-1,
+                            content:"看起來不像嗎?",
+                            author:"張建築師",
+                            date:"2020-11-12T09:12:15.579458+00:00",
+                        },
+                        {
+                            id:1-2,
+                            content:"你目瞅勾丟賽?",
+                            author:"Andy佬",
+                            date:"2020-11-12T09:12:15.579458+00:00",
+                        },
+                    ],
+                },
+                {
+                    id:1,
+                    content:"看起來不便宜，聽說最近這一帶房價漲很兇，一輩子只吃茶葉蛋也買不起",
+                    author:"頭號窮鬼",
+                    date:"2020-11-12T09:12:15.579458+00:00",
+                    replies:[],
+                }
+            ],
       showViewer:false,
-      markupData:{imgSrc:null,svgSrc:null},
+      markupData:null,
       searchValue:null,
       infoColor:'',
       commentColor:'primary',
@@ -319,7 +348,22 @@ export default {
     };
   },
   computed: {
-    
+    showPrevBtn(){
+       if(this.currentIndex > 0){
+        return true;
+      }
+      else{
+        return false;
+      }
+    },
+    showNextBtn(){
+      if(this.currentIndex < this.photosData.length-1){
+        return true;
+      }
+      else{
+        return false;
+      }
+    },
     breakPointName(){
       switch (this.$vuetify.breakpoint.name) {
         case 'xs': return 'xs'
@@ -348,8 +392,7 @@ export default {
 
     changeAll(photo,index){
       this.currentItem=photo;
-      // this.markupData=photo.markupData;
-      this.markupData.imgSrc=photo.imgSrc;
+      this.markupData=photo.markupData;
       console.log(this.markupData);
       this.changeCurrentIndex(index);
       this.showViewer=true;
@@ -472,6 +515,7 @@ export default {
                     };
       const queryStr = toDataSourceRequestString(state2);
       let vm = this;
+      console.log(this.$API);
       this.$API.api.main.projectPhoto.get(this.projectId,queryStr,this.ConfigJSON)
           .then(res => {
           const arr = res.data.data;
@@ -573,10 +617,15 @@ export default {
           const reader = new FileReader();
           if (res.data) {
             reader.readAsDataURL(res.data);
+            // onloadend!!! use this!!!
             reader.onloadend = function() { 
             vm.$set(vm.photosData[index],'imgSrc',reader.result);
-            // vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});
-             //vm.$forceUpdate();      
+            vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});     
+
+
+            ///fake data
+            vm.$set(vm.photosData[index],'description','此物件的ID: ' + index ); 
+            vm.$set(vm.photosData[index],'comments',vm.comments); 
             };
           }
         })

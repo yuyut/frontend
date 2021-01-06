@@ -102,7 +102,16 @@ export default [{
             ...viewPermission["CompanySetting"]
         }
     },
-
+    {
+            id: "AccessControlDialog",
+            name: "AccessControlDialog",
+            header: "FullPage",
+            text: "AccessControlDialog",
+            icon: "mdi-view-dashboard",
+            meta: {
+                ...viewPermission["AccessControlDialog"]
+            }
+        },
     // =============================================================================
     // PROJECT
     // =============================================================================
