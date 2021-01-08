@@ -53,7 +53,7 @@
                     <div class="default-control-box mt-5">
                         <v-row>
                         <v-col cols="3" class="d-inline">
-                            <p class="subtitle-1 access-title control-box">預設儲存權限：</p>
+                            <p class="subtitle-1 control-box">預設儲存權限：</p>
                         </v-col>
                         <v-col cols="9" class="d-inline control-box">
                             <v-select
@@ -166,8 +166,8 @@
             </v-icon> 
         <template v-slot:prepend>
            <v-row>
-               <v-col>
-                    <v-list-item two-line >
+               <v-col >
+                    <v-list-item two-line>
                         <v-icon 
                             class="info-icon"
                             size="75"
@@ -194,11 +194,11 @@
         <br/>
         <div class="default-control-box mx-6">
             <v-row>
-            <v-col cols="4" class="d-flex">
-                <span class="subtitle-1 access-title ">預設儲存權限：</span>
+            <v-col cols="4" class="d-flex py-0">
+                <span class="subtitle-1 ">預設儲存權限：</span>
             </v-col>
             <v-spacer/>
-            <v-col cols="8" class="d-inline control-box ">
+            <v-col cols="8" class="d-inline control-box py-0">
                 <v-select
                     dense
                     :items="items"
@@ -354,90 +354,189 @@
             </v-row>
             </v-list-item> -->
             <v-list-item class="px-5 add-access">
-                <v-autocomplete 
-                    v-model="friends"
-                    :disabled="isUpdating"
-                    :items="people"
-                    chipsc
+                <v-text-field 
+                    class="pr-3"
+                    v-model="search"
                     hide-details
-                    item-text="name"
-                    item-value="name"
-                    multiple
                     placeholder="關鍵字搜尋使用者"
-                    label="新增授權使用者"
+                    label="搜尋使用者"
                     flat
-                    color="dark grey"
-                    hide-selected
-                    @keydown.enter="addItem(friends)"
                 >
-                <template v-slot:selection="data">
-                <v-chip
-                    v-bind="data.attrs"
-                    :input-value="data.selected"
-                    close
-                    @click="data.select"
-                    @click:close="remove(data.item)"
-                    >
-                    <v-avatar left v-if="data.item.type=='img'">
-                        <v-img :src="data.item.avatar"></v-img>
-                    </v-avatar>
-                    <v-avatar left v-else>
-                        <v-icon>
-                            mdi-account-multiple
-                        </v-icon>
-                    </v-avatar>
-                    {{ data.item.name }}
-                    </v-chip>
-                </template>
-                <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                    <v-list-item-content v-text="data.item"></v-list-item-content>
-                </template>
-                <template v-else>
-                    <v-list-item-avatar v-if="data.item.type=='img'">
-                        <img :src="data.item.avatar">
-                    </v-list-item-avatar>
-                    <v-list-item-avatar v-else>
-                            <v-icon>
-                            mdi-account-multiple
-                        </v-icon>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                        <v-list-item-title v-html="data.item.name"></v-list-item-title>
-                    </v-list-item-content>
-                </template>
-                </template>
                 <template v-slot:prepend>
                     <v-icon
                     class="mx-2"
                     >
                     mdi-account-search-outline</v-icon>
-                </template>
-            <template v-slot:append>
-                <v-tooltip bottom >
-                <template v-slot:activator="{ on, attrs }">
-                <v-icon
-                    color="primary"
-                    v-bind="attrs"
-                    v-on="on"
-                    class="mx-2"
-                    @keydown.enter="addItem(item)"
-                    @click="addItem(item)"
-                    >
-                    mdi-account-plus-outline</v-icon>
-                </template>
-                    <span>新增使用者</span>
-                </v-tooltip>
-            </template>
-                    </v-autocomplete>
+                </template> 
+                </v-text-field>
+                        <v-dialog
+                        v-model="addMemberDialog"
+                        max-width="600px"
+                        >
+                        <template v-slot:activator="{ on, attrs }">
+                        <v-btn 
+                            v-bind="attrs"
+                            v-on="on"
+                            color="#ffffff"
+                        >
+                        新增成員
+                        </v-btn>
+                        </template>
+                        <v-spacer></v-spacer>  
+                        <v-card>
+                            <v-card-title>
+                                <span class="title">成員設定</span>
+                                <v-spacer></v-spacer>
+                                <v-icon
+                                    @click="addMemberDialog = false;"
+                                    > 
+                                    mdi-close
+                                    </v-icon> 
+                                </v-card-title>
+                            <v-card-text>
+                               
+                                  <v-row>
+                                    <v-col cols="3" class="d-inline">
+                                        <p class="subtitle-1 mt-6">新增授權成員：</p>
+                                    </v-col>
+                                    <v-col cols="9" class="d-inline ">
+                                    <v-autocomplete
+                                        class="py-4"
+                                        :search-input.sync="search"
+                                        v-model="friends"
+                                        :disabled="isUpdating"
+                                        :items="people"
+                                        hide-details
+                                        chipsc
+                                        item-text="name"
+                                        item-value="name"
+                                        multiple
+                                        placeholder="新增授權使用者"
+                                        flat
+                                        color="dark grey"
+                                        hide-selected
+                                        @keydown.enter="addItem(friends)"
+                                    >
+                                    <template v-slot:selection="data">
+                                    <v-chip
+                                        v-bind="data.attrs"
+                                        :input-value="data.selected"
+                                        close
+                                        @click="data.select"
+                                        @click:close="remove(data.item)"
+                                        >
+                                        <v-avatar left v-if="data.item.type=='img'">
+                                            <v-img :src="data.item.avatar"></v-img>
+                                        </v-avatar>
+                                        <v-avatar left v-else>
+                                            <v-icon>
+                                                mdi-account-multiple
+                                            </v-icon>
+                                        </v-avatar>
+                                        {{ data.item.name }}
+                                        </v-chip>
+                                    </template>
+                                    <template v-slot:item="data">
+                                    <template v-if="typeof data.item !== 'object'">
+                                        <v-list-item-content v-text="data.item"></v-list-item-content>
+                                    </template>
+                                    <template v-else>
+                                        <v-list-item-avatar v-if="data.item.type=='img'">
+                                            <img :src="data.item.avatar">
+                                        </v-list-item-avatar>
+                                        <v-list-item-avatar v-else>
+                                                <v-icon>
+                                                mdi-account-multiple
+                                            </v-icon>
+                                        </v-list-item-avatar>
+                                        <v-list-item-content>
+                                            <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                                        </v-list-item-content>
+                                    </template>
+                                    </template>
+                                    <!-- <template v-slot:prepend>
+                                        <v-icon
+                                        class="mx-2"
+                                        >
+                                        mdi-account-plus-outline</v-icon>
+                                    </template> -->
+                                    <!-- <template v-slot:append>
+                                        <v-tooltip bottom >
+                                        <template v-slot:activator="{ on, attrs }">
+                                        <v-icon
+                                            color="primary"
+                                            v-bind="attrs"
+                                            v-on="on"
+                                            class="mx-2"
+                                            @keydown.enter="addItem(item)"
+                                            @click="addItem(item)"
+                                            >
+                                            mdi-account-plus-outline</v-icon>
+                                        </template>
+                                            <span>新增使用者</span>
+                                        </v-tooltip>
+                                    </template> -->
+                                    </v-autocomplete>
+                                </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col cols="3" class="d-inline">
+                                        <p class="subtitle-1">成員儲存權限：</p>
+                                    </v-col>
+                                    <v-col cols="9" class="d-inline ">
+                                        <v-select
+                                            :disabled="dialogDisable"
+                                            dense
+                                            :items="items"
+                                            solo
+                                            label="Deny"
+                                            id="default-select"
+                                            ></v-select>
+                                            </v-col>
+                                </v-row>
+                                </v-card-text>
+                            <v-card-actions class="pb-3">
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    class="pa-2 mx-2"
+                                    color="primary"
+                                    outlined
+                                    @click="addMemberDialog = false;"
+                                    >
+                                    取消
+                                </v-btn> 
+                                    <v-btn
+                                    class="p mx-2"
+                                    depressed
+                                    color="primary"
+                                    @click="addMemberDialog = false;"
+                                    >
+                                    新增
+                                </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                    </v-dialog> 
+                    <!-- <v-tooltip bottom >
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn
+                                color="primary"
+                                v-bind="attrs"
+                                v-on="on"
+                                class="mx-2"
+                                >
+                                新增成員</v-btn>
+                                </template>
+                            <span>搜尋使用者</span>
+                        </v-tooltip> -->
+                
             </v-list-item>
         <v-list dense class="access-box overflow-y-auto">
             <v-list-item 
             class="access-list"
-            v-for="item in items1"
+            v-for="item in stuff"
             :key="item.title" 
             two-line>
-            <v-list-item-avatar>
+            <v-list-item-avatar >
                 <v-icon size="45">{{ item.icon }}</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
@@ -455,7 +554,7 @@
                     id="default-select"
                     ></v-select>
                     </v-col>
-                <v-col cols="2" class="pa-0 d-flex justify-center">
+                <v-col cols="2" class="pa-0 d-flex justify-center ">
                     <v-btn
                         v-if="!drawerDisable"
                         icon
@@ -466,6 +565,7 @@
                     </v-col>
                 </v-list-item-content> 
             </v-list-item>
+            <p class="text-center" v-if="!searchUserResult">'{{search}}' 沒有任何搜尋結果</p>
         </v-list>
         <v-dialog
             v-model="deleteDialog"
@@ -517,7 +617,7 @@
         </v-navigation-drawer>
     <v-dialog
         v-model="shareDialog"
-        max-width="600px"
+        max-width="700px"
         >
     <template v-slot:activator="{ on, attrs }">
         <v-btn
@@ -536,7 +636,7 @@
     </template>
     <v-spacer></v-spacer>  
         <v-card >
-        <v-card-title class="card-title">
+        <v-card-title>
             <span class="title">分享設定</span>
             <!-- <v-icon>
                 mdi-share-variant-outline
@@ -548,56 +648,51 @@
                 mdi-close
                 </v-icon> 
             </v-card-title>
-        <v-card-text
-            class="share-control-text"
-            >
-            <v-icon 
-                class="info-icon"
-                size="75"
-                color="primary"> 
-                mdi-folder 
-                </v-icon> 
-             <div class="file-info">
-                <p class="file-info-title">資料夾名稱</p>
-                <p class="file-info-detail">資料夾 (25MB)</p>
-                </div>
-            <div class="permission">
+        <v-card-text>
+            <v-row>
+                <v-icon 
+                    class="info-icon"
+                    size="75"
+                    color="primary"> 
+                    mdi-folder 
+                    </v-icon> 
+                <div class="file-info">
+                    <p class="file-info-title">資料夾名稱</p>
+                    <p class="file-info-detail">資料夾 (25MB)</p>
+                    </div>
+                </v-row>
+            <div>
                 <v-row>
-                    <v-col cols="3" class="pb-0">
-                        <span class="body-1 text--primary">權限設定</span>
+                    <v-col cols="3">
                         <v-icon
-                        class="ml-2"
+                        class="mr-2"
                         size="25"
                         >
                         mdi-account-multiple
                         </v-icon>
+                        <span class="body-1">權限設定</span>
                     </v-col>
-                    <v-col cols="9" class="pb-0">
-                        <v-select
+                    <v-col cols="9" class="justify-end d-flex">
+                        <v-switch
                             v-model="sharingResult"
-                            hide-details
                             dense
-                            :items="sharingOpt"
-                            solo
-                            :label="'Select sharing style'"
-                            id="default-select"
-                            ></v-select>   
-                            <p class="d-inline" v-if="sharingResult=='知道連結的使用者'">任何知道這個連結的網際網路使用者都能查看</p>
-                            <p class="d-inline" v-if="sharingResult=='隱藏'">停止分享此項目</p>
+                            hide-details
+                            inset
+                            flat
+                            ></v-switch>
                     </v-col>
-                  
                 </v-row>
-                 <v-row  v-if="sharingResult!=='隱藏'" > 
-                    <v-col cols="3" class="pb-0">
-                        <span class="body-1 text--primary">密碼設定</span>
+                 <v-row  v-if="sharingResult " > 
+                    <v-col cols="3" >
                         <v-icon
-                            class="ml-2"
+                            class="mr-2"
                             size="25"
                             >
                             mdi-link-lock
                             </v-icon>
+                        <span class="body-1">密碼設定</span>
                     </v-col>
-                    <v-col cols="9" class="justify-end d-flex py-0">
+                    <v-col cols="9" class="justify-end d-flex">
                         <v-switch
                             dense
                             hide-details
@@ -608,8 +703,8 @@
                     </v-col>
                 </v-row>
 
-                <v-row  v-if="sharingResult!=='隱藏'">
-                    <v-col cols="12"  v-if="passwordSwitch && !passwordChanged">
+                <v-row  v-if="sharingResult">
+                    <v-col cols="12"  v-if="passwordSwitch && !passwordChanged" class="pt-0">
                         <v-text-field v-if="passwordSwitch"
                             class="d-inline"
                             flat
@@ -617,17 +712,19 @@
                             label="Password"
                             single-line
                             :rules="rules"
-                            @keydown.enter="setPassword(password)"
+                            :value="password"
+                            @keydown.enter="setPassword(password); updatePassword()"
+                            :messages="message"
                             >
                                 <template v-slot:append>
-                                    <v-icon @click="setPassword(password)"
+                                    <v-icon @click="setPassword(password);  updatePassword()"
                                         color="primary">
                                         mdi-subdirectory-arrow-left
                                     </v-icon>
                                 </template>
                             </v-text-field>
                     </v-col>
-                     <v-col cols="12"  v-if="passwordSwitch && passwordChanged">
+                     <v-col cols="12"  v-if="passwordSwitch && passwordChanged" class="pt-0">
                         <a @click="changePassword=!changePassword">Change Password</a>
                         <v-text-field  v-if="changePassword"
                             class="d-inline"
@@ -635,11 +732,13 @@
                             label="Password"
                             single-line
                             :rules="rules"
-                            @keydown.enter="setPassword(password)"
+                            :value="password"
+                            @keydown.enter="setPassword(password); updatePassword()"
+                            :messages="message"
                             >
                                 <template v-slot:append>
                                     <v-icon @click="setPassword(password)"
-                                        color="primary">
+                                        >
                                         mdi-subdirectory-arrow-left
                                     </v-icon>
                                 </template>
@@ -647,49 +746,177 @@
                     </v-col>
                 </v-row>
 
-                <v-row  v-if="sharingResult!=='隱藏'" > 
-                    <v-col cols="3" class="pb-0">
-                        <span class="body-1 text--primary">時效設定</span>
+                <v-row  v-if="sharingResult" > 
+                    <v-col cols="10" >
                         <v-icon
-                            class="ml-2"
+                            class="mr-2"
                             size="25"
                             >
                             mdi-calendar-month-outline
                             </v-icon>
+                        <span class="body-1">時效設定 </span>
+                        <span>
+                             <span class="body-1" v-if="dates!=null && dateSwitch && checkValidate()">  {{dates}} </span>
+                            <span class="body-1" v-if="timePicker!=null && dateSwitch && checkValidate()">  {{timePicker}}</span>
+                            </span>
                     </v-col>
-                    <v-col cols="9" class="justify-end d-flex py-0">
+                    <v-col cols="2" class="justify-end d-flex">
                         <v-switch
                             dense
                             hide-details
                             inset
+
                             v-model="dateSwitch"
                             flat
                             ></v-switch>
                     </v-col>
                 </v-row>
-                <v-row  v-if="dateSwitch && sharingResult!=='隱藏'">
-                    <v-col
-                    cols="12"
-                    sm="6"
-                    >
-                    <v-date-picker
+                <v-row  v-if="sharingResult">
+                    <v-col cols="6" class=" py-0">
+                       <sapn v-if="dateSwitch">
+                                <!-- <v-text-field
+                                    class="d-inline"
+                                    label="Input Dates"
+                                    solo
+                                    ref="datesPicker"
+                                    :value="dates"
+                                    v-model="dates"
+                                    @keydown.enter="setDates(dates);"
+                                    :rules="dateRules"
+                                    @focus="dateOnFocus"
+
+                                >
+                                 <template v-slot:prepend :style="{width:'90px'}">
+                                    日期: (yyyy-mm-dd)
+                                   
+                                </template>
+                                </v-text-field>
+                                 <v-checkbox
+                                    v-model="showDatePicker "
+                                    hide-details
+                                    class="mt-0"
+                                    label="顯示日期"
+                                ></v-checkbox> -->
+                             <v-menu
+                                ref="menu"
+                                v-model="dateMenu"
+                                :close-on-content-click="false"
+                                :return-value.sync="dates"
+                                transition="scale-transition"
+                                offset-y
+                                min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                <v-text-field
+                                    v-model="dates"
+                                    :value="dates"
+                                    label="日期: (yyyy-mm-dd)"
+                                    prepend-icon="mdi-calendar"
+                                    v-bind="attrs"
+                                    v-on="on"
+                                ></v-text-field>
+                                </template>
+                                <v-date-picker
+                                v-model="dates"
+                                no-title
+                                :allowed-dates="setAllowDates"
+                                scrollable
+                                >
+                                <v-spacer></v-spacer>
+                                <v-btn
+                                    text
+                                    color="primary"
+                                    @click="menu = false"
+                                >
+                                    Cancel
+                                </v-btn>
+                                <v-btn
+                                    text
+                                    color="primary"
+                                    @click="$refs.menu.save(dates)"
+                                >
+                                    OK
+                                </v-btn>
+                                </v-date-picker>
+                            </v-menu>
+                        </sapn>
+                    </v-col>
+                      <v-col cols="6" class=" py-0">
+                       <sapn v-if="dateSwitch">
+                                <!-- <v-text-field
+                                    class="d-inline py-0"
+                                    label="Input Time"
+                                    solo
+                                    ref="timePicker"
+                                    :value="timePicker"
+                                    v-model="timePicker"
+                                    :rules="timeRules"
+                                    @focus="timeOnFocus"
+                                   
+                                    @keydown.enter="setTime(timePicker);"
+                                >
+                                 <template v-slot:prepend :style="{width:'90px'}">
+                                    時間: (hh:mm)
+                                    
+                                </template>
+                                </v-text-field>
+                                <v-checkbox
+                                    v-model="showTimePicker"
+                                    hide-details
+                                    class="mt-0"
+                                    label="顯示時間"
+                                ></v-checkbox> -->
+    
+                        </sapn>
+                    </v-col>
+                </v-row>
+                <v-row  v-if="dateSwitch && sharingResult">
+                    <v-col cols="6">
+                         <!-- v-model="dates" -->
+                    <!-- <v-date-picker v-if="showDatePicker"
                         v-model="dates"
-                        range
                         :allowed-dates="setAllowDates"
-                    ></v-date-picker>
+                    ></v-date-picker> -->
+                    </v-col>  
+                    <v-col cols="6" >
+                    <v-time-picker v-if="showTimePicker"
+                        format="ampm"
+                        scrollable
+                        class="mt-8 mr-4"
+                        v-model="timePicker"
+
+                        :landscape="$vuetify.breakpoint.smAndUp"
+                        no-title
+                        ></v-time-picker>
                     </v-col>
-                    <v-col
-                    cols="12"
-                    sm="6"
-                    >
-                    <v-text-field
-                        v-model="dateRangeText"
-                        label="時效範圍"
-                        prepend-icon="mdi-calendar"
-                        readonly
-                    ></v-text-field>
-                    日期: {{ dates }}
-                    </v-col>
+                    <!-- <v-row  v-if="dateSwitch && sharingResult">
+                        <v-col cols="6">
+                            <v-checkbox
+                                class="ml-6"
+                                v-model="showDatePicker "
+                                label="showDatePicker"
+                                ></v-checkbox>
+                            </v-col>
+                        <v-col cols="6">
+                            <v-checkbox
+                                class="ml-6"
+                                v-model="showTimePicker"
+                                label="showTimePicker"
+                                ></v-checkbox>
+                             </v-col>
+                    </v-row> -->
+                    <!-- <v-col cols="8">
+                        <v-text-field
+                            v-model="dateRangeText"
+                            label="時效範圍"
+                            prepend-icon="mdi-calendar"
+                            readonly
+                        ></v-text-field>
+                    </v-col> -->
+                     
+                    
+                    
+                    
                 </v-row>
                 <!-- <v-row v-if="passwordSwitch">
                     <v-col cols="2">
@@ -706,21 +933,12 @@
                             ></v-select>
                     </v-col>
                 </v-row> -->
-            <v-row v-if="sharingResult!=='隱藏'"> 
-                <v-col cols="3" class="pr-0">
-                    <v-btn 
-                        elevation="2"
-                        @click="generateLink"
-                        :loading="isLoading"
-                        :disabled="sharingResult==null  || !passwordChanged"
-                    >
-                        <v-icon>
-                            mdi-refresh
-                        </v-icon>
-                        更新連結</v-btn>
-                </v-col>
-                <v-col cols="9" v-if="showLink">
+            <v-row v-if="sharingResult"> 
+                
+                <v-col cols="9" >
                     <v-text-field
+                        v-if="showLink"
+                        id="copyLink"
                         flat
                         v-model="link"
                         hide-details
@@ -732,13 +950,26 @@
                              <div class="justify-end d-flex"
                                 @click="copyItem()">
                                 <v-icon size="25"
-                                    color="primary"> 
+                                    > 
                                 mdi-link-variant
                                 </v-icon> 
                                 <span class="subtitle-1 ">複製連結</span>
                                 </div>
                         </template>
                         </v-text-field>
+                </v-col>
+                <v-col cols="3" class="justify-end d-flex">
+                    <v-btn 
+                        elevation="2"
+                        @click="generateLink()"
+                        :loading="isLoading"
+                        :disabled=" !sharingResult  || (!password&&passwordSwitch) "
+                        color="primary"
+                    >
+                        <v-icon>
+                            mdi-refresh
+                        </v-icon>
+                        更新連結</v-btn>
                 </v-col>
                 <!-- <v-col cols="3" v-if="showLink" class="pl-0">
                    
@@ -755,7 +986,7 @@
                 連結複製成功
             </v-alert>
         </v-card-text>
-        <v-card-actions class="pb-3" v-if="sharingResult=='隱藏'">
+        <v-card-actions class="pb-3" v-if="!sharingResult">
             <v-spacer></v-spacer>
             <v-btn
                 class="pa-2 mx-2"
@@ -791,13 +1022,18 @@ export default {
 
     },
     watch: {
-
+      search (val) {
+        val && val !== this.friends && this.querySelections(val)
+      },
     },
     props: {
 
     },
     mounted(){
        this.setAllowDates();
+       this.stuff=this.items1;
+    //    this.dates = moment().format(YYYY-MM-DD);
+    //    this.timePicker = moment().format(HH:mm);
     },
     computed: {
       dateRangeText () {
@@ -815,8 +1051,14 @@ export default {
                 6: 'mdi-account-multiple'
             }
         return {
-            dates: [],
+            dateMenu:false,
+            showDatePicker:false,
+            showTimePicker:false,
+            message:null,
+            dates: null,
+            timePicker:null,
             copied:false,
+            passwordUpdated:false,
             showLink:false,
             isLoading:false,
             changePassword:false,
@@ -826,6 +1068,8 @@ export default {
             dateSwitch:false,
             passwordSwitch:false,
             rules: [(v) =>  !!v || "請輸入密碼"],
+            dateRules:[(v) =>  moment(v).isValid() || "請輸入正確格式"],
+            timeRules:[(v) =>  moment(v,"HH:mm", true).isValid() || "請輸入正確格式"],
             searchResult:null,
             searchOrAdd: {
                 name: "add",
@@ -836,8 +1080,11 @@ export default {
                 { name:'add', icon:'mdi-account-plus-outline'}
                 ],
             loading: false,
+            stuff:[],
             search: null,
+            searchUserResult:true,
             select: null,
+            friends1:[],
             friends: ['Sandra', 'Britta'],
             people: [
                     { name: 'Sandra', avatar: srcs[1], type:'img' },
@@ -854,6 +1101,7 @@ export default {
                 ],
             name:null,
             dialogDisable:false,
+            addMemberDialog:false,
             drawerDisable:false,
             inherentSwitch: false,
             link:'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse odio lacus, ultrices sed dolor sit amet, commodo venenatis lectus.',
@@ -878,6 +1126,9 @@ export default {
                 { title: '王7明', status:'Deny', icon: 'mdi-account', sub:'研發工程師' },
                 { title: '王5明', status:'ReadWrite', icon: 'mdi-account', sub:'專案工程師' },
                 { title: '王3明', status:'ReadOnly', icon: 'mdi-account', sub:'研發工程師' },
+                { title: 'group', status:'ReadWrite', icon: 'mdi-account-multiple', sub:'專案工程師' },
+                { title: 'group1', status:'ReadOnly', icon: 'mdi-account-multiple', sub:'研發工程師' },
+                
             ],
             dialog:false,
             deleteDialog:false,
@@ -943,13 +1194,92 @@ export default {
         }
     },
     methods: {
+
+        dateOnFocus(){
+            this.showDatePicker=true;
+        },
+        dateOnBlur(){
+            this.showDatePicker=false;
+        },
+        timeOnFocus(){
+            this.showTimePicker=true;
+        },
+        timeOnBlur(){
+            this.showTimePicker=false;
+        },
+        checkValidate(){
+
+            if( moment(this.dates).isValid() & moment(this.timePicker,"HH:mm", true).isValid()){
+                return true
+            }
+            else{
+                return false
+            }
+        },
+        querySelections (v) {
+
+            this.loading = true
+            // Simulated ajax query
+            this.searchUserResult=false;
+            let vm = this;
+            setTimeout(() => {
+                    let userText = v.replace(/^\s+/, '').replace(/\s+$/, '');
+                    if (userText == ''|| undefined) {
+                        // text was all whitespace
+                        vm.stuff=vm.items1;
+                        vm.searchUserResult=true;
+
+                    } else {
+                        // text has real content, now free of leading/trailing whitespace
+                        vm.stuff = vm.items1.filter(e => {
+                            if((e.title || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1){
+                                vm.searchUserResult=true;
+                                return e
+                            } 
+                            else{
+                                if(vm.searchUserResult!==true)
+                                    vm.searchUserResult=false;
+                            }
+                        })
+                        vm.loading = false
+                    }
+                    
+                }, 500)
+               
+        },
         setAllowDates(val){
             return moment(val).add(+1, 'days').isSameOrAfter(moment());
         },
         copyItem(){
+            //this.link.select();
+            // console.log(document.queryCommandSupported('copy'));
+            // try {
+            //     var successful = document.execCommand('copy');
+            //     var msg = successful ? 'successful' : 'unsuccessful';
+            //     console.log('Copying text command was ' + msg);
+            //     debugger
+            // } catch (err) {
+            //     console.log('Oops, unable to copy');
+            // }
+            // debugger
             this.copied=true;
+            var text = this.link;
+            navigator.clipboard.writeText(text).then(function() {
+            console.log('Async: Copying to clipboard was successful!');});
             setTimeout((()=>{
                 this.copied=false;
+                }),2000);
+
+        },
+        updatePassword(){
+            this.passwordUpdated=true;
+            
+            let vm=this;
+            vm.message="密碼更新成功"
+            setTimeout((()=>{
+                vm.passwordUpdated=false;
+                this.passwordChanged=true;
+                vm.message=null;
                 }),2000);
         },
         generateLink(){
@@ -961,7 +1291,16 @@ export default {
            
         },
         setPassword(password){
+            this.password=password; 
             this.passwordChanged=true;
+        },
+        setDates(dates){
+            this.dates=dates;
+            
+        },
+        setTime(timePicker){
+            debugger
+            this.timePicker=timePicker;
         },
         remove (item) {
             const index = this.friends.indexOf(item.name)
@@ -990,9 +1329,7 @@ export default {
     top:10px;
     right:10px;
 }
-.card-title{
-    padding-bottom: 0px !important;
-}
+
 .access-control-text{
     height:auto;
     min-height: 500px;
@@ -1020,18 +1357,13 @@ export default {
     margin-bottom: 5px;
 }
 .access-box{
-    height:65%;
+    height:80%;
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color:#E5E7E9 
 }
-.access-title{
-    margin-top: 8px !important;
-    color:#454545;
-}
-.control-box{
-    padding-bottom: 0;
-}
+
+
 #default-select{
     //padding:0 !important;
     width:150px;
