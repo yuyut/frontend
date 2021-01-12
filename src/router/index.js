@@ -80,6 +80,12 @@ const routes = [
         component: () => import( '../components/AccessControlDialog.vue'),
        
       },
+      {
+        path: '/ShareControlDialog',
+        name: 'ShareControlDialog',
+        component: () => import( '../components/ShareControlDialog.vue'),
+       
+      },
 
     ]
   }

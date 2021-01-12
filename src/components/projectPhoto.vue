@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-icon 
-      @click="topFunction()" 
+      @click="goToTopFunction()" 
       id="topBtn"
       color="primary"
       class="mdi-48px d-none d-sm-block"
@@ -15,7 +15,6 @@
     >
       Upload / Delete failed
     </v-alert>
-
     <v-toolbar class="toolbar" elevation="0">
       <v-toolbar-title>專案照片</v-toolbar-title>
       <v-divider class="mx-4" inset vertical></v-divider>
@@ -31,7 +30,7 @@
       <v-divider class="mx-4" inset vertical></v-divider>
       <v-spacer></v-spacer>
       <v-dialog
-          v-model="dialog"
+          v-model="addPhotoDialog"
           persistent
           max-width="600px"
           >
@@ -40,7 +39,6 @@
               v-bind="attrs"
               v-on="on"
               id="titleBtn"
-     
               :height="btnHeight"
                 color="#ffffff"
           >
@@ -69,7 +67,7 @@
               <v-btn
               color="blue darken-1"
               text
-              @click="dialog = false;"
+              @click="addPhotoDialog = false;"
               >
               {{$t('close')}}
               </v-btn>
@@ -77,7 +75,7 @@
               :disabled="buttonDisable(file)"
               color="blue darken-1"
               text
-              @click="dialog = false; myUpload();"
+              @click="addPhotoDialog = false; myUpload();"
               >
               {{$t('save')}}
               </v-btn>
@@ -90,7 +88,6 @@
             v-bind="attrs"
             v-on="on"
             :height="btnHeight"
-
             color="#ffffff" 
           >
             <span v-if="!isSame(breakPointName,'xs') "> 排序</span>
@@ -132,14 +129,13 @@
         </v-list>
       </v-menu>
     </v-toolbar> 
-      <v-row  class="row123"  >
+      <v-row  class="mr-0 pt-5"  >
         <v-col
           cols="12" lg2 sm4 md3 xs6 lg="2" sm="4" md="3" xs="6"
           v-for="(photo,index) in photosData"
           :key="index"
-          @click="changeAll(photo,index)"
+          @click="changePhotoData(photo,index)"
         >
-   
           <v-hover v-slot="{hover}">
             <sb-gallery-card
                 :hover="hover"
@@ -174,30 +170,12 @@ import UserMenu from './SystemUserMenu'
 import axios from 'axios'
 import NoImageAtAll from '../assets/Noimage.jpg'
 
-moment.locale('zh-tw', {
-  relativeTime: {
-    future: '%s内',
-    past: '%s前',
-    s: '幾秒',
-    ss: '%d秒',
-    m: '1分',
-    mm: '%d分鐘',
-    h: '1小時',
-    hh: '%d小時',
-    d: '1天',
-    dd: '%d天',
-    M: '1個月',
-    MM: '%d個月',
-    y: '1年',
-    yy: '%d年'
-  },
-})
 export default {
   directives:{
     lazyLoad: {
       inserted: el => {
         async function loadImage() {
-         var result;;
+         var result;
             await Vue.prototype.$API.api.main.photo.getData(el.id,null,Vue.prototype.$Config)            
             .then(res => {
               const reader = new FileReader();
@@ -214,7 +192,6 @@ export default {
                 console.log(error);
             }); 
         }
-
         function handleIntersect(entries, observer) {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -223,7 +200,6 @@ export default {
             }
           });
         }
-
         function createObserver() {
           const options = {
             root: null,
@@ -241,12 +217,6 @@ export default {
     }
   },
 
-  components: {
-
-  },
-  props: {
-
-  },
   watch:{
     sort:{
       deep: true,
@@ -305,12 +275,6 @@ export default {
       comment:true,
       info:false,
       note:null,
-
-      items: [
-        { title: 'comment', icon: 'mdi-comment-outline',color:'primary' },
-        { title: 'Home', icon: 'mdi-information-outline', color:'' },
-      ],
-      showNav:false,
       mini: false,
       alert:false,
       closeOnContentClick: false,
@@ -329,18 +293,13 @@ export default {
       sort: [
               { field: 'createdDate', dir: 'desc' }
             ],
-      filter: null,
-      componentKey: 0,
       currentItem:{},
       currentImage:null,
       currentIndex:null,
       imageDialog:false,      
-      dialog:false,
-      dialog1:false,
+      addPhotoDialog:false,
       deleteDialog:false,
-      imageURLs:[],
       photosData:[],
-      is_data_fetched: false,
       file:null,
       rules: [
         v => !!v || 'Required Content',
@@ -389,8 +348,7 @@ export default {
     },
   },
   methods: { 
-
-    changeAll(photo,index){
+    changePhotoData(photo,index){
       this.currentItem=photo;
       this.markupData=photo.markupData;
       console.log(this.markupData);
@@ -401,7 +359,7 @@ export default {
     closeImgDialog(value){
       this.showViewer=value;
     },
-   renameKey ( obj, oldKey, newKey ) {
+   renameKey( obj, oldKey, newKey ) {
       obj[newKey] = obj[oldKey];
       delete obj[oldKey];
     },
@@ -409,31 +367,6 @@ export default {
         if(event.key==="Enter" || event.target._value===""){
             this.searchValue = event.target.value
         }
-    },
-    changeNavContent(str){
-      if(str=='comment'){
-        this.comment=true;
-        this.info=false;
-        this.infoColor='';
-        this.commentColor='primary';
-      }
-      if(str=='info'){
-        this.comment=false;
-        this.info=true;
-        this.commentColor='';
-        this.infoColor='primary';
-      }
-    },
-    submitNote(){
-      let index = this.replys.length;
-      let obj = { 'comment': this.note, 'time': '今天', };
-      this.replys.splice(0,0,obj);
-     
-      this.note=null;
-    },
-    activateDrawer(){
-      this.$refs.imageDrawer.isActive=true;
-      this.$refs.imageDrawerMini.isActive=true;
     },
     onResize () {
         this.isMobile = window.innerWidth < 600
@@ -460,17 +393,6 @@ export default {
     changeCurrentIndex(index){
       this.currentIndex = index;
     },
-    changeCurrentItem(item){
-      this.currentItem = item;
-    },
-
-
-    editHandler: function() {
-    this.$emit('edit', {dataItem:this.dataItem});
-    },
-    activateReadMore(photo){
-      photo.readMoreActivated = true;
-    },
     isScrollToPageBottom(){
        if(this.page >= Math.ceil(this.total / this.pageSize)){
           this.bottom = true;
@@ -478,14 +400,12 @@ export default {
         else {
           this.bottom = false;
         }
-            
     },
     handScroll(){
       if(!this.loading && this.scrollTop() + this.windowHeight() >= (this.documentHeight() - 150/*滾動響應區域高度取150px*/)){
         this.isScrollToPageBottom();
        if(!this.bottom){       
           this.postData();
-
        }
       }
     },
@@ -508,39 +428,32 @@ export default {
     postData:function(){
       this.loading = true;
       if(this.page==0)  this.page++;
-      let state2 = {   
+      let newState = {   
                   take: this.pageSize,
                   skip: this.page*this.pageSize,
                   sort: this.sort
                     };
-      const queryStr = toDataSourceRequestString(state2);
+      const queryStr = toDataSourceRequestString(newState);
       let vm = this;
-      console.log(this.$API);
       this.$API.api.main.projectPhoto.get(this.projectId,queryStr,this.ConfigJSON)
           .then(res => {
-          const arr = res.data.data;
-          arr.forEach( obj => {this.$set(obj,'formatTime',vm.time(obj.createdDate) );
+          const photoArray = res.data.data;
+          photoArray.forEach( obj => {this.$set(obj,'formatTime',vm.time(obj.createdDate) );
               this.renameKey( obj, 'createdUserName', 'author' );
               this.renameKey( obj, 'createdDate', 'date' ) 
           } );
-
           this.total = res.data.total;
           this.loading = false;
-
-          //CONCAT CONCAT CONCAT!!!!!
-          this.photosData = vm.photosData.concat(arr);
-
+          this.photosData = vm.photosData.concat(photoArray);
           this.newData = res.data.data;
           this.page++;
           this.isScrollToPageBottom();
           if(this.documentHeight()-this.windowHeight()-this.scrollTop() < this.windowHeight()*0.1 && !this.bottom){
               this.postData();
           }
-
       })
       .then(function(){
         vm.getPhotos(vm.newData);
-        
       })
       .catch(function (error) {
           console.log(error);
@@ -568,18 +481,14 @@ export default {
         this.postData();
       })
       .catch(function (error) {
-          console.log(error);
-          vm.alert=true;
+        console.log(error);
+        vm.alert=true;
       });
     },
     myDelete:function(input){
       let vm = this;
-      
       this.$API.api.main.photo.delete(input)            
       .then(res => {
-        //DONE:update datas
-        //empty input
-        
         if (input) {
         let index = this.photosData.findIndex(p => p.id === input);
         this.photosData.splice(index, 1);
@@ -617,13 +526,9 @@ export default {
           const reader = new FileReader();
           if (res.data) {
             reader.readAsDataURL(res.data);
-            // onloadend!!! use this!!!
             reader.onloadend = function() { 
             vm.$set(vm.photosData[index],'imgSrc',reader.result);
             vm.$set(vm.photosData[index],'markupData',{'imgSrc': reader.result, 'svgSrc':null});     
-
-
-            ///fake data
             vm.$set(vm.photosData[index],'description','此物件的ID: ' + index ); 
             vm.$set(vm.photosData[index],'comments',vm.comments); 
             };
@@ -644,7 +549,7 @@ export default {
       }
     },
     // When the user clicks on the button, scroll to the top of the document
-    topFunction() {
+    gotoTopFunction() {
       document.body.scrollTop = 0;
       document.documentElement.scrollTop = 0;
     }
@@ -725,11 +630,7 @@ export default {
     margin: 10px;
     /* padding-bottom: 20px; */
 }
-  .row123{
-    margin: 0px !important;
-    padding: 5px 10px;
-    height : auto;
-  }
+
   .edit-icon{
     z-index: 15;
     margin:5px;

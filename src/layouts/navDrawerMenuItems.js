@@ -112,6 +112,16 @@ export default [{
                 ...viewPermission["AccessControlDialog"]
             }
         },
+        {
+            id: "ShareControlDialog",
+            name: "ShareControlDialog",
+            header: "FullPage",
+            text: "ShareControlDialog",
+            icon: "mdi-view-dashboard",
+            meta: {
+                ...viewPermission["ShareControlDialog"]
+            }
+        },
     // =============================================================================
     // PROJECT
     // =============================================================================
